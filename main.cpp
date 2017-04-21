@@ -18,9 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "scorecontroller.h"
+#include "choosediscilpline.h"
 #include <QApplication>
 #include <QSharedMemory>
 #include <QMessageBox>
+
 
 int
 main(int argc, char *argv[]) {
@@ -49,7 +51,10 @@ main(int argc, char *argv[]) {
         lockingMemory.detach();
         return 0;
     }
-    #endif
+#endif
+
+    ChooseDiscilpline chooser;
+    chooser.exec();
 
     ScoreController w;
 

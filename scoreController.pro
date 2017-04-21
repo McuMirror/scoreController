@@ -21,14 +21,17 @@ SOURCES += main.cpp\
     clientlistdialog.cpp \
     utility.cpp \
     fileserver.cpp \
-    netServer.cpp
+    netServer.cpp \
+    choosediscilpline.cpp
 
 HEADERS  += scorecontroller.h \
     clientlistdialog.h \
     utility.h \
     fileserver.h \
-    netServer.h
+    netServer.h \
+    choosediscilpline.h
 
 CONFIG += mobility
 MOBILITY = 
 
+FORMS    += choosediscilpline.ui
