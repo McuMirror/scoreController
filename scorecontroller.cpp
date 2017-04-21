@@ -26,12 +26,11 @@
 #define FILE_UPDATER_PORT  45455
 
 
-//#define UPDATE_PERIOD  2000
-
 #define VOLLEY_PANEL 0
 #define FIRST_PANEL  VOLLEY_PANEL
 #define BASKET_PANEL 1
 #define LAST_PANEL   BASKET_PANEL
+
 
 //#define QT_DEBUG
 #define LOG_MESG
@@ -67,7 +66,6 @@ ScoreController::ScoreController(QWidget *parent)
     slideList     = QStringList();
     iCurrentSlide = 0;
     iCurrentSpot  = 0;
-//    updatePeriod  = UPDATE_PERIOD;
 
     PrepareLogFile();
 
@@ -98,11 +96,6 @@ ScoreController::ScoreController(QWidget *parent)
     pFileServerThread->start(QThread::LowestPriority);
     emit startFileServer();
 
-//    pPeriodicUpdate = new QTimer(this);
-//    connect(pPeriodicUpdate, SIGNAL(timeout()),
-//            this, SLOT(onPeriodicUpdate()));
-//    pPeriodicUpdate->start(updatePeriod);
-
     // Pan-Tilt Camera management
     connect(pClientListDialog, SIGNAL(disableVideo()),
             this, SLOT(onStopCamera()));
@@ -115,9 +108,9 @@ ScoreController::ScoreController(QWidget *parent)
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
 
-    mainLayout->addLayout(createGamePanel());
-//    mainLayout->addWidget(createGameButtonBox(), 3, 0, 1, 2);
-//    mainLayout->addWidget(createSpotButtonBox(), 0, 2, 4, 1);
+    mainLayout->addLayout(CreateGamePanel());
+//    mainLayout->addWidget(CreateGameButtonBox(), 3, 0, 1, 2);
+//    mainLayout->addWidget(CreateSpotButtonBox(), 0, 2, 4, 1);
     setLayout(mainLayout);
 }
 
@@ -716,7 +709,7 @@ ScoreController::onProcessBinaryMessage(QByteArray message) {
 
 
 QGroupBox*
-ScoreController::createSpotButtonBox() {
+ScoreController::CreateSpotButtonBox() {
     QGroupBox* spotButtonBox = new QGroupBox(tr("Controlli"));
     QGridLayout* spotButtonLayout = new QGridLayout();
 
@@ -796,7 +789,7 @@ ScoreController::createSpotButtonBox() {
 
 
 QGroupBox*
-ScoreController::createGameButtonBox() {
+ScoreController::CreateGameButtonBox() {
     QGroupBox* gameButtonBox = new QGroupBox();
     QHBoxLayout* gameButtonLayout = new QHBoxLayout();
     newSetButton  = new QPushButton(tr("Nuovo\nSet"));
@@ -1030,4 +1023,18 @@ ScoreController::onButtonSetupClicked() {
 //    pFileUpdaterServer->setDirs(sSlideDir, sSpotDir);
 //    sMessage = QString("<reloadSpot>1</reloadSpot>");
 //    SendToAll(sMessage);
+}
+
+
+QString
+ScoreController::FormatStatusMsg() {
+    QString sFunctionName = " ScoreController::FormatStatusMsg ";
+    Q_UNUSED(sFunctionName)
+    return QString();
+}
+
+
+QGridLayout*
+ScoreController::CreateGamePanel() {
+    return new QGridLayout();
 }

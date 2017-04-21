@@ -45,7 +45,6 @@ protected slots:
     void onProcessTextMessage(QString sMessage);
     void onProcessBinaryMessage(QByteArray message);
     void onProcessConnectionRequest();
-    void onPeriodicUpdate();
 
     void onStartCamera(QString sClientIp);
     void onStopCamera();
@@ -55,10 +54,10 @@ protected slots:
     void onFileServerDone(bool bError);
 
 protected:
-    virtual QGridLayout* createGamePanel();
-    QGroupBox* createGameButtonBox();
-    QGroupBox* createSpotButtonBox();
-    QGroupBox* createClientListBox();
+    virtual QGridLayout* CreateGamePanel();
+    QGroupBox* CreateGameButtonBox();
+    QGroupBox* CreateSpotButtonBox();
+    QGroupBox* CreateClientListBox();
     void WaitForNetworkReady();
     int  SendToAll(QString sMessage);
     int  SendToOne(QWebSocket* pSocket, QString sMessage);
@@ -101,7 +100,6 @@ protected:
     QString               sSpotDir;
     QFileInfoList         spotList;
     int                   iCurrentSpot;
-//    int                   updatePeriod;
     QSoundEffect          buttonClick;
     QTimer               *pExitTimer;
 
