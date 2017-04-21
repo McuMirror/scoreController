@@ -19,11 +19,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         scorecontroller.cpp \
     clientlistdialog.cpp \
-    utility.cpp
+    utility.cpp \
+    fileserver.cpp \
+    netServer.cpp
 
 HEADERS  += scorecontroller.h \
     clientlistdialog.h \
-    utility.h
+    utility.h \
+    fileserver.h \
+    netServer.h
 
 CONFIG += mobility
 MOBILITY = 

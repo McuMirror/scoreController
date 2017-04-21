@@ -1,6 +1,20 @@
+#include <QDir>
+#include <QTimer>
+#include <QMessageBox>
+#include <QThread>
+#include <QNetworkInterface>
+#include <QUdpSocket>
+#include <QWebSocket>
+#include <QBuffer>
+#include <QFileDialog>
+#include <QPushButton>
+#include <QHostInfo>
+
 #include "scorecontroller.h"
 #include "clientlistdialog.h"
 #include "utility.h"
+#include "netServer.h"
+#include "fileserver.h"
 
 
 #define DISCOVERY_PORT     45453
@@ -8,7 +22,7 @@
 #define FILE_UPDATER_PORT  45455
 
 
-#define UPDATE_PERIOD  2000
+//#define UPDATE_PERIOD  2000
 
 #define VOLLEY_PANEL 0
 #define FIRST_PANEL  VOLLEY_PANEL
@@ -33,7 +47,6 @@ ScoreController::ScoreController(QWidget *parent)
 
     buttonClick.setSource(QUrl::fromLocalFile(":/key.wav"));
     sIpAddresses = QString();
-    sNoData      = QString(tr("NoData"));
 
     QString sBaseDir;
 #ifdef Q_OS_ANDROID
@@ -50,7 +63,7 @@ ScoreController::ScoreController(QWidget *parent)
     slideList     = QStringList();
     iCurrentSlide = 0;
     iCurrentSpot  = 0;
-    updatePeriod  = UPDATE_PERIOD;
+//    updatePeriod  = UPDATE_PERIOD;
 
     PrepareLogFile();
 
@@ -58,7 +71,7 @@ ScoreController::ScoreController(QWidget *parent)
     connect(pExitTimer, SIGNAL(timeout()),
             this, SLOT(close()));
 
-    waitForNetworkReady();
+    WaitForNetworkReady();
 
     sHostName = QHostInfo::localHostName();
 
@@ -138,32 +151,15 @@ void
 ScoreController::onFileServerDone(bool bError) {
     QString sFunctionName = QString(" ScoreController::onFileServerDone ");
     if(bError) {
-        logMessage(sFunctionName, QString("File server stopped with errors"));
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("File server stopped with errors"));
     }
     else {
-        logMessage(sFunctionName, QString("File server stopped without errors"));
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("File server stopped without errors"));
     }
-}
-
-
-void
-ScoreController::logMessage(QString sFunctionName, QString sMessage) {
-    Q_UNUSED(sFunctionName)
-    Q_UNUSED(sMessage)
-#ifdef LOG_MESG
-    sDebugMessage = QString();
-    sDebugInformation << dateTime.currentDateTime().toString()
-                      << sFunctionName
-                      << sMessage;
-    if(logFile) {
-      logFile->write(sDebugMessage.toUtf8().data());
-      logFile->write("\n");
-      logFile->flush();
-    }
-    else {
-        qDebug() << sDebugMessage;
-    }
-#endif
 }
 
 
@@ -191,13 +187,15 @@ ScoreController::prepareDiscovery() {
                         discoverySocketArray.append(pDiscoverySocket);
                         connect(pDiscoverySocket, SIGNAL(readyRead()),
                                 this, SLOT(onProcessConnectionRequest()));
-                        logMessage(sFunctionName,
+                        logMessage(logFile,
+                                   sFunctionName,
                                    QString("Listening for connections at address: %1 port:%2")
                                    .arg(discoveryAddress.toString())
                                    .arg(discoveryPort));
                     }
                     else {
-                        logMessage(sFunctionName,
+                        logMessage(logFile,
+                                   sFunctionName,
                                    QString("Unable to bound %1")
                                    .arg(discoveryAddress.toString()));
                     }
@@ -235,7 +233,7 @@ ScoreController::onSetNewPanValue(QString sClientIp, int newPan) {
   QHostAddress hostAddress(sClientIp);
   for(int i=0; i<connectionList.count(); i++) {
       if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
-          sMessage = tr("<pan>%1</pan>").arg(newPan);
+          QString sMessage = tr("<pan>%1</pan>").arg(newPan);
           SendToOne(connectionList.at(i).pClientSocket, sMessage);
           return;
       }
@@ -248,7 +246,7 @@ ScoreController::onSetNewTiltValue(QString sClientIp, int newTilt) {
   QHostAddress hostAddress(sClientIp);
   for(int i=0; i<connectionList.count(); i++) {
       if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
-          sMessage = tr("<tilt>%1</tilt>").arg(newTilt);
+          QString sMessage = tr("<tilt>%1</tilt>").arg(newTilt);
           SendToOne(connectionList.at(i).pClientSocket, sMessage);
           return;
       }
@@ -296,7 +294,9 @@ ScoreController::isConnectedToNetwork() {
             }
         }
     }
-    logMessage(sFunctionName, result ? QString("true") : QString("false"));
+    logMessage(logFile,
+               sFunctionName,
+               result ? QString("true") : QString("false"));
     return result;
 }
 
@@ -304,10 +304,11 @@ ScoreController::isConnectedToNetwork() {
 void
 ScoreController::onProcessConnectionRequest() {
     QString sFunctionName = " ScoreController::onProcessConnectionRequest ";
-    sDebugMessage = QString();
     QByteArray datagram;
     QString sToken;
     QUdpSocket* pDiscoverySocket = qobject_cast<QUdpSocket*>(sender());
+    QString sNoData = QString("NoData");
+    QString sMessage;
 
     while(pDiscoverySocket->hasPendingDatagrams()) {
         datagram.resize(pDiscoverySocket->pendingDatagramSize());
@@ -317,14 +318,18 @@ ScoreController::onProcessConnectionRequest() {
         pDiscoverySocket->readDatagram(datagram.data(), datagram.size(), &hostAddress, &port);
         sToken = XML_Parse(datagram.data(), "getServer");
         if(sToken != sNoData) {
-            logMessage(sFunctionName,
+            logMessage(logFile,
+                       sFunctionName,
                        QString("Connection request from: %1 at Address %2:%3")
                        .arg(sToken)
                        .arg(hostAddress.toString())
                        .arg(port));
             RemoveClient(hostAddress);
             sMessage = "<serverIP>" + sIpAddresses + "</serverIP>";
-            logMessage(sFunctionName, QString("Sent: %1").arg(sMessage));
+            logMessage(logFile,
+                       sFunctionName,
+                       QString("Sent: %1")
+                       .arg(sMessage));
             sendAcceptConnection(pDiscoverySocket, sMessage, hostAddress, port);
         }
     }
@@ -334,17 +339,20 @@ ScoreController::onProcessConnectionRequest() {
 int
 ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, QString sMessage, QHostAddress hostAddress, quint16 port) {
     QString sFunctionName = " ScoreController::sendAcceptConnection ";
-    sDebugMessage = QString();
     Q_UNUSED(sFunctionName)
     QByteArray datagram = sMessage.toUtf8();
     if(!pDiscoverySocket->isValid()) {
-        logMessage(sFunctionName, QString("Discovery Socket Invalid !"));
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Discovery Socket Invalid !"));
         return -1;
     }
     qint64 bytesWritten = pDiscoverySocket->writeDatagram(datagram.data(), datagram.size(), hostAddress, port);
     Q_UNUSED(bytesWritten)
     if(bytesWritten != datagram.size()) {
-      logMessage(sFunctionName, QString("Unable to send data !"));
+      logMessage(logFile,
+                 sFunctionName,
+                 QString("Unable to send data !"));
     }
     return 0;
 }
@@ -387,7 +395,6 @@ ScoreController::closeEvent(QCloseEvent *event) {
 int
 ScoreController::prepareServer() {
     QString sFunctionName = " ScoreController::prepareServer ";
-    sDebugMessage = QString();
     Q_UNUSED(sFunctionName)
 
     pPanelServer = new NetServer(QString("PanelServer"), logFile, this);
@@ -403,6 +410,7 @@ void
 ScoreController::onProcessTextMessage(QString sMessage) {
     QString sFunctionName = " ScoreController::onProcessTextMessage ";
     QString sToken;
+    QString sNoData = QString("NoData");
 
     sToken = XML_Parse(sMessage, "getStatus");
     if(sToken != sNoData) {
@@ -435,7 +443,8 @@ ScoreController::onProcessTextMessage(QString sMessage) {
     sToken = XML_Parse(sMessage, "image_size");
     if(sToken != sNoData) {
         QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-        logMessage(sFunctionName,
+        logMessage(logFile,
+                   sFunctionName,
                    QString("%1 received %2 bytes")
                    .arg(pClient->peerAddress().toString())
                    .arg(sToken));
@@ -444,19 +453,23 @@ ScoreController::onProcessTextMessage(QString sMessage) {
     sToken = XML_Parse(sMessage, "send_image");
     if(sToken != sNoData) {
         if(slideList.isEmpty()) {
-            logMessage(sFunctionName,
+            logMessage(logFile,
+                       sFunctionName,
                        QString("Empty slide list"));
             return;
         }
         QStringList dimension = QStringList(sToken.split(tr(","),QString::SkipEmptyParts));
         if(dimension.count() < 2) {
-            logMessage(sFunctionName, QString("Malformed image request"));
+            logMessage(logFile,
+                       sFunctionName,
+                       QString("Malformed image request"));
             return;
         }
         QSize imageSize = QSize(dimension.at(0).toInt(), dimension.at(1).toInt());
         QImage image;
         if(!image.load(sSlideDir+slideList[iCurrentSlide])) {
-            logMessage(sFunctionName,
+            logMessage(logFile,
+                       sFunctionName,
                        QString("Unable to read:  %1")
                        .arg(sSlideDir+slideList[iCurrentSlide]));
             return;
@@ -464,19 +477,24 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         QByteArray ba;
         QBuffer buffer(&ba);
         if(!buffer.open(QIODevice::WriteOnly)) {
-            logMessage(sFunctionName, QString("Unable to open image buffer"));
+            logMessage(logFile,
+                       sFunctionName,
+                       QString("Unable to open image buffer"));
             return;
         }
         image = image.scaled(imageSize, Qt::KeepAspectRatio);
         if(!image.save(&buffer, "JPG", -1)) {// writes image into ba in JPEG format
-            logMessage(sFunctionName, QString("Unable to save image into buffer"));
+            logMessage(logFile,
+                       sFunctionName,
+                       QString("Unable to save image into buffer"));
             buffer.close();
             return;
         }
         buffer.close();
         QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
         if(pClient->isValid()) {
-            logMessage(sFunctionName,
+            logMessage(logFile,
+                       sFunctionName,
                        QString("Sending image %1 to %2")
                        .arg(iCurrentSlide)
                        .arg(pClient->peerAddress().toString()));
@@ -484,7 +502,9 @@ ScoreController::onProcessTextMessage(QString sMessage) {
                if(connectionList.at(i).clientAddress == pClient->peerAddress()) {
                     int bytesSent = pClient->sendBinaryMessage(ba);
                     if(bytesSent != ba.size()) {
-                        logMessage(sFunctionName, QString("Unable to send the image to client"));
+                        logMessage(logFile,
+                                   sFunctionName,
+                                   QString("Unable to send the image to client"));
                     }
                     break;
                 }
@@ -492,7 +512,9 @@ ScoreController::onProcessTextMessage(QString sMessage) {
             iCurrentSlide = (iCurrentSlide + 1) % slideList.count();
         }
         else {
-            logMessage(sFunctionName, QString("Client socket is Invalid !"));
+            logMessage(logFile,
+                       sFunctionName,
+                       QString("Client socket is Invalid !"));
         }
     }// send_image
 
@@ -538,7 +560,9 @@ ScoreController::onProcessTextMessage(QString sMessage) {
 int
 ScoreController::SendToAll(QString sMessage) {
     QString sFunctionName = " ScoreController::SendToAll ";
-    logMessage(sFunctionName, sMessage);
+    logMessage(logFile,
+               sFunctionName,
+               sMessage);
     for(int i=0; i< connectionList.count(); i++) {
         SendToOne(connectionList.at(i).pClientSocket, sMessage);
     }
@@ -555,10 +579,13 @@ ScoreController::SendToOne(QWebSocket* pClient, QString sMessage) {
                 qint64 written = pClient->sendTextMessage(sMessage);
                 Q_UNUSED(written)
                 if(written != sMessage.length()) {
-                    logMessage(sFunctionName, QString("Error writing %1").arg(sMessage));
+                    logMessage(logFile,
+                               sFunctionName,
+                               QString("Error writing %1").arg(sMessage));
                 }
                 else {
-                    logMessage(sFunctionName,
+                    logMessage(logFile,
+                               sFunctionName,
                                QString("Sent %1 to: %2")
                                .arg(sMessage)
                                .arg(pClient->peerAddress().toString()));
@@ -568,7 +595,9 @@ ScoreController::SendToOne(QWebSocket* pClient, QString sMessage) {
         }
     }
     else {
-        logMessage(sFunctionName, QString("Client socket is invalid !"));
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Client socket is invalid !"));
         RemoveClient(pClient->peerAddress());
     }
     return 0;
@@ -590,7 +619,8 @@ ScoreController::RemoveClient(QHostAddress hAddress) {
             pClientToClose->close(QWebSocketProtocol::CloseCodeAbnormalDisconnection, tr("Timeout in connection"));
             connectionList.removeAt(i);
             sFound = " Removed !";
-            logMessage(sFunctionName,
+            logMessage(logFile,
+                       sFunctionName,
                        QString("%1 %2")
                        .arg(hAddress.toString())
                        .arg(sFound));
@@ -649,7 +679,8 @@ ScoreController::onNewConnection(QWebSocket *pClient) {
         shutdownButton->setDisabled(false);
     }
     shutdownButton->setText(QString("Spegni %1\nTabelloni").arg(connectionList.count()));
-    logMessage(sFunctionName,
+    logMessage(logFile,
+               sFunctionName,
                QString("Client connected: %1")
                .arg(sAddress));
 }
@@ -660,7 +691,8 @@ ScoreController::onClientDisconnected() {
     QString sFunctionName = " ScoreController::onClientDisconnected ";
     QWebSocket* pClient = qobject_cast<QWebSocket *>(sender());
     QString sDiconnectedAddress = pClient->peerAddress().toString();
-    logMessage(sFunctionName,
+    logMessage(logFile,
+               sFunctionName,
                QString("%1 disconnected because %2. Close code: %3")
                .arg(sDiconnectedAddress)
                .arg(pClient->closeReason())
@@ -673,7 +705,9 @@ void
 ScoreController::onProcessBinaryMessage(QByteArray message) {
     QString sFunctionName = " ScoreController::onProcessBinaryMessage ";
     Q_UNUSED(message)
-    logMessage(sFunctionName, QString("Unexpected binary message received !"));
+    logMessage(logFile,
+               sFunctionName,
+               QString("Unexpected binary message received !"));
 }
 
 
@@ -792,6 +826,7 @@ ScoreController::createGameButtonBox() {
 
 void
 ScoreController::onButtonStartStopSpotClicked() {
+    QString sMessage;
     if(connectionList.count() == 0) {
         startStopSpotButton->setText(tr("Avvia\nSpot Singolo"));
         startStopSpotButton->setDisabled(true);
@@ -808,7 +843,7 @@ ScoreController::onButtonStartStopSpotClicked() {
         startStopLiveCameraButton->setDisabled(true);
     }
     else {
-        sMessage = "<endspot>1</endspot>";
+        QString sMessage = "<endspot>1</endspot>";
         SendToAll(sMessage);
         startStopSpotButton->setText(tr("Avvia\nSpot Singolo"));
         startStopLoopSpotButton->setDisabled(false);
@@ -820,6 +855,7 @@ ScoreController::onButtonStartStopSpotClicked() {
 
 void
 ScoreController::onButtonStartStopSpotLoopClicked() {
+    QString sMessage;
     if(connectionList.count() == 0) {
         startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
         startStopLoopSpotButton->setDisabled(true);
@@ -848,6 +884,7 @@ ScoreController::onButtonStartStopSpotLoopClicked() {
 
 void
 ScoreController::onButtonStartStopLiveCameraClicked() {
+    QString sMessage;
     if(connectionList.count() == 0) {
         startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
         startStopLiveCameraButton->setDisabled(true);
@@ -876,6 +913,7 @@ ScoreController::onButtonStartStopLiveCameraClicked() {
 
 void
 ScoreController::onButtonStartStopSlideShowClicked() {
+    QString sMessage;
     if(connectionList.count() == 0) {
         startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
         startStopSlideShowButton->setDisabled(true);
@@ -909,7 +947,7 @@ ScoreController::onButtonShutdownClicked() {
                                      QMessageBox::No|QMessageBox::Default,
                                      QMessageBox::NoButton);
     if(iRes != QMessageBox::Yes) return;
-    sMessage = "<kill>1</kill>";
+    QString sMessage = "<kill>1</kill>";
     SendToAll(sMessage);
 }
 
@@ -951,7 +989,9 @@ ScoreController::onButtonSetupClicked() {
         slideDir.setNameFilters(filter);
         slideList = slideDir.entryList();
     }
-    logMessage(sFunctionName, QString("Found %1 slides").arg(slideList.count()));
+    logMessage(logFile,
+               sFunctionName,
+               QString("Found %1 slides").arg(slideList.count()));
 
     QDir spotDir(sSpotDir);
     if(spotDir.exists()) {
@@ -979,7 +1019,10 @@ ScoreController::onButtonSetupClicked() {
         spotDir.setFilter(QDir::Files);
         spotList = spotDir.entryInfoList();
     }
-    logMessage(sFunctionName, QString("Found %1 spots").arg(spotList.count()));
+    logMessage(logFile,
+               sFunctionName,
+               QString("Found %1 spots")
+               .arg(spotList.count()));
 //    pFileUpdaterServer->setDirs(sSlideDir, sSpotDir);
 //    sMessage = QString("<reloadSpot>1</reloadSpot>");
 //    SendToAll(sMessage);

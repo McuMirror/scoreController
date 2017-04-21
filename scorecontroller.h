@@ -4,11 +4,17 @@
 #include <QWidget>
 #include <QHostAddress>
 #include <QFileInfoList>
+#include <QSoundEffect>
+
 
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
 QT_FORWARD_DECLARE_CLASS(QUdpSocket)
 QT_FORWARD_DECLARE_CLASS(ClientListDialog)
-
+QT_FORWARD_DECLARE_CLASS(QTimer)
+QT_FORWARD_DECLARE_CLASS(QPushButton)
+QT_FORWARD_DECLARE_CLASS(QThread)
+QT_FORWARD_DECLARE_CLASS(NetServer)
+QT_FORWARD_DECLARE_CLASS(FileServer)
 
 class ScoreController : public QWidget
 {
@@ -55,12 +61,18 @@ protected:
     bool isConnectedToNetwork();
     bool PrepareLogFile();
     void prepareDiscovery();
+    virtual void FormatStatusMsg();
 
 protected:
     struct connection{
       QWebSocket*     pClientSocket;
       QHostAddress    clientAddress;
     };
+    QString               sHostName;
+
+    NetServer            *pPanelServer;
+    QThread              *pFileServerThread;
+    FileServer           *pFileUpdaterServer;
 
     QString               logFileName;
     QFile*                logFile;
@@ -71,6 +83,7 @@ protected:
     quint16               discoveryPort;
     quint16               serverPort;
     quint16               updaterPort;
+    QVector<QUdpSocket*>  discoverySocketArray;
 
     QString               sIpAddresses;
     QHostAddress          discoveryAddress;
@@ -81,7 +94,18 @@ protected:
     QString               sSpotDir;
     QFileInfoList         spotList;
     int                   iCurrentSpot;
-    int                   updatePeriod;
+//    int                   updatePeriod;
+    QSoundEffect          buttonClick;
+    QTimer               *pExitTimer;
+
+    QPushButton*          startStopLoopSpotButton;
+    QPushButton*          startStopSpotButton;
+    QPushButton*          startStopSlideShowButton;
+    QPushButton*          startStopLiveCameraButton;
+    QPushButton*          cameraControlButton;
+    QPushButton*          generalSetupButton;
+    QPushButton*          shutdownButton;
+
 };
 
 #endif // SCORECONTROLLER_H
