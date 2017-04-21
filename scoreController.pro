@@ -4,7 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT += core
+QT += gui
+QT += network
+QT += websockets
+QT += multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,9 +17,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        scorecontroller.cpp
+        scorecontroller.cpp \
+    clientlistdialog.cpp
 
-HEADERS  += scorecontroller.h
+HEADERS  += scorecontroller.h \
+    clientlistdialog.h
 
 CONFIG += mobility
 MOBILITY = 

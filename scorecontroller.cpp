@@ -1,4 +1,5 @@
 #include "scorecontroller.h"
+#include "clientlistdialog.h"
 
 
 #define DISCOVERY_PORT     45453
