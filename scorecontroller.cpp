@@ -12,6 +12,7 @@
 #include <QGroupBox>
 #include <QGridLayout>
 #include <QLabel>
+#include <QCloseEvent>
 
 #include "scorecontroller.h"
 #include "clientlistdialog.h"
@@ -112,11 +113,11 @@ ScoreController::ScoreController(QWidget *parent)
     connect(pClientListDialog, SIGNAL(newTiltValue(QString,int)),
             this, SLOT(onSetNewTiltValue(QString, int)));
 
-    QGridLayout*  mainLayout = new QGridLayout();
+    QVBoxLayout *mainLayout = new QVBoxLayout();
 
-    mainLayout->addWidget(createGamePanel(),     0, 0, 3, 1);
-    mainLayout->addWidget(createGameButtonBox(), 3, 0, 1, 2);
-    mainLayout->addWidget(createSpotButtonBox(), 0, 2, 4, 1);
+    mainLayout->addLayout(createGamePanel());
+//    mainLayout->addWidget(createGameButtonBox(), 3, 0, 1, 2);
+//    mainLayout->addWidget(createSpotButtonBox(), 0, 2, 4, 1);
     setLayout(mainLayout);
 }
 
@@ -364,8 +365,8 @@ ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, QString sMes
 void
 ScoreController::closeEvent(QCloseEvent *event) {
     QString sFunctionName = " ScoreController::closeEvent ";
-    sDebugMessage = QString();
     Q_UNUSED(sFunctionName)
+    QString sMessage;
 
     if(connectionList.count() > 0) {
         int answer = QMessageBox::question(this,
@@ -987,7 +988,7 @@ ScoreController::onButtonSetupClicked() {
     if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
     slideDir = QDir(sSlideDir);
     if(sSlideDir != QString() && slideDir.exists()) {
-        pSettings->setValue("directories/slides", sSlideDir);
+//        pSettings->setValue("directories/slides", sSlideDir);
         QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
         slideDir.setNameFilters(filter);
         slideList = slideDir.entryList();
@@ -1016,7 +1017,7 @@ ScoreController::onButtonSetupClicked() {
     if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
     spotDir = QDir(sSpotDir);
     if(sSpotDir != QString() && spotDir.exists()) {
-        pSettings->setValue("directories/spots", sSpotDir);
+//        pSettings->setValue("directories/spots", sSpotDir);
         QStringList nameFilter(QStringList() << "*.mp4");
         spotDir.setNameFilters(nameFilter);
         spotDir.setFilter(QDir::Files);

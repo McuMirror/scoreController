@@ -16,6 +16,7 @@ QT_FORWARD_DECLARE_CLASS(QThread)
 QT_FORWARD_DECLARE_CLASS(NetServer)
 QT_FORWARD_DECLARE_CLASS(FileServer)
 QT_FORWARD_DECLARE_CLASS(QGroupBox)
+QT_FORWARD_DECLARE_CLASS(QGridLayout)
 
 class ScoreController : public QWidget
 {
@@ -24,6 +25,7 @@ class ScoreController : public QWidget
 public:
     ScoreController(QWidget *parent = 0);
     ~ScoreController();
+    void closeEvent(QCloseEvent *event);
 
 signals:
     void startFileServer();
@@ -53,6 +55,7 @@ protected slots:
     void onFileServerDone(bool bError);
 
 protected:
+    virtual QGridLayout* createGamePanel();
     QGroupBox* createGameButtonBox();
     QGroupBox* createSpotButtonBox();
     QGroupBox* createClientListBox();
