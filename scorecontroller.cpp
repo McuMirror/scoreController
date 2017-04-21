@@ -1,5 +1,6 @@
 #include "scorecontroller.h"
 #include "clientlistdialog.h"
+#include "utility.h"
 
 
 #define DISCOVERY_PORT     45453
@@ -50,9 +51,6 @@ ScoreController::ScoreController(QWidget *parent)
     iCurrentSlide = 0;
     iCurrentSpot  = 0;
     updatePeriod  = UPDATE_PERIOD;
-
-    sDebugInformation.setString(&sDebugMessage);
-    sDebugMessage = QString();
 
     PrepareLogFile();
 

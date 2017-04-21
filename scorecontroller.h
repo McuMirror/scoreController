@@ -2,10 +2,11 @@
 #define SCORECONTROLLER_H
 
 #include <QWidget>
+#include <QHostAddress>
+#include <QFileInfoList>
 
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
 QT_FORWARD_DECLARE_CLASS(QUdpSocket)
-QT_FORWARD_DECLARE_CLASS(QHostAddress)
 QT_FORWARD_DECLARE_CLASS(ClientListDialog)
 
 
@@ -53,11 +54,34 @@ protected:
     void RemoveClient(QHostAddress hAddress);
     bool isConnectedToNetwork();
     bool PrepareLogFile();
-    void logMessage(QString sFunctionName, QString sMessage);
     void prepareDiscovery();
 
 protected:
+    struct connection{
+      QWebSocket*     pClientSocket;
+      QHostAddress    clientAddress;
+    };
+
+    QString               logFileName;
+    QFile*                logFile;
+
     ClientListDialog     *pClientListDialog;
+    QList<connection>     connectionList;
+
+    quint16               discoveryPort;
+    quint16               serverPort;
+    quint16               updaterPort;
+
+    QString               sIpAddresses;
+    QHostAddress          discoveryAddress;
+
+    QString               sSlideDir;
+    QStringList           slideList;
+    int                   iCurrentSlide;
+    QString               sSpotDir;
+    QFileInfoList         spotList;
+    int                   iCurrentSpot;
+    int                   updatePeriod;
 };
 
 #endif // SCORECONTROLLER_H
