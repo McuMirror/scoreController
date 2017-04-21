@@ -677,3 +677,311 @@ ScoreController::onProcessBinaryMessage(QByteArray message) {
     logMessage(sFunctionName, QString("Unexpected binary message received !"));
 }
 
+
+QGroupBox*
+ScoreController::createSpotButtonBox() {
+    QGroupBox* spotButtonBox = new QGroupBox(tr("Controlli"));
+    QGridLayout* spotButtonLayout = new QGridLayout();
+
+    startStopLoopSpotButton = new QPushButton(tr("Avvia\nSpot Loop"));
+    startStopSpotButton = new QPushButton(tr("Avvia\nSpot Singolo"));
+    startStopSlideShowButton = new QPushButton(tr("Avvia\nSlide Show"));
+    startStopLiveCameraButton = new QPushButton(tr("Avvia\nLive Camera"));
+
+    cameraControlButton = new QPushButton(tr("Controlo\nTelecamere"));
+
+    generalSetupButton = new QPushButton(tr("Setup\nGenerale"));
+    shutdownButton = new QPushButton(QString("Spegni %1\nTabelloni").arg(connectionList.count()));
+
+    startStopLoopSpotButton->setDisabled(true);
+    startStopSpotButton->setDisabled(true);
+    startStopSlideShowButton->setDisabled(true);
+    startStopLiveCameraButton->setDisabled(true);
+
+    cameraControlButton->setDisabled(true);
+    generalSetupButton->setDisabled(false);
+    shutdownButton->setDisabled(true);
+
+    connect(cameraControlButton, SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+    connect(cameraControlButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonCameraControlClicked()));
+
+    connect(startStopLoopSpotButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonStartStopSpotLoopClicked()));
+    connect(startStopLoopSpotButton, SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+    connect(startStopSpotButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonStartStopSpotClicked()));
+    connect(startStopSpotButton, SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+
+    connect(startStopSlideShowButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonStartStopSlideShowClicked()));
+    connect(startStopSlideShowButton, SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+
+    connect(startStopLiveCameraButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonStartStopLiveCameraClicked()));
+    connect(startStopLiveCameraButton, SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+
+    connect(generalSetupButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonSetupClicked()));
+    connect(generalSetupButton, SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+
+    connect(shutdownButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonShutdownClicked()));
+    connect(shutdownButton, SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+
+    spotButtonLayout->addWidget(startStopLoopSpotButton,   0, 0, 1, 1);
+    spotButtonLayout->addWidget(startStopSpotButton,       1, 0, 1, 1);
+
+    spotButtonLayout->addWidget(new QLabel(""),            2, 0, 1, 1);
+    spotButtonLayout->addWidget(startStopSlideShowButton,  3, 0, 1, 1);
+
+    spotButtonLayout->addWidget(new QLabel(""),            4, 0, 1, 1);
+    spotButtonLayout->addWidget(startStopLiveCameraButton, 5, 0, 1, 1);
+
+    spotButtonLayout->addWidget(new QLabel(""),            6, 0, 1, 1);
+    spotButtonLayout->addWidget(cameraControlButton,       7, 0, 1, 1);
+
+    spotButtonLayout->addWidget(new QLabel(""),            8, 0, 1, 1);
+
+    spotButtonLayout->addWidget(generalSetupButton,        9, 0, 1, 1);
+    spotButtonLayout->addWidget(shutdownButton,           10, 0, 1, 1);
+
+    spotButtonBox->setLayout(spotButtonLayout);
+    return spotButtonBox;
+}
+
+
+QGroupBox*
+ScoreController::createGameButtonBox() {
+    QGroupBox* gameButtonBox = new QGroupBox();
+    QHBoxLayout* gameButtonLayout = new QHBoxLayout();
+    newSetButton  = new QPushButton(tr("Nuovo\nSet"));
+    newGameButton = new QPushButton(tr("Nuova\nPartita"));
+    changeFieldButton = new QPushButton(tr("Cambio\nCampo"));
+
+    connect(newSetButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonNewSetClicked()));
+    connect(newSetButton, SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+    connect(newGameButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonNewGameClicked()));
+    connect(newGameButton, SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+    connect(changeFieldButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonChangeFieldClicked()));
+    connect(changeFieldButton, SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+
+    gameButtonLayout->addStretch();
+    gameButtonLayout->addWidget(newSetButton);
+    gameButtonLayout->addStretch();
+    gameButtonLayout->addWidget(newGameButton);
+    gameButtonLayout->addStretch();
+    gameButtonLayout->addWidget(changeFieldButton);
+    gameButtonLayout->addStretch();
+    gameButtonBox->setLayout(gameButtonLayout);
+    return gameButtonBox;
+}
+
+
+void
+ScoreController::onButtonStartStopSpotClicked() {
+    if(connectionList.count() == 0) {
+        startStopSpotButton->setText(tr("Avvia\nSpot Singolo"));
+        startStopSpotButton->setDisabled(true);
+        return;
+    }
+    if(startStopSpotButton->text().contains(QString("Avvia"))) {
+        for(int i=0; i<connectionList.count(); i++) {
+            sMessage = QString("<spot>%1</spot>").arg(iCurrentSpot++);
+            SendToOne(connectionList.at(i).pClientSocket, sMessage);
+        }
+        startStopSpotButton->setText(tr("Chiudi\nSpot"));
+        startStopLoopSpotButton->setDisabled(true);
+        startStopSlideShowButton->setDisabled(true);
+        startStopLiveCameraButton->setDisabled(true);
+    }
+    else {
+        sMessage = "<endspot>1</endspot>";
+        SendToAll(sMessage);
+        startStopSpotButton->setText(tr("Avvia\nSpot Singolo"));
+        startStopLoopSpotButton->setDisabled(false);
+        startStopSlideShowButton->setDisabled(false);
+        startStopLiveCameraButton->setDisabled(false);
+    }
+}
+
+
+void
+ScoreController::onButtonStartStopSpotLoopClicked() {
+    if(connectionList.count() == 0) {
+        startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
+        startStopLoopSpotButton->setDisabled(true);
+        return;
+    }
+    if(startStopLoopSpotButton->text().contains(QString("Avvia"))) {
+        for(int i=0; i<connectionList.count(); i++) {
+            sMessage = QString("<spotloop>1</spotloop>");
+            SendToOne(connectionList.at(i).pClientSocket, sMessage);
+        }
+        startStopLoopSpotButton->setText(tr("Chiudi\nSpot Loop"));
+        startStopSpotButton->setDisabled(true);
+        startStopSlideShowButton->setDisabled(true);
+        startStopLiveCameraButton->setDisabled(true);
+    }
+    else {
+        sMessage = "<endspotloop>1</endspotloop>";
+        SendToAll(sMessage);
+        startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
+        startStopSpotButton->setDisabled(false);
+        startStopSlideShowButton->setDisabled(false);
+        startStopLiveCameraButton->setDisabled(false);
+    }
+}
+
+
+void
+ScoreController::onButtonStartStopLiveCameraClicked() {
+    if(connectionList.count() == 0) {
+        startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
+        startStopLiveCameraButton->setDisabled(true);
+        return;
+    }
+    if(startStopLiveCameraButton->text().contains(QString("Avvia"))) {
+        for(int i=0; i<connectionList.count(); i++) {
+            sMessage = QString("<live>1</live>");
+            SendToOne(connectionList.at(i).pClientSocket, sMessage);
+        }
+        startStopLiveCameraButton->setText(tr("Chiudi\nLive Camera"));
+        startStopLoopSpotButton->setDisabled(true);
+        startStopSpotButton->setDisabled(true);
+        startStopSlideShowButton->setDisabled(true);
+    }
+    else {
+        sMessage = "<endlive>1</endlive>";
+        SendToAll(sMessage);
+        startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
+        startStopLoopSpotButton->setDisabled(false);
+        startStopSpotButton->setDisabled(false);
+        startStopSlideShowButton->setDisabled(false);
+    }
+}
+
+
+void
+ScoreController::onButtonStartStopSlideShowClicked() {
+    if(connectionList.count() == 0) {
+        startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
+        startStopSlideShowButton->setDisabled(true);
+        return;
+    }
+    if(startStopSlideShowButton->text().contains(QString("Avvia"))) {
+        sMessage = "<slideshow>1</slideshow>";
+        SendToAll(sMessage);
+        startStopLoopSpotButton->setDisabled(true);
+        startStopSpotButton->setDisabled(true);
+        startStopLiveCameraButton->setDisabled(true);
+        startStopSlideShowButton->setText(tr("Chiudi\nSlideshow"));
+    }
+    else {
+        sMessage = "<endslideshow>1</endslideshow>";
+        SendToAll(sMessage);
+        startStopLoopSpotButton->setDisabled(false);
+        startStopSpotButton->setDisabled(false);
+        startStopLiveCameraButton->setDisabled(false);
+        startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
+    }
+}
+
+
+void
+ScoreController::onButtonShutdownClicked() {
+    int iRes = QMessageBox::question(this,
+                                     tr("ScoreController"),
+                                     tr("Vuoi Spegnere i Tabelloni ?"),
+                                     QMessageBox::Yes,
+                                     QMessageBox::No|QMessageBox::Default,
+                                     QMessageBox::NoButton);
+    if(iRes != QMessageBox::Yes) return;
+    sMessage = "<kill>1</kill>";
+    SendToAll(sMessage);
+}
+
+
+void
+ScoreController::onButtonCameraControlClicked() {
+    pClientListDialog->exec();
+}
+
+
+void
+ScoreController::onButtonSetupClicked() {
+    QString sFunctionName = QString(" ScoreController::onButtonSetupClicked ");
+    QFileDialog chooseDir(this, Qt::Dialog);
+    chooseDir.setViewMode(QFileDialog::List);
+
+    QDir slideDir(sSlideDir);
+    if(slideDir.exists()) {
+        sSlideDir = chooseDir.getExistingDirectory(
+                        this,
+                        "Seleziona la cartella con le Slide",
+                        sSlideDir,
+                        QFileDialog::ShowDirsOnly |
+                        QFileDialog::DontResolveSymlinks);
+    }
+    else {
+        sSlideDir = chooseDir.getExistingDirectory(
+                        this,
+                        "Seleziona la cartella con le Slide",
+                        QDir::homePath(),
+                        QFileDialog::ShowDirsOnly |
+                        QFileDialog::DontResolveSymlinks);
+    }
+    if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
+    slideDir = QDir(sSlideDir);
+    if(sSlideDir != QString() && slideDir.exists()) {
+        pSettings->setValue("directories/slides", sSlideDir);
+        QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
+        slideDir.setNameFilters(filter);
+        slideList = slideDir.entryList();
+    }
+    logMessage(sFunctionName, QString("Found %1 slides").arg(slideList.count()));
+
+    QDir spotDir(sSpotDir);
+    if(spotDir.exists()) {
+        sSpotDir = chooseDir.getExistingDirectory(
+                       this,
+                       tr("Seleziona la cartella con gli Spot"),
+                       sSpotDir,
+                       QFileDialog::ShowDirsOnly |
+                       QFileDialog::DontResolveSymlinks);
+    }
+    else {
+        sSpotDir = chooseDir.getExistingDirectory(
+                       this,
+                       tr("Seleziona la cartella con gli Spot"),
+                       QDir::homePath(),
+                       QFileDialog::ShowDirsOnly |
+                       QFileDialog::DontResolveSymlinks);
+    }
+    if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
+    spotDir = QDir(sSpotDir);
+    if(sSpotDir != QString() && spotDir.exists()) {
+        pSettings->setValue("directories/spots", sSpotDir);
+        QStringList nameFilter(QStringList() << "*.mp4");
+        spotDir.setNameFilters(nameFilter);
+        spotDir.setFilter(QDir::Files);
+        spotList = spotDir.entryInfoList();
+    }
+    logMessage(sFunctionName, QString("Found %1 spots").arg(spotList.count()));
+//    pFileUpdaterServer->setDirs(sSlideDir, sSpotDir);
+//    sMessage = QString("<reloadSpot>1</reloadSpot>");
+//    SendToAll(sMessage);
+}
