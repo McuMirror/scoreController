@@ -10,6 +10,9 @@ class ScoreController : public QWidget
 public:
     ScoreController(QWidget *parent = 0);
     ~ScoreController();
+
+protected:
+    void WaitForNetworkReady();
 };
 
 #endif // SCORECONTROLLER_H
