@@ -15,6 +15,7 @@ QT_FORWARD_DECLARE_CLASS(QPushButton)
 QT_FORWARD_DECLARE_CLASS(QThread)
 QT_FORWARD_DECLARE_CLASS(NetServer)
 QT_FORWARD_DECLARE_CLASS(FileServer)
+QT_FORWARD_DECLARE_CLASS(QGroupBox)
 
 class ScoreController : public QWidget
 {
@@ -52,6 +53,9 @@ protected slots:
     void onFileServerDone(bool bError);
 
 protected:
+    QGroupBox* createGameButtonBox();
+    QGroupBox* createSpotButtonBox();
+    QGroupBox* createClientListBox();
     void WaitForNetworkReady();
     int  SendToAll(QString sMessage);
     int  SendToOne(QWebSocket* pSocket, QString sMessage);
@@ -61,7 +65,7 @@ protected:
     bool isConnectedToNetwork();
     bool PrepareLogFile();
     void prepareDiscovery();
-    virtual void FormatStatusMsg();
+    virtual QString FormatStatusMsg();
 
 protected:
     struct connection{
@@ -97,6 +101,10 @@ protected:
 //    int                   updatePeriod;
     QSoundEffect          buttonClick;
     QTimer               *pExitTimer;
+
+    QPushButton*          newSetButton;
+    QPushButton*          newGameButton;
+    QPushButton*          changeFieldButton;
 
     QPushButton*          startStopLoopSpotButton;
     QPushButton*          startStopSpotButton;

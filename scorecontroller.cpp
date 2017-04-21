@@ -9,6 +9,9 @@
 #include <QFileDialog>
 #include <QPushButton>
 #include <QHostInfo>
+#include <QGroupBox>
+#include <QGridLayout>
+#include <QLabel>
 
 #include "scorecontroller.h"
 #include "clientlistdialog.h"
