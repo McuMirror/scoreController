@@ -120,10 +120,6 @@ protected:
     QSoundEffect          buttonClick;
     QTimer               *pExitTimer;
 
-    QPushButton*          newSetButton;
-    QPushButton*          newGameButton;
-    QPushButton*          changeFieldButton;
-
     QPushButton*          startStopLoopSpotButton;
     QPushButton*          startStopSpotButton;
     QPushButton*          startStopSlideShowButton;

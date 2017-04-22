@@ -146,7 +146,8 @@ VolleyController::CreateTeamBox(int iTeam) {
     teamName[iTeam] = new Edit(sTeam[iTeam], iTeam);
     teamName[iTeam]->setAlignment(Qt::AlignHCenter);
     teamName[iTeam]->setMaxLength(15);
-    connect(teamName[iTeam], SIGNAL(textChanged(QString, int)), this, SLOT(onTeamTextChanged(QString, int)));
+    connect(teamName[iTeam], SIGNAL(textChanged(QString, int)),
+            this, SLOT(onTeamTextChanged(QString, int)));
     teamLayout->addWidget(teamName[iTeam], 0, 0, 1, 3);
 
     // Timeout

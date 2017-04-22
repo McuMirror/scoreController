@@ -16,6 +16,8 @@ QT_FORWARD_DECLARE_CLASS(QPushButton)
 
 class VolleyController : public ScoreController
 {
+    Q_OBJECT
+
 public:
     VolleyController();
     void closeEvent(QCloseEvent *event);
