@@ -30,12 +30,12 @@ main(int argc, char *argv[]) {
 
     QApplication app(argc, argv);
 
-//    QFont myFont = QApplication::font();
-//    myFont.setPointSize(32);
-//    app.setFont(myFont, "QEdit");
-//    myFont.setPointSize(18);
-//    app.setFont(myFont, "QRadioButton");
-//    app.setFont(myFont, "QLabel");
+    QFont myFont = QApplication::font();
+    myFont.setPointSize(32);
+    app.setFont(myFont, "QEdit");
+    myFont.setPointSize(18);
+    app.setFont(myFont, "QRadioButton");
+    app.setFont(myFont, "QLabel");
 
     ChooseDiscilpline chooser;
     chooser.exec();

@@ -65,11 +65,11 @@ private:
     Button*       setsDecrement[2];
     Button*       scoreIncrement[2];
     Button*       scoreDecrement[2];
-    QRadioButton* service[2];
+    QRadioButton *service[2];
 
-    QPushButton*  newSetButton;
-    QPushButton*  newGameButton;
-    QPushButton*  changeFieldButton;
+    QPushButton  *newSetButton;
+    QPushButton  *newGameButton;
+    QPushButton  *changeFieldButton;
 };
 
 #endif // VOLLEYCONTROLLER_H

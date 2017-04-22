@@ -49,8 +49,8 @@ VolleyController::VolleyController()
     mainLayout->addWidget(CreateSpotButtonBox(), 0, gamePanelWidth, gamePanelHeigth+1, 1);
     setLayout(mainLayout);
 
-    service[iServizio ? 1 : 0]->setChecked(true);
-    service[iServizio ? 0 : 1]->setChecked(false);
+//    service[iServizio ? 1 : 0]->setChecked(true);
+//    service[iServizio ? 0 : 1]->setChecked(false);
 }
 
 
@@ -132,15 +132,9 @@ VolleyController::closeEvent(QCloseEvent *event) {
 
 QGroupBox*
 VolleyController::CreateTeamBox(int iTeam) {
-    QGroupBox* teamBox = new QGroupBox();
-
-    QGridLayout* teamLayout = new QGridLayout();
-
-    teamLayout->setColumnStretch(0, 20);
-    teamLayout->setColumnStretch(1, 20);
-    teamLayout->setColumnStretch(2, 10);
-
     QString sString;
+    QGroupBox* teamBox      = new QGroupBox();
+    QGridLayout* teamLayout = new QGridLayout();
 
     // Team
     teamName[iTeam] = new Edit(sTeam[iTeam], iTeam);
@@ -148,19 +142,19 @@ VolleyController::CreateTeamBox(int iTeam) {
     teamName[iTeam]->setMaxLength(15);
     connect(teamName[iTeam], SIGNAL(textChanged(QString, int)),
             this, SLOT(onTeamTextChanged(QString, int)));
-    teamLayout->addWidget(teamName[iTeam], 0, 0, 1, 3);
+    teamLayout->addWidget(teamName[iTeam], 0, 0, 1, 10);
 
     // Timeout
     QLabel *timeoutLabel;
     timeoutLabel = new QLabel(tr("Timeout"));
     timeoutLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
-    teamLayout->addWidget(timeoutLabel, 1, 0, 2, 1, Qt::AlignRight|Qt::AlignVCenter);
+
     sString.sprintf("%1d", iTimeout[iTeam]);
     timeoutEdit[iTeam] = new Edit(sString);
     timeoutEdit[iTeam]->setMaxLength(1);
     timeoutEdit[iTeam]->setAlignment(Qt::AlignHCenter);
     timeoutEdit[iTeam]->setReadOnly(true);
-    teamLayout->addWidget(timeoutEdit[iTeam],  1, 1, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
+
     timeoutIncrement[iTeam] = new Button(tr("+"), iTeam);
     timeoutDecrement[iTeam] = new Button(tr("-"), iTeam);
 
@@ -179,20 +173,24 @@ VolleyController::CreateTeamBox(int iTeam) {
         timeoutIncrement[iTeam]->setEnabled(false);
         timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
-    teamLayout->addWidget(timeoutIncrement[iTeam], 1, 2, 1, 1, Qt::AlignLeft);
-    teamLayout->addWidget(timeoutDecrement[iTeam], 2, 2, 1, 1, Qt::AlignLeft);
+
+    teamLayout->addWidget(timeoutLabel,            2, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
+    teamLayout->addWidget(timeoutEdit[iTeam],      2, 2, 3, 6, Qt::AlignHCenter|Qt::AlignVCenter);
+    teamLayout->addWidget(timeoutIncrement[iTeam], 1, 8, 2, 2, Qt::AlignLeft);
+    teamLayout->addWidget(timeoutDecrement[iTeam], 4, 8, 2, 2, Qt::AlignLeft);
+
 
     // Set
     QLabel *setsLabel;
     setsLabel = new QLabel(tr("Set Vinti"));
     setsLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
-    teamLayout->addWidget(setsLabel, 3, 0, 2, 1, Qt::AlignRight|Qt::AlignVCenter);
     sString.sprintf("%1d", iSet[iTeam]);
+
     setsEdit[iTeam] = new Edit(sString);
     setsEdit[iTeam]->setMaxLength(1);
     setsEdit[iTeam]->setAlignment(Qt::AlignHCenter);
     setsEdit[iTeam]->setReadOnly(true);
-    teamLayout->addWidget(setsEdit[iTeam],  3, 1, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
+
     setsIncrement[iTeam] = new Button(tr("+"), iTeam);
     setsDecrement[iTeam] = new Button(tr("-"), iTeam);
 
@@ -209,15 +207,18 @@ VolleyController::CreateTeamBox(int iTeam) {
         setsDecrement[iTeam]->setEnabled(false);
     if(iSet[iTeam] == MAX_SETS)
         setsIncrement[iTeam]->setEnabled(false);
-    teamLayout->addWidget(setsIncrement[iTeam], 3, 2, 1, 1, Qt::AlignLeft);
-    teamLayout->addWidget(setsDecrement[iTeam], 4, 2, 1, 1, Qt::AlignLeft);
+
+    teamLayout->addWidget(setsLabel,            7, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
+    teamLayout->addWidget(setsEdit[iTeam],      7, 2, 3, 6, Qt::AlignHCenter|Qt::AlignVCenter);
+    teamLayout->addWidget(setsIncrement[iTeam], 6, 8, 2, 2, Qt::AlignLeft);
+    teamLayout->addWidget(setsDecrement[iTeam], 9, 8, 2, 2, Qt::AlignLeft);
 
     // Service
     service[iTeam] = new RadioButton(tr("Servizio"), iTeam);
     if(iTeam == 0) {
-        teamLayout->addWidget(service[iTeam], 5, 1, 1, 1, Qt::AlignLeft|Qt::AlignVCenter);
+        teamLayout->addWidget(service[iTeam],   11, 4, 1, 4, Qt::AlignLeft|Qt::AlignVCenter);
     } else {
-        teamLayout->addWidget(service[iTeam], 5, 1, 1, 1, Qt::AlignLeft|Qt::AlignVCenter);
+        teamLayout->addWidget(service[iTeam],   11, 4, 1, 4, Qt::AlignLeft|Qt::AlignVCenter);
     }
     connect(service[iTeam], SIGNAL(buttonClicked(int, bool)), this, SLOT(onServiceClicked(int, bool)));
 
@@ -225,14 +226,14 @@ VolleyController::CreateTeamBox(int iTeam) {
     QLabel *scoreLabel;
     scoreLabel = new QLabel(tr("Punti"));
     scoreLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
-    teamLayout->addWidget(scoreLabel, 6, 0, 2, 1, Qt::AlignRight|Qt::AlignVCenter);
+
     sString.sprintf("%2d", iScore[iTeam]);
     scoreEdit[iTeam] = new Edit(sString);
     scoreEdit[iTeam]->setMaxLength(2);
     scoreEdit[iTeam]->setReadOnly(true);
     scoreEdit[iTeam]->setAlignment(Qt::AlignRight);
-    teamLayout->addWidget(scoreEdit[iTeam], 6, 1, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
     scoreIncrement[iTeam] = new Button(tr("+"), iTeam);
+
     scoreDecrement[iTeam] = new Button(tr("-"), iTeam);
 
     connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
@@ -246,9 +247,18 @@ VolleyController::CreateTeamBox(int iTeam) {
 
     if(iSet[iTeam] == 0)
         scoreDecrement[iTeam]->setEnabled(false);
-    teamLayout->addWidget(scoreIncrement[iTeam], 6, 2, 1, 1, Qt::AlignLeft);
-    teamLayout->addWidget(scoreDecrement[iTeam], 7, 2, 1, 1, Qt::AlignLeft);
 
+    teamLayout->addWidget(scoreLabel,            13, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
+    teamLayout->addWidget(scoreEdit[iTeam],      13, 2, 3, 6, Qt::AlignHCenter|Qt::AlignVCenter);
+    teamLayout->addWidget(scoreIncrement[iTeam], 12, 8, 2, 2, Qt::AlignLeft);
+    teamLayout->addWidget(scoreDecrement[iTeam], 15, 8, 2, 2, Qt::AlignLeft);
+
+/*
+
+    teamLayout->setColumnStretch(0, 20);
+    teamLayout->setColumnStretch(1, 20);
+    teamLayout->setColumnStretch(2, 10);
+*/
     teamBox->setLayout(teamLayout);
     return teamBox;
 }
