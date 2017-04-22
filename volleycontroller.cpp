@@ -49,8 +49,8 @@ VolleyController::VolleyController()
     mainLayout->addWidget(CreateSpotButtonBox(), 0, gamePanelWidth, gamePanelHeigth+1, 1);
     setLayout(mainLayout);
 
-//    service[iServizio ? 1 : 0]->setChecked(true);
-//    service[iServizio ? 0 : 1]->setChecked(false);
+    service[iServizio ? 1 : 0]->setChecked(true);
+    service[iServizio ? 0 : 1]->setChecked(false);
 }
 
 
@@ -176,8 +176,8 @@ VolleyController::CreateTeamBox(int iTeam) {
 
     teamLayout->addWidget(timeoutLabel,            2, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
     teamLayout->addWidget(timeoutEdit[iTeam],      2, 2, 3, 6, Qt::AlignHCenter|Qt::AlignVCenter);
-    teamLayout->addWidget(timeoutIncrement[iTeam], 1, 8, 2, 2, Qt::AlignLeft);
-    teamLayout->addWidget(timeoutDecrement[iTeam], 4, 8, 2, 2, Qt::AlignLeft);
+    teamLayout->addWidget(timeoutIncrement[iTeam], 1, 8, 2, 3, Qt::AlignLeft);
+    teamLayout->addWidget(timeoutDecrement[iTeam], 4, 8, 2, 3, Qt::AlignLeft);
 
 
     // Set
@@ -253,12 +253,6 @@ VolleyController::CreateTeamBox(int iTeam) {
     teamLayout->addWidget(scoreIncrement[iTeam], 12, 8, 2, 2, Qt::AlignLeft);
     teamLayout->addWidget(scoreDecrement[iTeam], 15, 8, 2, 2, Qt::AlignLeft);
 
-/*
-
-    teamLayout->setColumnStretch(0, 20);
-    teamLayout->setColumnStretch(1, 20);
-    teamLayout->setColumnStretch(2, 10);
-*/
     teamBox->setLayout(teamLayout);
     return teamBox;
 }

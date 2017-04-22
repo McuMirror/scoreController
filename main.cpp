@@ -32,19 +32,21 @@ main(int argc, char *argv[]) {
 
     QFont myFont = QApplication::font();
     myFont.setPointSize(32);
-    app.setFont(myFont, "QEdit");
+    app.setFont(myFont, "Edit");
     myFont.setPointSize(18);
     app.setFont(myFont, "QRadioButton");
     app.setFont(myFont, "QLabel");
 
-    ChooseDiscilpline chooser;
-    chooser.exec();
+    ChooseDiscilpline *pChooser = new ChooseDiscilpline();
+    pChooser->exec();
 
     ScoreController* pController;
-    if(chooser.getDiscipline() == BASKET_PANEL)
+    if(pChooser->getDiscipline() == BASKET_PANEL)
         pController = new BasketController();
     else
         pController = new VolleyController();
+    pChooser->close();
+    delete pChooser;
 
 #ifdef Q_OS_ANDROID
     pController->showFullScreen();
