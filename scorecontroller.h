@@ -73,19 +73,17 @@ protected slots:
     void onFileServerDone(bool bError);
 
 protected:
-    virtual QGridLayout* CreateGamePanel();
-    QGroupBox* CreateGameButtonBox();
-    QGroupBox* CreateSpotButtonBox();
-    QGroupBox* CreateClientListBox();
-    void WaitForNetworkReady();
-    int  SendToAll(QString sMessage);
-    int  SendToOne(QWebSocket* pSocket, QString sMessage);
-    int  prepareServer();
-    int  sendAcceptConnection(QUdpSocket *pDiscoverySocket, QString sMessage, QHostAddress hostAddress, quint16 port);
-    void RemoveClient(QHostAddress hAddress);
-    bool isConnectedToNetwork();
-    bool PrepareLogFile();
-    void prepareDiscovery();
+    QGroupBox      *CreateClientListBox();
+    QGroupBox      *CreateSpotButtonBox();
+    void            WaitForNetworkReady();
+    int             SendToAll(QString sMessage);
+    int             SendToOne(QWebSocket* pSocket, QString sMessage);
+    int             prepareServer();
+    int             sendAcceptConnection(QUdpSocket *pDiscoverySocket, QString sMessage, QHostAddress hostAddress, quint16 port);
+    void            RemoveClient(QHostAddress hAddress);
+    bool            isConnectedToNetwork();
+    bool            PrepareLogFile();
+    void            prepareDiscovery();
     virtual QString FormatStatusMsg();
 
 protected:

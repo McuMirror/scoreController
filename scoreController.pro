@@ -17,19 +17,31 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        scorecontroller.cpp \
+    scorecontroller.cpp \
     clientlistdialog.cpp \
     utility.cpp \
     fileserver.cpp \
     netServer.cpp \
-    choosediscilpline.cpp
+    choosediscilpline.cpp \
+    basketcontroller.cpp \
+    volleycontroller.cpp \
+    button.cpp \
+    edit.cpp \
+    radioButton.cpp
 
 HEADERS  += scorecontroller.h \
     clientlistdialog.h \
     utility.h \
     fileserver.h \
     netServer.h \
-    choosediscilpline.h
+    choosediscilpline.h \
+    basketcontroller.h \
+    volleycontroller.h \
+    button.h \
+    edit.h \
+    radioButton.h
+
+RESOURCES += scorecontroller.qrc
 
 CONFIG += mobility
 MOBILITY = 

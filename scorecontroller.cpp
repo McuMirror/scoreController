@@ -64,7 +64,7 @@ ScoreController::ScoreController(QWidget *parent)
     , updaterPort(FILE_UPDATER_PORT)
     , discoveryAddress(QHostAddress("224.0.0.1"))
 {
-    QString sFunctionName = QString(" Volley_Controller::Volley_Controller ");
+    QString sFunctionName = QString(" ScoreController::Volley_Controller ");
     Q_UNUSED(sFunctionName)
 
     buttonClick.setSource(QUrl::fromLocalFile(":/key.wav"));
@@ -125,12 +125,6 @@ ScoreController::ScoreController(QWidget *parent)
     connect(pClientListDialog, SIGNAL(newTiltValue(QString,int)),
             this, SLOT(onSetNewTiltValue(QString, int)));
 
-    QVBoxLayout *mainLayout = new QVBoxLayout();
-
-    mainLayout->addLayout(CreateGamePanel());
-//    mainLayout->addWidget(CreateGameButtonBox(), 3, 0, 1, 2);
-//    mainLayout->addWidget(CreateSpotButtonBox(), 0, 2, 4, 1);
-    setLayout(mainLayout);
 }
 
 
@@ -807,39 +801,6 @@ ScoreController::CreateSpotButtonBox() {
 }
 
 
-QGroupBox*
-ScoreController::CreateGameButtonBox() {
-    QGroupBox* gameButtonBox = new QGroupBox();
-    QHBoxLayout* gameButtonLayout = new QHBoxLayout();
-    newSetButton  = new QPushButton(tr("Nuovo\nSet"));
-    newGameButton = new QPushButton(tr("Nuova\nPartita"));
-    changeFieldButton = new QPushButton(tr("Cambio\nCampo"));
-
-    connect(newSetButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonNewSetClicked()));
-    connect(newSetButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
-    connect(newGameButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonNewGameClicked()));
-    connect(newGameButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
-    connect(changeFieldButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonChangeFieldClicked()));
-    connect(changeFieldButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
-
-    gameButtonLayout->addStretch();
-    gameButtonLayout->addWidget(newSetButton);
-    gameButtonLayout->addStretch();
-    gameButtonLayout->addWidget(newGameButton);
-    gameButtonLayout->addStretch();
-    gameButtonLayout->addWidget(changeFieldButton);
-    gameButtonLayout->addStretch();
-    gameButtonBox->setLayout(gameButtonLayout);
-    return gameButtonBox;
-}
-
-
 void
 ScoreController::onButtonStartStopSpotClicked() {
     QString sMessage;
@@ -1053,7 +1014,3 @@ ScoreController::FormatStatusMsg() {
 }
 
 
-QGridLayout*
-ScoreController::CreateGamePanel() {
-    return new QGridLayout();
-}

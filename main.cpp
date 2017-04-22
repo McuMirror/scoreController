@@ -17,7 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
 
-#include "scorecontroller.h"
+//#include "scorecontroller.h"
+#include "volleycontroller.h"
+#include "basketcontroller.h"
 #include "choosediscilpline.h"
 #include <QApplication>
 #include <QMessageBox>
@@ -38,13 +40,17 @@ main(int argc, char *argv[]) {
     ChooseDiscilpline chooser;
     chooser.exec();
 
-    ScoreController w;
+    ScoreController* pController;
+    if(chooser.getDiscipline() == BASKET_PANEL)
+        pController = new BasketController();
+    else
+        pController = new VolleyController();
 
 #ifdef Q_OS_ANDROID
-    w.showFullScreen();
+    pController->showFullScreen();
 #else
-    w.showMaximized();
-    //w.show();
+    pController->showMaximized();
+    //pController->show();
 #endif
 
     int iresult = app.exec();
