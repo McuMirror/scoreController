@@ -244,7 +244,7 @@ VolleyController::CreateTeamBox(int iTeam) {
     connect(scoreDecrement[iTeam], SIGNAL(clicked()),
             &buttonClick, SLOT(play()));
 
-    if(iSet[iTeam] == 0)
+    if(iScore[iTeam] == 0)
         scoreDecrement[iTeam]->setEnabled(false);
 
     teamLayout->addWidget(scoreLabel,            13, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);

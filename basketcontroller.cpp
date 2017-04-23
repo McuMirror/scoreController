@@ -74,6 +74,9 @@ BasketController::BasketController()
     mainLayout->addWidget(CreateGameButtonBox(), gamePanelHeigth, 0, 1, gamePanelWidth);
     mainLayout->addWidget(CreateSpotButtonBox(), 0, gamePanelWidth, gamePanelHeigth+1, 1);
     setLayout(mainLayout);
+
+    possess[iPossess ? 1 : 0]->setChecked(true);
+    possess[iPossess ? 0 : 1]->setChecked(false);
 }
 
 
@@ -209,7 +212,7 @@ BasketController::CreateTeamBox(int iTeam) {
     teamLayout->addWidget(faulsDecrement[iTeam], 9, 8, 2, 2, Qt::AlignLeft);
 
     // Possess
-    possess[iTeam] = new RadioButton(tr("Possesso"), iTeam);
+    possess[iTeam] = new RadioButton(tr("Possess"), iTeam);
     if(iTeam == 0) {
         teamLayout->addWidget(possess[iTeam],   11, 4, 1, 4, Qt::AlignLeft|Qt::AlignVCenter);
     } else {
@@ -219,7 +222,7 @@ BasketController::CreateTeamBox(int iTeam) {
 
     // Score
     QLabel *scoreLabel;
-    scoreLabel = new QLabel(tr("Punti"));
+    scoreLabel = new QLabel(tr("Score"));
     scoreLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
 
     sString.sprintf("%2d", iScore[iTeam]);
@@ -227,8 +230,8 @@ BasketController::CreateTeamBox(int iTeam) {
     scoreEdit[iTeam]->setMaxLength(2);
     scoreEdit[iTeam]->setReadOnly(true);
     scoreEdit[iTeam]->setAlignment(Qt::AlignRight);
-    scoreIncrement[iTeam] = new Button(tr("+"), iTeam);
 
+    scoreIncrement[iTeam] = new Button(tr("+"), iTeam);
     scoreDecrement[iTeam] = new Button(tr("-"), iTeam);
 
     connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
@@ -240,7 +243,7 @@ BasketController::CreateTeamBox(int iTeam) {
     connect(scoreDecrement[iTeam], SIGNAL(clicked()),
             &buttonClick, SLOT(play()));
 
-    if(iPeriod == 0)
+    if(iScore[iTeam] == 0)
         scoreDecrement[iTeam]->setEnabled(false);
 
     teamLayout->addWidget(scoreLabel,            13, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
