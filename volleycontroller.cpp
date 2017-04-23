@@ -43,7 +43,7 @@ VolleyController::VolleyController()
     QGridLayout *mainLayout = new QGridLayout();
 
     int gamePanelWidth  = 15;
-    int gamePanelHeigth = 8;
+    int gamePanelHeigth =  8;
     mainLayout->addLayout(CreateGamePanel(),     0, 0, gamePanelHeigth, gamePanelWidth);
     mainLayout->addWidget(CreateGameButtonBox(), gamePanelHeigth, 0, 1, gamePanelWidth);
     mainLayout->addWidget(CreateSpotButtonBox(), 0, gamePanelWidth, gamePanelHeigth+1, 1);
@@ -178,7 +178,6 @@ VolleyController::CreateTeamBox(int iTeam) {
     teamLayout->addWidget(timeoutEdit[iTeam],      2, 2, 3, 6, Qt::AlignHCenter|Qt::AlignVCenter);
     teamLayout->addWidget(timeoutIncrement[iTeam], 1, 8, 2, 3, Qt::AlignLeft);
     teamLayout->addWidget(timeoutDecrement[iTeam], 4, 8, 2, 3, Qt::AlignLeft);
-
 
     // Set
     QLabel *setsLabel;
