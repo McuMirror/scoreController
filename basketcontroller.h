@@ -30,6 +30,8 @@ private slots:
     void onTimeOutDecrement(int iTeam);
     void onScoreIncrement(int iTeam);
     void onScoreDecrement(int iTeam);
+    void onFaulsIncrement(int iTeam);
+    void onFaulsDecrement(int iTeam);
     void onTeamTextChanged(QString sText, int iTeam);
     void onPeriodIncrement();
     void onPeriodDecrement();

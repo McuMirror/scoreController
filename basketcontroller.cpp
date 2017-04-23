@@ -38,7 +38,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 BasketController::BasketController()
     : ScoreController(Q_NULLPTR)
 {
+    QString sFunctionName = QString(" VolleyController::VolleyController ");
     GetSettings();
+
+    QDir slideDir(sSlideDir);
+    QDir spotDir(sSpotDir);
+    if(!slideDir.exists() || !spotDir.exists()) {
+        onButtonSetupClicked();
+    }
+    else {
+        QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
+        slideDir.setNameFilters(filter);
+        slideList = slideDir.entryList();
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Slides directory: %1 Found %2 Slides")
+                   .arg(sSlideDir)
+                   .arg(slideList.count()));
+        QStringList nameFilter(QStringList() << "*.mp4");
+        spotDir.setNameFilters(nameFilter);
+        spotDir.setFilter(QDir::Files);
+        spotList = spotDir.entryInfoList();
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Spot directory: %1 Found %2 Spots")
+                   .arg(sSpotDir)
+                   .arg(spotList.count()));
+    }
 
     QGridLayout *mainLayout = new QGridLayout();
 
@@ -63,45 +89,14 @@ BasketController::GetSettings() {
     iTimeout[1] = pSettings->value("team2/timeouts", 0).toInt();
     iScore[0]   = pSettings->value("team1/score", 0).toInt();
     iScore[1]   = pSettings->value("team2/score", 0).toInt();
+    iFauls[0]   = pSettings->value("team1/fauls", 0).toInt();
+    iFauls[1]   = pSettings->value("team2/fauls", 0).toInt();
 
     iPeriod     = pSettings->value("game/period", 0).toInt();
     iPossess    = pSettings->value("game/possess", 0).toInt();
 
     sSlideDir   = pSettings->value("directories/slides", sSlideDir).toString();
     sSpotDir    = pSettings->value("directories/spots", sSpotDir).toString();
-
-    logMessage(logFile,
-               sFunctionName,
-               QString("Slides directory: %1")
-               .arg(sSlideDir));
-    logMessage(logFile,
-               sFunctionName,
-               QString("Spot directory: %1")
-               .arg(sSpotDir));
-
-    QDir slideDir(sSlideDir);
-    QDir spotDir(sSpotDir);
-
-    if(!slideDir.exists() || !spotDir.exists()) {
-        onButtonSetupClicked();
-    }
-    else {
-        QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
-        slideDir.setNameFilters(filter);
-        slideList = slideDir.entryList();
-        logMessage(logFile,
-                   sFunctionName,
-                   QString("Found %1 Slides")
-                   .arg(slideList.count()));
-        QStringList nameFilter(QStringList() << "*.mp4");
-        spotDir.setNameFilters(nameFilter);
-        spotDir.setFilter(QDir::Files);
-        spotList = spotDir.entryInfoList();
-        logMessage(logFile,
-                   sFunctionName,
-                   QString("Found %1 Spots")
-                   .arg(spotList.count()));
-    }
 }
 
 
@@ -364,40 +359,40 @@ BasketController::onTimeOutDecrement(int iTeam) {
 }
 
 
-//void
-//BasketController::onSetIncrement(int iTeam) {
-//    QString sMessage;
-//    iSet[iTeam]++;
-//    setsDecrement[iTeam]->setEnabled(true);
-//    if(iSet[iTeam] == MAX_SETS) {
-//        setsIncrement[iTeam]->setEnabled(false);
-//    }
-//    sMessage.sprintf("<set%1d>%d</set%1d>", iTeam, iSet[iTeam], iTeam);
-//    SendToAll(sMessage);
-//    QString sText;
-//    sText.sprintf("%1d", iSet[iTeam]);
-//    setsEdit[iTeam]->setText(sText);
-//    sText.sprintf("team%1d/sets", iTeam+1);
-//    pSettings->setValue(sText, iSet[iTeam]);
-//}
+void
+BasketController::onFaulsIncrement(int iTeam) {
+    QString sMessage;
+    iFauls[iTeam]++;
+    faulsDecrement[iTeam]->setEnabled(true);
+    if(iFauls[iTeam] == MAX_FAULS) {
+        faulsIncrement[iTeam]->setEnabled(false);
+    }
+    sMessage.sprintf("<fauls%1d>%d</fauls%1d>", iTeam, iFauls[iTeam], iTeam);
+    SendToAll(sMessage);
+    QString sText;
+    sText.sprintf("%1d", iFauls[iTeam]);
+    faulsEdit[iTeam]->setText(sText);
+    sText.sprintf("team%1d/fauls", iTeam+1);
+    pSettings->setValue(sText, iFauls[iTeam]);
+}
 
 
-//void
-//BasketController::onSetDecrement(int iTeam) {
-//    QString sMessage;
-//    iSet[iTeam]--;
-//    setsIncrement[iTeam]->setEnabled(true);
-//    if(iSet[iTeam] == 0) {
-//       setsDecrement[iTeam]->setEnabled(false);
-//    }
-//    sMessage.sprintf("<set%1d>%d</set%1d>", iTeam, iSet[iTeam], iTeam);
-//    SendToAll(sMessage);
-//    QString sText;
-//    sText.sprintf("%1d", iSet[iTeam]);
-//    setsEdit[iTeam]->setText(sText);
-//    sText.sprintf("team%1d/sets", iTeam+1);
-//    pSettings->setValue(sText, iSet[iTeam]);
-//}
+void
+BasketController::onFaulsDecrement(int iTeam) {
+    QString sMessage;
+    iFauls[iTeam]--;
+    faulsIncrement[iTeam]->setEnabled(true);
+    if(iFauls[iTeam] == 0) {
+       faulsDecrement[iTeam]->setEnabled(false);
+    }
+    sMessage.sprintf("<fauls%1d>%d</fauls%1d>", iTeam, iFauls[iTeam], iTeam);
+    SendToAll(sMessage);
+    QString sText;
+    sText.sprintf("%1d", iFauls[iTeam]);
+    faulsEdit[iTeam]->setText(sText);
+    sText.sprintf("team%1d/fauls", iTeam+1);
+    pSettings->setValue(sText, iFauls[iTeam]);
+}
 
 
 void
