@@ -44,6 +44,7 @@ private:
     QGroupBox    *CreateTeamBox(int iTeam);
     QGroupBox    *CreateGameButtonBox();
     QString       FormatStatusMsg();
+    void          SaveStatus();
 
 private:
     QSettings    *pSettings;

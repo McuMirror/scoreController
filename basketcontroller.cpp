@@ -38,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 BasketController::BasketController()
     : ScoreController(Q_NULLPTR)
 {
-    QString sFunctionName = QString(" VolleyController::VolleyController ");
+    QString sFunctionName = QString(" BasketController::BasketController ");
     GetSettings();
 
     QDir slideDir(sSlideDir);
@@ -523,7 +523,8 @@ BasketController::onButtonChangeFieldClicked() {
         }
     }
     SendToAll(FormatStatusMsg());
-    SaveStatus();}
+    SaveStatus();
+}
 
 
 void

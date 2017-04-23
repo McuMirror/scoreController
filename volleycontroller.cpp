@@ -38,7 +38,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 VolleyController::VolleyController()
     : ScoreController(Q_NULLPTR)
 {
+    QString sFunctionName = QString(" VolleyController::VolleyController ");
     GetSettings();
+
+    QDir slideDir(sSlideDir);
+    QDir spotDir(sSpotDir);
+    if(!slideDir.exists() || !spotDir.exists()) {
+        onButtonSetupClicked();
+    }
+    else {
+        QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
+        slideDir.setNameFilters(filter);
+        slideList = slideDir.entryList();
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Slides directory: %1 Found %2 Slides")
+                   .arg(sSlideDir)
+                   .arg(slideList.count()));
+        QStringList nameFilter(QStringList() << "*.mp4");
+        spotDir.setNameFilters(nameFilter);
+        spotDir.setFilter(QDir::Files);
+        spotList = spotDir.entryInfoList();
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Spot directory: %1 Found %2 Spots")
+                   .arg(sSpotDir)
+                   .arg(spotList.count()));
+    }
 
     QGridLayout *mainLayout = new QGridLayout();
 
@@ -74,39 +100,6 @@ VolleyController::GetSettings() {
 
     sSlideDir   = pSettings->value("directories/slides", sSlideDir).toString();
     sSpotDir    = pSettings->value("directories/spots", sSpotDir).toString();
-
-    logMessage(logFile,
-               sFunctionName,
-               QString("Slides directory: %1")
-               .arg(sSlideDir));
-    logMessage(logFile,
-               sFunctionName,
-               QString("Spot directory: %1")
-               .arg(sSpotDir));
-
-    QDir slideDir(sSlideDir);
-    QDir spotDir(sSpotDir);
-
-    if(!slideDir.exists() || !spotDir.exists()) {
-        onButtonSetupClicked();
-    }
-    else {
-        QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
-        slideDir.setNameFilters(filter);
-        slideList = slideDir.entryList();
-        logMessage(logFile,
-                   sFunctionName,
-                   QString("Found %1 Slides")
-                   .arg(slideList.count()));
-        QStringList nameFilter(QStringList() << "*.mp4");
-        spotDir.setNameFilters(nameFilter);
-        spotDir.setFilter(QDir::Files);
-        spotList = spotDir.entryInfoList();
-        logMessage(logFile,
-                   sFunctionName,
-                   QString("Found %1 Spots")
-                   .arg(spotList.count()));
-    }
 }
 
 
@@ -114,6 +107,13 @@ void
 VolleyController::closeEvent(QCloseEvent *event) {
     QString sFunctionName = " Volley_Controller::closeEvent ";
     Q_UNUSED(sFunctionName)
+    SaveStatus();
+    ScoreController::closeEvent(event);// Propagate the event
+}
+
+
+void
+VolleyController::SaveStatus() {
     pSettings->setValue("team1/name", sTeam[0]);
     pSettings->setValue("team2/name", sTeam[1]);
     pSettings->setValue("team1/timeouts", iTimeout[0]);
@@ -126,7 +126,6 @@ VolleyController::closeEvent(QCloseEvent *event) {
     pSettings->setValue("set/lastservice", lastService);
     pSettings->setValue("directories/slides", sSlideDir);
     pSettings->setValue("directories/spots", sSpotDir);
-    ScoreController::closeEvent(event);// Propagate the event
 }
 
 
@@ -545,16 +544,7 @@ VolleyController::onButtonChangeFieldClicked() {
         }
     }
     SendToAll(FormatStatusMsg());
-    pSettings->setValue("team1/name", sTeam[0]);
-    pSettings->setValue("team2/name", sTeam[1]);
-    pSettings->setValue("team1/timeouts", iTimeout[0]);
-    pSettings->setValue("team2/timeouts", iTimeout[1]);
-    pSettings->setValue("team1/sets", iSet[0]);
-    pSettings->setValue("team2/sets", iSet[1]);
-    pSettings->setValue("team1/score", iScore[0]);
-    pSettings->setValue("team2/score", iScore[1]);
-    pSettings->setValue("set/service", iServizio);
-    pSettings->setValue("set/lastservice", lastService);
+    SaveStatus();
 }
 
 
@@ -599,16 +589,7 @@ VolleyController::onButtonNewSetClicked() {
     service[iServizio ? 1 : 0]->setChecked(true);
     service[iServizio ? 0 : 1]->setChecked(false);
     SendToAll(FormatStatusMsg());
-    pSettings->setValue("team1/name", sTeam[0]);
-    pSettings->setValue("team2/name", sTeam[1]);
-    pSettings->setValue("team1/timeouts", iTimeout[0]);
-    pSettings->setValue("team2/timeouts", iTimeout[1]);
-    pSettings->setValue("team1/sets", iSet[0]);
-    pSettings->setValue("team2/sets", iSet[1]);
-    pSettings->setValue("team1/score", iScore[0]);
-    pSettings->setValue("team2/score", iScore[1]);
-    pSettings->setValue("set/service", iServizio);
-    pSettings->setValue("set/lastservice", lastService);
+    SaveStatus();
 }
 
 
@@ -646,15 +627,6 @@ VolleyController::onButtonNewGameClicked() {
     service[iServizio ? 1 : 0]->setChecked(true);
     service[iServizio ? 0 : 1]->setChecked(false);
     SendToAll(FormatStatusMsg());
-    pSettings->setValue("team1/name", sTeam[0]);
-    pSettings->setValue("team2/name", sTeam[1]);
-    pSettings->setValue("team1/timeouts", iTimeout[0]);
-    pSettings->setValue("team2/timeouts", iTimeout[1]);
-    pSettings->setValue("team1/sets", iSet[0]);
-    pSettings->setValue("team2/sets", iSet[1]);
-    pSettings->setValue("team1/score", iScore[0]);
-    pSettings->setValue("team2/score", iScore[1]);
-    pSettings->setValue("set/service", iServizio);
-    pSettings->setValue("set/lastservice", lastService);
+    SaveStatus();
 }
 
