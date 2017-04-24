@@ -32,8 +32,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "button.h"
 #include "radioButton.h"
 
-#define MAX_TIMEOUTS 3
-#define MAX_FAULS    99
+
+#define MAX_TIMEOUTS  3
+#define MAX_FAULS    99 // Da definire il comportamento dopo il numer max di falli !
+#define MAX_PERIODS  99 // Da definire il comportamento dopo il numer max di periodi !
+#define BONUS_TARGET  5 // After this value the Bonus is triggered for the team
+
 
 BasketController::BasketController()
     : ScoreController(Q_NULLPTR)
@@ -121,6 +125,8 @@ BasketController::SaveStatus() {
     pSettings->setValue("team2/timeouts", iTimeout[1]);
     pSettings->setValue("team1/score", iScore[0]);
     pSettings->setValue("team2/score", iScore[1]);
+    pSettings->setValue("team1/fauls", iFauls[0]);
+    pSettings->setValue("team2/fauls", iFauls[1]);
 
     pSettings->setValue("game/period", iPeriod);
     pSettings->setValue("game/possess", iPossess);
@@ -263,6 +269,17 @@ BasketController::CreateGameBox() {
     QGroupBox* gameBox      = new QGroupBox();
     QGridLayout* gameLayout = new QGridLayout();
 
+    // Bonus
+    for(int iTeam=0; iTeam<2; iTeam++) {
+        bonusEdit[iTeam] = new Edit(QString("Bonus"));
+        bonusEdit[iTeam]->setAlignment(Qt::AlignHCenter);
+        bonusEdit[iTeam]->setReadOnly(true);
+        bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
+        if(iFauls[iTeam] >= BONUS_TARGET) {
+            bonusEdit[iTeam]->setHidden(true);
+        }
+    }
+
     // Period
     QLabel *periodLabel;
     periodLabel = new QLabel(tr("Period"));
@@ -289,10 +306,12 @@ BasketController::CreateGameBox() {
     if(iPeriod == 0)
         periodDecrement[0]->setEnabled(false);
 
+    gameLayout->addWidget(bonusEdit[0],       1, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
     gameLayout->addWidget(periodLabel,        1, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
     gameLayout->addWidget(periodEdit,         1, 2, 3, 6, Qt::AlignHCenter|Qt::AlignVCenter);
     gameLayout->addWidget(periodIncrement[0], 0, 8, 2, 3, Qt::AlignLeft);
     gameLayout->addWidget(periodDecrement[0], 3, 8, 2, 3, Qt::AlignLeft);
+    gameLayout->addWidget(bonusEdit[1],       1, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
     gameBox->setLayout(gameLayout);
     return gameBox;
 }
@@ -411,8 +430,14 @@ BasketController::onFaulsIncrement(int iTeam) {
     QString sMessage;
     iFauls[iTeam]++;
     faulsDecrement[iTeam]->setEnabled(true);
-    if(iFauls[iTeam] == MAX_FAULS) {
+    if(iFauls[iTeam] == MAX_FAULS) {// To be changed
         faulsIncrement[iTeam]->setEnabled(false);
+    }
+    if(iFauls[iTeam] >= BONUS_TARGET) {
+        bonusEdit[iTeam]->setHidden(false);
+    }
+    else {
+        bonusEdit[iTeam]->setHidden(true);
     }
     sMessage.sprintf("<fauls%1d>%d</fauls%1d>", iTeam, iFauls[iTeam], iTeam);
     SendToAll(sMessage);
@@ -431,6 +456,12 @@ BasketController::onFaulsDecrement(int iTeam) {
     faulsIncrement[iTeam]->setEnabled(true);
     if(iFauls[iTeam] == 0) {
        faulsDecrement[iTeam]->setEnabled(false);
+    }
+    if(iFauls[iTeam] >= BONUS_TARGET) {
+        bonusEdit[iTeam]->setHidden(false);
+    }
+    else {
+        bonusEdit[iTeam]->setHidden(true);
     }
     sMessage.sprintf("<fauls%1d>%d</fauls%1d>", iTeam, iFauls[iTeam], iTeam);
     SendToAll(sMessage);

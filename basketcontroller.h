@@ -64,6 +64,7 @@ private:
     Edit         *scoreEdit[2];
     Edit         *faulsEdit[2];
     Edit         *periodEdit;
+    Edit         *bonusEdit[2];
     Button       *timeoutIncrement[2];
     Button       *timeoutDecrement[2];
     Button       *scoreIncrement[2];
