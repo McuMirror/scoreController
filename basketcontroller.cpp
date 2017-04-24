@@ -277,6 +277,9 @@ BasketController::CreateGameBox() {
         if(iFauls[iTeam] >= BONUS_TARGET) {
             bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
+        else {
+            bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
+        }
     }
 
     // Period
@@ -436,7 +439,7 @@ BasketController::onFaulsIncrement(int iTeam) {
         bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
     else {
-        bonusEdit[iTeam]->setStyleSheet("background:white;color:black;");
+        bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
     }
     sMessage.sprintf("<fauls%1d>%d</fauls%1d>", iTeam, iFauls[iTeam], iTeam);
     SendToAll(sMessage);
@@ -460,7 +463,7 @@ BasketController::onFaulsDecrement(int iTeam) {
         bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
     else {
-        bonusEdit[iTeam]->setStyleSheet("background:white;color:black;");
+        bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
     }
     sMessage.sprintf("<fauls%1d>%d</fauls%1d>", iTeam, iFauls[iTeam], iTeam);
     SendToAll(sMessage);
