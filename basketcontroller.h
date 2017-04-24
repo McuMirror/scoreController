@@ -71,8 +71,8 @@ private:
     Button       *scoreDecrement[2];
     Button       *faulsIncrement[2];
     Button       *faulsDecrement[2];
-    Button       *periodIncrement[2];
-    Button       *periodDecrement[2];
+    Button       *periodIncrement;
+    Button       *periodDecrement;
     QRadioButton *possess[2];
     QRadioButton *period[2];
 

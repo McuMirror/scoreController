@@ -274,9 +274,8 @@ BasketController::CreateGameBox() {
         bonusEdit[iTeam] = new Edit(QString("Bonus"));
         bonusEdit[iTeam]->setAlignment(Qt::AlignHCenter);
         bonusEdit[iTeam]->setReadOnly(true);
-        bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
         if(iFauls[iTeam] >= BONUS_TARGET) {
-            bonusEdit[iTeam]->setHidden(true);
+            bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
     }
 
@@ -291,27 +290,27 @@ BasketController::CreateGameBox() {
     periodEdit->setAlignment(Qt::AlignHCenter);
     periodEdit->setReadOnly(true);
 
-    periodIncrement[0] = new Button(tr("+"), 0);
-    periodDecrement[0] = new Button(tr("-"), 0);
+    periodIncrement = new Button(tr("+"), 0);
+    periodDecrement = new Button(tr("-"), 0);
 
-    connect(periodIncrement[0], SIGNAL(buttonClicked(int)),
+    connect(periodIncrement, SIGNAL(buttonClicked(int)),
             this, SLOT(onPeriodIncrement(int)));
-    connect(periodIncrement[0], SIGNAL(clicked()),
+    connect(periodIncrement, SIGNAL(clicked()),
             &buttonClick, SLOT(play()));
-    connect(periodDecrement[0], SIGNAL(buttonClicked(int)),
+    connect(periodDecrement, SIGNAL(buttonClicked(int)),
             this, SLOT(onTimeOutDecrement(int)));
-    connect(periodDecrement[0], SIGNAL(clicked()),
+    connect(periodDecrement, SIGNAL(clicked()),
             &buttonClick, SLOT(play()));
 
     if(iPeriod == 0)
-        periodDecrement[0]->setEnabled(false);
+        periodDecrement->setEnabled(false);
 
-    gameLayout->addWidget(bonusEdit[0],       1, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
-    gameLayout->addWidget(periodLabel,        1, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
-    gameLayout->addWidget(periodEdit,         1, 2, 3, 6, Qt::AlignHCenter|Qt::AlignVCenter);
-    gameLayout->addWidget(periodIncrement[0], 0, 8, 2, 3, Qt::AlignLeft);
-    gameLayout->addWidget(periodDecrement[0], 3, 8, 2, 3, Qt::AlignLeft);
-    gameLayout->addWidget(bonusEdit[1],       1, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
+    gameLayout->addWidget(bonusEdit[0],    1,  0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
+    gameLayout->addWidget(periodLabel,     1,  2, 3, 3, Qt::AlignRight|Qt::AlignVCenter);
+    gameLayout->addWidget(periodEdit,      1,  5, 3, 3, Qt::AlignHCenter|Qt::AlignVCenter);
+    gameLayout->addWidget(periodIncrement, 0,  8, 2, 3, Qt::AlignLeft);
+    gameLayout->addWidget(periodDecrement, 3,  8, 2, 3, Qt::AlignLeft);
+    gameLayout->addWidget(bonusEdit[1],    1, 11, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
     gameBox->setLayout(gameLayout);
     return gameBox;
 }
@@ -434,10 +433,10 @@ BasketController::onFaulsIncrement(int iTeam) {
         faulsIncrement[iTeam]->setEnabled(false);
     }
     if(iFauls[iTeam] >= BONUS_TARGET) {
-        bonusEdit[iTeam]->setHidden(false);
+        bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
     else {
-        bonusEdit[iTeam]->setHidden(true);
+        bonusEdit[iTeam]->setStyleSheet("background:white;color:black;");
     }
     sMessage.sprintf("<fauls%1d>%d</fauls%1d>", iTeam, iFauls[iTeam], iTeam);
     SendToAll(sMessage);
@@ -458,10 +457,10 @@ BasketController::onFaulsDecrement(int iTeam) {
        faulsDecrement[iTeam]->setEnabled(false);
     }
     if(iFauls[iTeam] >= BONUS_TARGET) {
-        bonusEdit[iTeam]->setHidden(false);
+        bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
     else {
-        bonusEdit[iTeam]->setHidden(true);
+        bonusEdit[iTeam]->setStyleSheet("background:white;color:black;");
     }
     sMessage.sprintf("<fauls%1d>%d</fauls%1d>", iTeam, iFauls[iTeam], iTeam);
     SendToAll(sMessage);
