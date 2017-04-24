@@ -44,6 +44,7 @@ private slots:
 private:
     QGridLayout  *CreateGamePanel();
     QGroupBox    *CreateTeamBox(int iTeam);
+    QGroupBox    *CreateGameBox();
     QGroupBox    *CreateGameButtonBox();
     QString       FormatStatusMsg();
     void          SaveStatus() ;
@@ -62,12 +63,15 @@ private:
     Edit         *timeoutEdit[2];
     Edit         *scoreEdit[2];
     Edit         *faulsEdit[2];
+    Edit         *periodEdit;
     Button       *timeoutIncrement[2];
     Button       *timeoutDecrement[2];
     Button       *scoreIncrement[2];
     Button       *scoreDecrement[2];
     Button       *faulsIncrement[2];
     Button       *faulsDecrement[2];
+    Button       *periodIncrement[2];
+    Button       *periodDecrement[2];
     QRadioButton *possess[2];
     QRadioButton *period[2];
 

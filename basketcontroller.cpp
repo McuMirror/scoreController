@@ -32,8 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "button.h"
 #include "radioButton.h"
 
-#define MAX_TIMEOUTS 2
-#define MAX_FAULS    5
+#define MAX_TIMEOUTS 3
+#define MAX_FAULS    99
 
 BasketController::BasketController()
     : ScoreController(Q_NULLPTR)
@@ -70,9 +70,10 @@ BasketController::BasketController()
 
     int gamePanelWidth  = 15;
     int gamePanelHeigth =  8;
-    mainLayout->addLayout(CreateGamePanel(),     0, 0, gamePanelHeigth, gamePanelWidth);
-    mainLayout->addWidget(CreateGameButtonBox(), gamePanelHeigth, 0, 1, gamePanelWidth);
-    mainLayout->addWidget(CreateSpotButtonBox(), 0, gamePanelWidth, gamePanelHeigth+1, 1);
+    mainLayout->addLayout(CreateGamePanel(),     0,                  0,              gamePanelHeigth,   gamePanelWidth);
+    mainLayout->addWidget(CreateGameBox(),       gamePanelHeigth,    0,              5,                 gamePanelWidth);
+    mainLayout->addWidget(CreateGameButtonBox(), gamePanelHeigth+5,  0,              1,                 gamePanelWidth);
+    mainLayout->addWidget(CreateSpotButtonBox(), 0,                  gamePanelWidth, gamePanelHeigth+1, 1);
     setLayout(mainLayout);
 
     possess[iPossess ? 1 : 0]->setChecked(true);
@@ -185,7 +186,7 @@ BasketController::CreateTeamBox(int iTeam) {
     sString.sprintf("%1d", iFauls[iTeam]);
 
     faulsEdit[iTeam] = new Edit(sString);
-    faulsEdit[iTeam]->setMaxLength(1);
+    faulsEdit[iTeam]->setMaxLength(2);
     faulsEdit[iTeam]->setAlignment(Qt::AlignHCenter);
     faulsEdit[iTeam]->setReadOnly(true);
 
@@ -227,7 +228,7 @@ BasketController::CreateTeamBox(int iTeam) {
 
     sString.sprintf("%2d", iScore[iTeam]);
     scoreEdit[iTeam] = new Edit(sString);
-    scoreEdit[iTeam]->setMaxLength(2);
+    scoreEdit[iTeam]->setMaxLength(3);
     scoreEdit[iTeam]->setReadOnly(true);
     scoreEdit[iTeam]->setAlignment(Qt::AlignRight);
 
@@ -253,6 +254,47 @@ BasketController::CreateTeamBox(int iTeam) {
 
     teamBox->setLayout(teamLayout);
     return teamBox;
+}
+
+
+QGroupBox*
+BasketController::CreateGameBox() {
+    QString sString;
+    QGroupBox* gameBox      = new QGroupBox();
+    QGridLayout* gameLayout = new QGridLayout();
+
+    // Period
+    QLabel *periodLabel;
+    periodLabel = new QLabel(tr("Period"));
+    periodLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
+
+    sString.sprintf("%1d", iPeriod);
+    periodEdit = new Edit(sString);
+    periodEdit->setMaxLength(2);
+    periodEdit->setAlignment(Qt::AlignHCenter);
+    periodEdit->setReadOnly(true);
+
+    periodIncrement[0] = new Button(tr("+"), 0);
+    periodDecrement[0] = new Button(tr("-"), 0);
+
+    connect(periodIncrement[0], SIGNAL(buttonClicked(int)),
+            this, SLOT(onPeriodIncrement(int)));
+    connect(periodIncrement[0], SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+    connect(periodDecrement[0], SIGNAL(buttonClicked(int)),
+            this, SLOT(onTimeOutDecrement(int)));
+    connect(periodDecrement[0], SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+
+    if(iPeriod == 0)
+        periodDecrement[0]->setEnabled(false);
+
+    gameLayout->addWidget(periodLabel,        1, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
+    gameLayout->addWidget(periodEdit,         1, 2, 3, 6, Qt::AlignHCenter|Qt::AlignVCenter);
+    gameLayout->addWidget(periodIncrement[0], 0, 8, 2, 3, Qt::AlignLeft);
+    gameLayout->addWidget(periodDecrement[0], 3, 8, 2, 3, Qt::AlignLeft);
+    gameBox->setLayout(gameLayout);
+    return gameBox;
 }
 
 
@@ -321,7 +363,9 @@ BasketController::FormatStatusMsg() {
 }
 
 
+// =========================
 // Event management routines
+// =========================
 
 
 void
@@ -462,14 +506,6 @@ BasketController::onButtonChangeFieldClicked() {
     teamName[0]->setText(sTeam[0]);
     teamName[1]->setText(sTeam[1]);
 
-//    int iVal = iSet[0];
-//    iSet[0] = iSet[1];
-//    iSet[1] = iVal;
-//    sText.sprintf("%1d", iSet[0]);
-//    setsEdit[0]->setText(sText);
-//    sText.sprintf("%1d", iSet[1]);
-//    setsEdit[1]->setText(sText);
-
     int iVal = iScore[0];
     iScore[0] = iScore[1];
     iScore[1] = iVal;
@@ -486,12 +522,6 @@ BasketController::onButtonChangeFieldClicked() {
     sText.sprintf("%1d", iTimeout[1]);
     timeoutEdit[1]->setText(sText);
 
-//    iServizio = 1 - iServizio;
-//    lastService = 1 -lastService;
-
-//    service[iServizio ? 1 : 0]->setChecked(true);
-//    service[iServizio ? 0 : 1]->setChecked(false);
-
     for(int iTeam=0; iTeam<2; iTeam++) {
         scoreDecrement[iTeam]->setEnabled(true);
         scoreIncrement[iTeam]->setEnabled(true);
@@ -501,16 +531,6 @@ BasketController::onButtonChangeFieldClicked() {
         if(iScore[iTeam] > 98) {
           scoreIncrement[iTeam]->setEnabled(false);
         }
-
-//        setsDecrement[iTeam]->setEnabled(true);
-//        setsIncrement[iTeam]->setEnabled(true);
-//        if(iSet[iTeam] == 0) {
-//            setsDecrement[iTeam]->setEnabled(false);
-//        }
-//        if(iSet[iTeam] == MAX_SETS) {
-//            setsIncrement[iTeam]->setEnabled(false);
-//        }
-
         timeoutIncrement[iTeam]->setEnabled(true);
         timeoutDecrement[iTeam]->setEnabled(true);
         timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
@@ -541,13 +561,6 @@ BasketController::onButtonNewPeriodClicked() {
     sTeam[1] = sText;
     teamName[0]->setText(sTeam[0]);
     teamName[1]->setText(sTeam[1]);
-//    int iVal = iSet[0];
-//    iSet[0] = iSet[1];
-//    iSet[1] = iVal;
-//    sText.sprintf("%1d", iSet[0]);
-//    setsEdit[0]->setText(sText);
-//    sText.sprintf("%1d", iSet[1]);
-//    setsEdit[1]->setText(sText);
     for(int iTeam=0; iTeam<2; iTeam++) {
         iTimeout[iTeam] = 0;
         sText.sprintf("%1d", iTimeout[iTeam]);
@@ -558,15 +571,9 @@ BasketController::onButtonNewPeriodClicked() {
         scoreEdit[iTeam]->setText(sText);
         timeoutDecrement[iTeam]->setEnabled(false);
         timeoutIncrement[iTeam]->setEnabled(true);
-//        setsDecrement[iTeam]->setEnabled(iSet[iTeam] != 0);
-//        setsIncrement[iTeam]->setEnabled(true);
         scoreDecrement[iTeam]->setEnabled(false);
         scoreIncrement[iTeam]->setEnabled(true);
     }
-//    iServizio   = 0;
-//    lastService = 0;
-//    service[iServizio ? 1 : 0]->setChecked(true);
-//    service[iServizio ? 0 : 1]->setChecked(false);
     SendToAll(FormatStatusMsg());
     SaveStatus();
 }
@@ -588,23 +595,14 @@ BasketController::onButtonNewGameClicked() {
         sText.sprintf("%1d", iTimeout[iTeam]);
         timeoutEdit[iTeam]->setText(sText);
         timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
-//        iSet[iTeam]   = 0;
-//        sText.sprintf("%1d", iSet[iTeam]);
-//        setsEdit[iTeam]->setText(sText);
         iScore[iTeam]   = 0;
         sText.sprintf("%1d", iScore[iTeam]);
         scoreEdit[iTeam]->setText(sText);
         timeoutDecrement[iTeam]->setEnabled(false);
         timeoutIncrement[iTeam]->setEnabled(true);
-//        setsDecrement[iTeam]->setEnabled(false);
-//        setsIncrement[iTeam]->setEnabled(true);
         scoreDecrement[iTeam]->setEnabled(false);
         scoreIncrement[iTeam]->setEnabled(true);
     }
-//    iServizio   = 0;
-//    lastService = 0;
-//    service[iServizio ? 1 : 0]->setChecked(true);
-//    service[iServizio ? 0 : 1]->setChecked(false);
     SendToAll(FormatStatusMsg());
     SaveStatus();
 }
