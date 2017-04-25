@@ -54,6 +54,8 @@ FileServer::setDirs(QString _sSlideDir, QString _sSpotDir) {
     QString sFunctionName = " FileServer::setDirs ";
     sSlideDir = _sSlideDir;
     sSpotDir  = _sSpotDir;
+    if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
+    if(!sSpotDir.endsWith(QString("/")))  sSpotDir+= QString("/");
 
     QDir slideDir(sSlideDir);
     if(slideDir.exists()) {

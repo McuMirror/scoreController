@@ -67,6 +67,9 @@ VolleyController::VolleyController()
                    .arg(sSpotDir)
                    .arg(spotList.count()));
     }
+    if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
+    if(!sSpotDir.endsWith(QString("/")))  sSpotDir+= QString("/");
+
     pFileUpdaterServer->setDirs(sSlideDir, sSpotDir);
     emit startFileServer();
 
