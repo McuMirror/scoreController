@@ -33,8 +33,8 @@ private slots:
     void onFaulsIncrement(int iTeam);
     void onFaulsDecrement(int iTeam);
     void onTeamTextChanged(QString sText, int iTeam);
-    void onPeriodIncrement();
-    void onPeriodDecrement();
+    void onPeriodIncrement(int iDummy);
+    void onPeriodDecrement(int iDummy);
     void onPossessClicked(int iTeam, bool bChecked);
 
     void onButtonChangeFieldClicked();

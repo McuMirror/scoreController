@@ -301,7 +301,7 @@ BasketController::CreateGameBox() {
     connect(periodIncrement, SIGNAL(clicked()),
             &buttonClick, SLOT(play()));
     connect(periodDecrement, SIGNAL(buttonClicked(int)),
-            this, SLOT(onTimeOutDecrement(int)));
+            this, SLOT(onPeriodDecrement(int)));
     connect(periodDecrement, SIGNAL(clicked()),
             &buttonClick, SLOT(play()));
 
@@ -642,12 +642,12 @@ BasketController::onButtonNewGameClicked() {
 
 
 void
-BasketController::onPeriodIncrement() {
+BasketController::onPeriodIncrement(int iDummy) {
 }
 
 
 void
-BasketController::onPeriodDecrement() {
+BasketController::onPeriodDecrement(int iDummy) {
 }
 
 
