@@ -466,14 +466,6 @@ ScoreController::onProcessTextMessage(QString sMessage) {
                        QString("Empty slide list"));
             return;
         }
-        QStringList dimension = QStringList(sToken.split(tr(","),QString::SkipEmptyParts));
-        if(dimension.count() < 2) {
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Malformed image request"));
-            return;
-        }
-        QSize imageSize = QSize(dimension.at(0).toInt(), dimension.at(1).toInt());
         QImage image;
         if(!image.load(sSlideDir+slideList[iCurrentSlide])) {
             logMessage(logFile,
@@ -490,7 +482,6 @@ ScoreController::onProcessTextMessage(QString sMessage) {
                        QString("Unable to open image buffer"));
             return;
         }
-        image = image.scaled(imageSize, Qt::KeepAspectRatio);
         if(!image.save(&buffer, "JPG", -1)) {// writes image into ba in JPEG format
             logMessage(logFile,
                        sFunctionName,
@@ -500,29 +491,24 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         }
         buffer.close();
         QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-        if(pClient->isValid()) {
+        if(!pClient->isValid()) {
+            logMessage(logFile,
+                       sFunctionName,
+                       QString("Client socket is Invalid !"));
+        }
+        else {
             logMessage(logFile,
                        sFunctionName,
                        QString("Sending image %1 to %2")
                        .arg(iCurrentSlide)
                        .arg(pClient->peerAddress().toString()));
-            for(int i=0; i< connectionList.count(); i++) {
-               if(connectionList.at(i).clientAddress == pClient->peerAddress()) {
-                    int bytesSent = pClient->sendBinaryMessage(ba);
-                    if(bytesSent != ba.size()) {
-                        logMessage(logFile,
-                                   sFunctionName,
-                                   QString("Unable to send the image to client"));
-                    }
-                    break;
-                }
+            int bytesSent = pClient->sendBinaryMessage(ba);
+            if(bytesSent != ba.size()) {
+                logMessage(logFile,
+                           sFunctionName,
+                           QString("Unable to send the image to client"));
             }
             iCurrentSlide = (iCurrentSlide + 1) % slideList.count();
-        }
-        else {
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Client socket is Invalid !"));
         }
     }// send_image
 
