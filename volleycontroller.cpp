@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "edit.h"
 #include "button.h"
 #include "radioButton.h"
+#include "fileserver.h"
 
 #define MAX_TIMEOUTS 2
 #define MAX_SETS     3
@@ -43,6 +44,7 @@ VolleyController::VolleyController()
 
     QDir slideDir(sSlideDir);
     QDir spotDir(sSpotDir);
+
     if(!slideDir.exists() || !spotDir.exists()) {
         onButtonSetupClicked();
     }
@@ -65,6 +67,8 @@ VolleyController::VolleyController()
                    .arg(sSpotDir)
                    .arg(spotList.count()));
     }
+    pFileUpdaterServer->setDirs(sSlideDir, sSpotDir);
+    emit startFileServer();
 
     QGridLayout *mainLayout = new QGridLayout();
 

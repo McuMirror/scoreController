@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "edit.h"
 #include "button.h"
 #include "radioButton.h"
+#include "fileserver.h"
 
 
 #define MAX_TIMEOUTS  3
@@ -69,6 +70,8 @@ BasketController::BasketController()
                    .arg(sSpotDir)
                    .arg(spotList.count()));
     }
+    pFileUpdaterServer->setDirs(sSlideDir, sSpotDir);
+    emit startFileServer();
 
     QGridLayout *mainLayout = new QGridLayout();
 
@@ -643,11 +646,13 @@ BasketController::onButtonNewGameClicked() {
 
 void
 BasketController::onPeriodIncrement(int iDummy) {
+    Q_UNUSED(iDummy)
 }
 
 
 void
 BasketController::onPeriodDecrement(int iDummy) {
+    Q_UNUSED(iDummy)
 }
 
 

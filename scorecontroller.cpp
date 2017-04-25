@@ -107,13 +107,11 @@ ScoreController::ScoreController(QWidget *parent)
     connect(pFileUpdaterServer, SIGNAL(fileServerDone(bool)),
             this, SLOT(onFileServerDone(bool)));
     pFileUpdaterServer->setServerPort(updaterPort);
-    pFileUpdaterServer->setDirs(sSlideDir, sSpotDir);
     pFileServerThread = new QThread();
     pFileUpdaterServer->moveToThread(pFileServerThread);
     connect(this, SIGNAL(startFileServer()),
             pFileUpdaterServer, SLOT(startServer()));
     pFileServerThread->start(QThread::LowestPriority);
-    emit startFileServer();
 
     // Pan-Tilt Camera management
     connect(pClientListDialog, SIGNAL(disableVideo()),
