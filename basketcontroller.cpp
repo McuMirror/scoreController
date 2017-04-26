@@ -447,6 +447,8 @@ BasketController::onFaulsIncrement(int iTeam) {
     else {
         bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
     }
+    // da aggiungere la trasmissione dei BONUS
+
     sMessage.sprintf("<fauls%1d>%d</fauls%1d>", iTeam, iFauls[iTeam], iTeam);
     SendToAll(sMessage);
     QString sText;
