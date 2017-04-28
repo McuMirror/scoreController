@@ -75,8 +75,8 @@ ScoreController::ScoreController(QWidget *parent)
     sBaseDir = QString("/storage/extSdCard/");
 #else
     sBaseDir = QDir::homePath();
-    if(!sBaseDir.endsWith(QString("/"))) sBaseDir+= QString("/");
 #endif
+    if(!sBaseDir.endsWith(QString("/"))) sBaseDir+= QString("/");
     sSlideDir   = QString("%1slides/").arg(sBaseDir);
     sSpotDir    = QString("%1spots/").arg(sBaseDir);
     logFileName = QString("%1volley_controller.txt").arg(sBaseDir);
@@ -540,11 +540,12 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         }
     }// send_spot
 
+    // >>>>>>>>>>>> Questa parte deve essere trasferita ai controller specifici <<<<<<<<<<<
     sToken = XML_Parse(sMessage, "getConf");
     if(sToken != sNoData) {
         QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
         if(pClient->isValid()) {
-            sMessage = QString("<setConf>%1</setConf>").arg(VOLLEY_PANEL);
+            sMessage = QString("<setConf>%1</setConf>").arg(VOLLEY_PANEL);// <<<<<<<<<<<<<<
             SendToOne(pClient, sMessage);
         }
     }// getConf
