@@ -111,6 +111,15 @@ BasketController::GetSettings() {
 
     sSlideDir   = pSettings->value("directories/slides", sSlideDir).toString();
     sSpotDir    = pSettings->value("directories/spots", sSpotDir).toString();
+
+    for(int iTeam=0; iTeam<2; iTeam++) {
+        if(iFauls[iTeam] >= BONUS_TARGET) {
+            iBonus[iTeam] = 1;
+        }
+        else {
+            iBonus[iTeam] = 0;
+        }
+    }
 }
 
 
@@ -238,11 +247,12 @@ BasketController::CreateTeamBox(int iTeam) {
     scoreLabel = new QLabel(tr("Score"));
     scoreLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
 
-    sString.sprintf("%2d", iScore[iTeam]);
-    scoreEdit[iTeam] = new Edit(sString);
+    scoreEdit[iTeam] = new Edit();
     scoreEdit[iTeam]->setMaxLength(3);
     scoreEdit[iTeam]->setReadOnly(true);
     scoreEdit[iTeam]->setAlignment(Qt::AlignRight);
+    sString.sprintf("%3d", iScore[iTeam]);
+    scoreEdit[iTeam]->setText(sString);
 
     scoreIncrement[iTeam] = new Button(tr("+"), iTeam);
     scoreDecrement[iTeam] = new Button(tr("-"), iTeam);
@@ -293,11 +303,12 @@ BasketController::CreateGameBox() {
     periodLabel = new QLabel(tr("Period"));
     periodLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
 
-    sString.sprintf("%1d", iPeriod);
-    periodEdit = new Edit(sString);
+    periodEdit = new Edit();
     periodEdit->setMaxLength(2);
-    periodEdit->setAlignment(Qt::AlignHCenter);
     periodEdit->setReadOnly(true);
+    periodEdit->setAlignment(Qt::AlignRight);
+    sString.sprintf("%2d", iPeriod);
+    periodEdit->setText(sString);
 
     periodIncrement = new Button(tr("+"), 0);
     periodDecrement = new Button(tr("-"), 0);
@@ -314,12 +325,12 @@ BasketController::CreateGameBox() {
     if(iPeriod == 0)
         periodDecrement->setEnabled(false);
 
-    gameLayout->addWidget(bonusEdit[0],    1,  0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
-    gameLayout->addWidget(periodLabel,     1,  2, 3, 3, Qt::AlignRight|Qt::AlignVCenter);
-    gameLayout->addWidget(periodEdit,      1,  5, 3, 3, Qt::AlignHCenter|Qt::AlignVCenter);
-    gameLayout->addWidget(periodIncrement, 0,  8, 2, 3, Qt::AlignLeft);
-    gameLayout->addWidget(periodDecrement, 3,  8, 2, 3, Qt::AlignLeft);
-    gameLayout->addWidget(bonusEdit[1],    1, 11, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
+    gameLayout->addWidget(bonusEdit[0],    1,  0, 2, 2, Qt::AlignRight|Qt::AlignVCenter);
+    gameLayout->addWidget(periodLabel,     1,  2, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
+    gameLayout->addWidget(periodEdit,      1,  5, 2, 3, Qt::AlignHCenter|Qt::AlignVCenter);
+    gameLayout->addWidget(periodIncrement, 0,  8, 2, 2, Qt::AlignLeft);
+    gameLayout->addWidget(periodDecrement, 2,  8, 2, 2, Qt::AlignLeft);
+    gameLayout->addWidget(bonusEdit[1],    1, 11, 2, 2, Qt::AlignRight|Qt::AlignVCenter);
     gameBox->setLayout(gameLayout);
     return gameBox;
 }
@@ -370,7 +381,7 @@ BasketController::CreateGamePanel() {
 
 QString
 BasketController::FormatStatusMsg() {
-    QString sFunctionName = " Volley_Controller::FormatStatusMsg ";
+    QString sFunctionName = " BasketController::FormatStatusMsg ";
     Q_UNUSED(sFunctionName)
     QString sMessage = tr("");
     QString sTemp;
@@ -380,6 +391,12 @@ BasketController::FormatStatusMsg() {
         sTemp.sprintf("<timeout%1d>%d</timeout%1d>", i, iTimeout[i], i);
         sMessage += sTemp;
         sTemp.sprintf("<score%1d>%d</score%1d>", i, iScore[i], i);
+        sMessage += sTemp;
+        sTemp.sprintf("<fauls%1d>%d</fauls%1d>", i, iFauls[i], i);
+        sMessage += sTemp;
+        sTemp.sprintf("<fauls%1d>%d</fauls%1d>", i, iFauls[i], i);
+        sMessage += sTemp;
+        sTemp.sprintf("<bonus%1d>%d</bons%1d>", i, iBonus[i], i);
         sMessage += sTemp;
     }
     sTemp.sprintf("<period>%d</period>", iPeriod);
@@ -435,23 +452,25 @@ BasketController::onTimeOutDecrement(int iTeam) {
 
 void
 BasketController::onFaulsIncrement(int iTeam) {
-    QString sMessage;
+    QString sMessage, sText;
     iFauls[iTeam]++;
     faulsDecrement[iTeam]->setEnabled(true);
     if(iFauls[iTeam] == MAX_FAULS) {// To be changed
         faulsIncrement[iTeam]->setEnabled(false);
     }
     if(iFauls[iTeam] >= BONUS_TARGET) {
+        iBonus[iTeam] = 1;
         bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
     else {
+        iBonus[iTeam] = 0;
         bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
     }
-    // da aggiungere la trasmissione dei BONUS
 
     sMessage.sprintf("<fauls%1d>%d</fauls%1d>", iTeam, iFauls[iTeam], iTeam);
+    sText.sprintf("<bonus%1d>%d</bonus%1d>", iTeam, iBonus[iTeam], iTeam);
+    sMessage += sText;
     SendToAll(sMessage);
-    QString sText;
     sText.sprintf("%1d", iFauls[iTeam]);
     faulsEdit[iTeam]->setText(sText);
     sText.sprintf("team%1d/fauls", iTeam+1);
@@ -461,21 +480,24 @@ BasketController::onFaulsIncrement(int iTeam) {
 
 void
 BasketController::onFaulsDecrement(int iTeam) {
-    QString sMessage;
+    QString sMessage, sText;
     iFauls[iTeam]--;
     faulsIncrement[iTeam]->setEnabled(true);
     if(iFauls[iTeam] == 0) {
        faulsDecrement[iTeam]->setEnabled(false);
     }
     if(iFauls[iTeam] >= BONUS_TARGET) {
+        iBonus[iTeam] = 1;
         bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
     else {
+        iBonus[iTeam] = 0;
         bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
     }
     sMessage.sprintf("<fauls%1d>%d</fauls%1d>", iTeam, iFauls[iTeam], iTeam);
+    sText.sprintf("<bonus%1d>%d</bonus%1d>", iTeam, iBonus[iTeam], iTeam);
+    sMessage += sText;
     SendToAll(sMessage);
-    QString sText;
     sText.sprintf("%1d", iFauls[iTeam]);
     faulsEdit[iTeam]->setText(sText);
     sText.sprintf("team%1d/fauls", iTeam+1);
@@ -535,7 +557,7 @@ BasketController::onTeamTextChanged(QString sText, int iTeam) {
 
 void
 BasketController::onButtonChangeFieldClicked() {
-    int iRes = QMessageBox::question(this, tr("Volley_Controller"),
+    int iRes = QMessageBox::question(this, tr("BasketController"),
                                      tr("Scambiare il campo delle squadre ?"),
                                      QMessageBox::Yes | QMessageBox::No,
                                      QMessageBox::No);
@@ -590,7 +612,7 @@ BasketController::onButtonChangeFieldClicked() {
 
 void
 BasketController::onButtonNewPeriodClicked() {
-    int iRes = QMessageBox::question(this, tr("Volley_Controller"),
+    int iRes = QMessageBox::question(this, tr("BasketController"),
                                      tr("Vuoi davvero iniziare un nuovo Periodo ?"),
                                      QMessageBox::Yes | QMessageBox::No,
                                      QMessageBox::No);
@@ -622,7 +644,7 @@ BasketController::onButtonNewPeriodClicked() {
 
 void
 BasketController::onButtonNewGameClicked() {
-    int iRes = QMessageBox::question(this, tr("Volley_Controller"),
+    int iRes = QMessageBox::question(this, tr("BasketController"),
                                      tr("Vuoi davvero azzerare tutto ?"),
                                      QMessageBox::Yes | QMessageBox::No,
                                      QMessageBox::No);
@@ -652,12 +674,40 @@ BasketController::onButtonNewGameClicked() {
 void
 BasketController::onPeriodIncrement(int iDummy) {
     Q_UNUSED(iDummy)
+    if(iPeriod < MAX_PERIODS) {
+        iPeriod++;
+    }
+    if(iPeriod >= MAX_PERIODS) {
+        periodIncrement->setDisabled(true);
+        iPeriod= MAX_PERIODS;
+    }
+    periodDecrement->setEnabled(true);
+    QString sString, sMessage;
+    sString.sprintf("%2d", iPeriod);
+    periodEdit->setText(sString);
+    sMessage.sprintf("<period>%d</period>", iPeriod);
+    SendToAll(sMessage);
+    pSettings->setValue("game/period", iPeriod);
 }
 
 
 void
 BasketController::onPeriodDecrement(int iDummy) {
     Q_UNUSED(iDummy)
+    if(iPeriod > 0) {
+        iPeriod--;
+    }
+    if(iPeriod >= MAX_PERIODS) {
+        periodIncrement->setDisabled(true);
+        iPeriod= MAX_PERIODS;
+    }
+    periodIncrement->setEnabled(true);
+    QString sString, sMessage;
+    sString.sprintf("%2d", iPeriod);
+    periodEdit->setText(sString);
+    sMessage.sprintf("<period>%d</period>", iPeriod);
+    SendToAll(sMessage);
+    pSettings->setValue("game/period", iPeriod);
 }
 
 

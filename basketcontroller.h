@@ -56,6 +56,7 @@ private:
     int           iTimeout[2];
     int           iScore[2];
     int           iFauls[2];
+    int           iBonus[2];
     int           iPeriod;
     int           iPossess;
 
