@@ -394,8 +394,6 @@ BasketController::FormatStatusMsg() {
         sMessage += sTemp;
         sTemp.sprintf("<fauls%1d>%d</fauls%1d>", i, iFauls[i], i);
         sMessage += sTemp;
-        sTemp.sprintf("<fauls%1d>%d</fauls%1d>", i, iFauls[i], i);
-        sMessage += sTemp;
         sTemp.sprintf("<bonus%1d>%d</bonus%1d>", i, iBonus[i], i);
         sMessage += sTemp;
     }
