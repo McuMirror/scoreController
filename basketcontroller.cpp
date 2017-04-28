@@ -466,12 +466,13 @@ BasketController::onFaulsIncrement(int iTeam) {
         iBonus[iTeam] = 0;
         bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
     }
+    faulsDecrement[iTeam]->setEnabled(true);
 
     sMessage.sprintf("<fauls%1d>%d</fauls%1d>", iTeam, iFauls[iTeam], iTeam);
     sText.sprintf("<bonus%1d>%d</bonus%1d>", iTeam, iBonus[iTeam], iTeam);
     sMessage += sText;
     SendToAll(sMessage);
-    sText.sprintf("%1d", iFauls[iTeam]);
+    sText.sprintf("%2d", iFauls[iTeam]);
     faulsEdit[iTeam]->setText(sText);
     sText.sprintf("team%1d/fauls", iTeam+1);
     pSettings->setValue(sText, iFauls[iTeam]);
@@ -494,11 +495,13 @@ BasketController::onFaulsDecrement(int iTeam) {
         iBonus[iTeam] = 0;
         bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
     }
+    faulsIncrement[iTeam]->setEnabled(true);
+
     sMessage.sprintf("<fauls%1d>%d</fauls%1d>", iTeam, iFauls[iTeam], iTeam);
     sText.sprintf("<bonus%1d>%d</bonus%1d>", iTeam, iBonus[iTeam], iTeam);
     sMessage += sText;
     SendToAll(sMessage);
-    sText.sprintf("%1d", iFauls[iTeam]);
+    sText.sprintf("%2d", iFauls[iTeam]);
     faulsEdit[iTeam]->setText(sText);
     sText.sprintf("team%1d/fauls", iTeam+1);
     pSettings->setValue(sText, iFauls[iTeam]);
