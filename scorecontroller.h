@@ -37,12 +37,19 @@ QT_FORWARD_DECLARE_CLASS(FileServer)
 QT_FORWARD_DECLARE_CLASS(QGroupBox)
 QT_FORWARD_DECLARE_CLASS(QGridLayout)
 
+
+#define VOLLEY_PANEL 0
+#define FIRST_PANEL  VOLLEY_PANEL
+#define BASKET_PANEL 1
+#define LAST_PANEL   BASKET_PANEL
+
+
 class ScoreController : public QWidget
 {
     Q_OBJECT
 
 public:
-    ScoreController(QWidget *parent = 0);
+    ScoreController(int _panelType, QWidget *parent = 0);
     ~ScoreController();
     void closeEvent(QCloseEvent *event);
 
@@ -93,6 +100,7 @@ protected:
     };
     QString               sHostName;
 
+    int                   panelType;
     NetServer            *pPanelServer;
     QThread              *pFileServerThread;
     FileServer           *pFileUpdaterServer;

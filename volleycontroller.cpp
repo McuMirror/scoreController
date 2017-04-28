@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MAX_SETS     3
 
 VolleyController::VolleyController()
-    : ScoreController(Q_NULLPTR)
+    : ScoreController(VOLLEY_PANEL, Q_NULLPTR)
 {
     QString sFunctionName = QString(" VolleyController::VolleyController ");
     GetSettings();

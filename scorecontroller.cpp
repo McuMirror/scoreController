@@ -45,18 +45,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define FILE_UPDATER_PORT  45455
 
 
-#define VOLLEY_PANEL 0
-#define FIRST_PANEL  VOLLEY_PANEL
-#define BASKET_PANEL 1
-#define LAST_PANEL   BASKET_PANEL
-
-
 //#define QT_DEBUG
 #define LOG_MESG
 
 
-ScoreController::ScoreController(QWidget *parent)
+ScoreController::ScoreController(int _panelType, QWidget *parent)
     : QWidget(parent)
+    , panelType(_panelType)
     , pClientListDialog(new ClientListDialog(this))
     , connectionList(QList<connection>())
     , discoveryPort(DISCOVERY_PORT)
@@ -87,6 +82,14 @@ ScoreController::ScoreController(QWidget *parent)
     iCurrentSpot  = 0;
 
     PrepareLogFile();
+
+
+    if((panelType < FIRST_PANEL) || (panelType > LAST_PANEL)) {
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Panel Type set to FIRST_PANEL"));
+        panelType = FIRST_PANEL;
+     }
 
     pExitTimer = new QTimer(this);
     connect(pExitTimer, SIGNAL(timeout()),
@@ -540,12 +543,11 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         }
     }// send_spot
 
-    // >>>>>>>>>>>> Questa parte deve essere trasferita ai controller specifici <<<<<<<<<<<
     sToken = XML_Parse(sMessage, "getConf");
     if(sToken != sNoData) {
         QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
         if(pClient->isValid()) {
-            sMessage = QString("<setConf>%1</setConf>").arg(VOLLEY_PANEL);// <<<<<<<<<<<<<<
+            sMessage = QString("<setConf>%1</setConf>").arg(panelType);
             SendToOne(pClient, sMessage);
         }
     }// getConf

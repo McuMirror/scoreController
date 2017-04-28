@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 BasketController::BasketController()
-    : ScoreController(Q_NULLPTR)
+    : ScoreController(BASKET_PANEL, Q_NULLPTR)
 {
     QString sFunctionName = QString(" BasketController::BasketController ");
     GetSettings();
