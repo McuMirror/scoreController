@@ -619,6 +619,19 @@ BasketController::onButtonNewPeriodClicked() {
                                      QMessageBox::No);
     if(iRes != QMessageBox::Yes) return;
 
+    // Increment period number
+    if(iPeriod < MAX_PERIODS) {
+        iPeriod++;
+    }
+    if(iPeriod >= MAX_PERIODS) {
+        periodIncrement->setDisabled(true);
+        iPeriod= MAX_PERIODS;
+    }
+    periodDecrement->setEnabled(true);
+    QString sString;
+    sString.sprintf("%2d", iPeriod);
+    periodEdit->setText(sString);
+
     // Exchange teams order in the field
     QString sText = sTeam[0];
     sTeam[0] = sTeam[1];
