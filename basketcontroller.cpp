@@ -83,7 +83,7 @@ BasketController::BasketController()
     mainLayout->addLayout(CreateGamePanel(),     0,                  0,              gamePanelHeigth,   gamePanelWidth);
     mainLayout->addWidget(CreateGameBox(),       gamePanelHeigth,    0,              5,                 gamePanelWidth);
     mainLayout->addWidget(CreateGameButtonBox(), gamePanelHeigth+5,  0,              1,                 gamePanelWidth);
-    mainLayout->addWidget(CreateSpotButtonBox(), 0,                  gamePanelWidth, gamePanelHeigth+1, 1);
+    mainLayout->addWidget(CreateSpotButtonBox(), 0,                  gamePanelWidth, gamePanelHeigth+6, 1);
     setLayout(mainLayout);
 
     possess[iPossess ? 1 : 0]->setChecked(true);
