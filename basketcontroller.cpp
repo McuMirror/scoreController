@@ -40,6 +40,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BONUS_TARGET  5 // After this value the Bonus is triggered for the team
 
 
+// >>>>>>>>>>> Da aggiungere la durata del periodo nella trasmissione del valore del periodo !
+
+
 BasketController::BasketController()
     : ScoreController(BASKET_PANEL, Q_NULLPTR)
 {
@@ -106,7 +109,7 @@ BasketController::GetSettings() {
     iFauls[0]   = pSettings->value("team1/fauls", 0).toInt();
     iFauls[1]   = pSettings->value("team2/fauls", 0).toInt();
 
-    iPeriod     = pSettings->value("game/period", 0).toInt();
+    iPeriod     = pSettings->value("game/period", 1).toInt();
     iPossess    = pSettings->value("game/possess", 0).toInt();
 
     sSlideDir   = pSettings->value("directories/slides", sSlideDir).toString();
@@ -322,7 +325,7 @@ BasketController::CreateGameBox() {
     connect(periodDecrement, SIGNAL(clicked()),
             &buttonClick, SLOT(play()));
 
-    if(iPeriod == 0)
+    if(iPeriod < 2)
         periodDecrement->setEnabled(false);
 
     gameLayout->addWidget(bonusEdit[0],    1,  0, 2, 2, Qt::AlignRight|Qt::AlignVCenter);
@@ -632,24 +635,43 @@ BasketController::onButtonNewPeriodClicked() {
     sString.sprintf("%2d", iPeriod);
     periodEdit->setText(sString);
 
-    // Exchange teams order in the field
+    // Exchange teams order, score and team fauls
     QString sText = sTeam[0];
     sTeam[0] = sTeam[1];
     sTeam[1] = sText;
-    teamName[0]->setText(sTeam[0]);
-    teamName[1]->setText(sTeam[1]);
+    int iVal = iScore[0];
+    iScore[0] = iScore[1];
+    iScore[1] = iVal;
+    iVal = iFauls[0];
+    iFauls[0] = iFauls[1];
+    iFauls[1] = iVal;
+    // Update panel
     for(int iTeam=0; iTeam<2; iTeam++) {
+        teamName[iTeam]->setText(sTeam[iTeam]);
         iTimeout[iTeam] = 0;
         sText.sprintf("%1d", iTimeout[iTeam]);
         timeoutEdit[iTeam]->setText(sText);
         timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
-        iScore[iTeam]   = 0;
-        sText.sprintf("%1d", iScore[iTeam]);
-        scoreEdit[iTeam]->setText(sText);
         timeoutDecrement[iTeam]->setEnabled(false);
         timeoutIncrement[iTeam]->setEnabled(true);
-        scoreDecrement[iTeam]->setEnabled(false);
-        scoreIncrement[iTeam]->setEnabled(true);
+        sText.sprintf("%3d", iScore[iTeam]);
+        scoreEdit[iTeam]->setText(sText);
+        sText.sprintf("%2d", iFauls[iTeam]);
+        faulsEdit[iTeam]->setText(sText);
+        if(iFauls[iTeam] == 0) {
+           faulsDecrement[iTeam]->setEnabled(false);
+        }
+        if(iFauls[iTeam] == MAX_FAULS) {// To be changed
+            faulsIncrement[iTeam]->setEnabled(false);
+        }
+        if(iFauls[iTeam] >= BONUS_TARGET) {
+            iBonus[iTeam] = 1;
+            bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
+        }
+        else {
+            iBonus[iTeam] = 0;
+            bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
+        }
     }
     SendToAll(FormatStatusMsg());
     SaveStatus();
@@ -666,19 +688,30 @@ BasketController::onButtonNewGameClicked() {
     sTeam[0]    = tr("Locali");
     sTeam[1]    = tr("Ospiti");
     QString sText;
+    iPeriod = 1;
+    sText.sprintf("%2d", iPeriod);
+    periodEdit->setText(sText);
+    periodIncrement->setEnabled(true);
+    periodDecrement->setEnabled(false);
     for(int iTeam=0; iTeam<2; iTeam++) {
         teamName[iTeam]->setText(sTeam[iTeam]);
         iTimeout[iTeam] = 0;
         sText.sprintf("%1d", iTimeout[iTeam]);
         timeoutEdit[iTeam]->setText(sText);
         timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
-        iScore[iTeam]   = 0;
-        sText.sprintf("%1d", iScore[iTeam]);
-        scoreEdit[iTeam]->setText(sText);
         timeoutDecrement[iTeam]->setEnabled(false);
         timeoutIncrement[iTeam]->setEnabled(true);
+        iScore[iTeam]   = 0;
+        sText.sprintf("%3d", iScore[iTeam]);
+        scoreEdit[iTeam]->setText(sText);
         scoreDecrement[iTeam]->setEnabled(false);
         scoreIncrement[iTeam]->setEnabled(true);
+        iFauls[iTeam] = 0;
+        sText.sprintf("%2d", iFauls[iTeam]);
+        faulsEdit[iTeam]->setText(sText);
+        faulsIncrement[iTeam]->setEnabled(true);
+        faulsDecrement[iTeam]->setEnabled(false);
+        bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
     }
     SendToAll(FormatStatusMsg());
     SaveStatus();
@@ -708,9 +741,11 @@ BasketController::onPeriodIncrement(int iDummy) {
 void
 BasketController::onPeriodDecrement(int iDummy) {
     Q_UNUSED(iDummy)
-    if(iPeriod > 0) {
+    if(iPeriod > 1) {
         iPeriod--;
     }
+    if(iPeriod < 2)
+        periodDecrement->setDisabled(true);
     if(iPeriod >= MAX_PERIODS) {
         periodIncrement->setDisabled(true);
         iPeriod= MAX_PERIODS;
