@@ -82,7 +82,7 @@ BasketController::BasketController()
     QGridLayout *mainLayout = new QGridLayout();
 
     int gamePanelWidth  = 15;
-    int gamePanelHeigth =  8;
+    int gamePanelHeigth = 13;
     mainLayout->addLayout(CreateGamePanel(),     0,                  0,              gamePanelHeigth,   gamePanelWidth);
     mainLayout->addWidget(CreateGameBox(),       gamePanelHeigth,    0,              5,                 gamePanelWidth);
     mainLayout->addWidget(CreateGameButtonBox(), gamePanelHeigth+5,  0,              1,                 gamePanelWidth);
@@ -159,14 +159,17 @@ BasketController::CreateTeamBox(int iTeam) {
     QString sString;
     QGroupBox* teamBox      = new QGroupBox();
     QGridLayout* teamLayout = new QGridLayout();
+    QLabel* labelSpacer = new QLabel(QString(""));
 
     // Team
+    int iRow = 0;
     teamName[iTeam] = new Edit(sTeam[iTeam], iTeam);
     teamName[iTeam]->setAlignment(Qt::AlignHCenter);
     teamName[iTeam]->setMaxLength(15);
     connect(teamName[iTeam], SIGNAL(textChanged(QString, int)),
             this, SLOT(onTeamTextChanged(QString, int)));
-    teamLayout->addWidget(teamName[iTeam], 0, 0, 1, 10);
+    teamLayout->addWidget(teamName[iTeam], iRow, 0, 2, 10);
+    teamLayout->addWidget(labelSpacer, iRow+2, 0, 1, 10);
 
     // Timeout
     QLabel *timeoutLabel;
@@ -198,10 +201,12 @@ BasketController::CreateTeamBox(int iTeam) {
         timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
 
-    teamLayout->addWidget(timeoutLabel,            2, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
-    teamLayout->addWidget(timeoutEdit[iTeam],      2, 2, 3, 6, Qt::AlignHCenter|Qt::AlignVCenter);
-    teamLayout->addWidget(timeoutIncrement[iTeam], 1, 8, 2, 3, Qt::AlignLeft);
-    teamLayout->addWidget(timeoutDecrement[iTeam], 4, 8, 2, 3, Qt::AlignLeft);
+    iRow += 3;
+    teamLayout->addWidget(timeoutLabel,            iRow, 0, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
+    teamLayout->addWidget(timeoutDecrement[iTeam], iRow, 3, 2, 2, Qt::AlignRight);
+    teamLayout->addWidget(timeoutEdit[iTeam],      iRow, 5, 2, 3, Qt::AlignHCenter|Qt::AlignVCenter);
+    teamLayout->addWidget(timeoutIncrement[iTeam], iRow, 8, 2, 2, Qt::AlignLeft);
+    teamLayout->addWidget(labelSpacer, iRow+2, 0, 1, 10);
 
     // Team Fauls
     QLabel *faulsLabel;
@@ -231,20 +236,25 @@ BasketController::CreateTeamBox(int iTeam) {
     if(iFauls[iTeam] == MAX_FAULS)
         faulsIncrement[iTeam]->setEnabled(false);
 
-    teamLayout->addWidget(faulsLabel,            7, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
-    teamLayout->addWidget(faulsEdit[iTeam],      7, 2, 3, 6, Qt::AlignHCenter|Qt::AlignVCenter);
-    teamLayout->addWidget(faulsIncrement[iTeam], 6, 8, 2, 2, Qt::AlignLeft);
-    teamLayout->addWidget(faulsDecrement[iTeam], 9, 8, 2, 2, Qt::AlignLeft);
+    iRow += 3;
+    teamLayout->addWidget(faulsLabel,            iRow, 0, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
+    teamLayout->addWidget(faulsDecrement[iTeam], iRow, 3, 2, 2, Qt::AlignRight);
+    teamLayout->addWidget(faulsEdit[iTeam],      iRow, 5, 2, 3, Qt::AlignHCenter|Qt::AlignVCenter);
+    teamLayout->addWidget(faulsIncrement[iTeam], iRow, 8, 2, 2, Qt::AlignLeft);
+    teamLayout->addWidget(labelSpacer, iRow+2, 0, 1, 10);
 
+    iRow += 3;
     // Possess
     possess[iTeam] = new RadioButton(tr("Possess"), iTeam);
     if(iTeam == 0) {
-        teamLayout->addWidget(possess[iTeam],   11, 4, 1, 4, Qt::AlignLeft|Qt::AlignVCenter);
+        teamLayout->addWidget(possess[iTeam],   iRow, 4, 1, 4, Qt::AlignLeft|Qt::AlignVCenter);
     } else {
-        teamLayout->addWidget(possess[iTeam],   11, 4, 1, 4, Qt::AlignLeft|Qt::AlignVCenter);
+        teamLayout->addWidget(possess[iTeam],   iRow, 4, 1, 4, Qt::AlignLeft|Qt::AlignVCenter);
     }
+    teamLayout->addWidget(labelSpacer, iRow+1, 0, 1, 10);
     connect(possess[iTeam], SIGNAL(buttonClicked(int, bool)), this, SLOT(onPossessClicked(int, bool)));
 
+    iRow += 2;
     // Score
     QLabel *scoreLabel;
     scoreLabel = new QLabel(tr("Score"));
@@ -272,10 +282,10 @@ BasketController::CreateTeamBox(int iTeam) {
     if(iScore[iTeam] == 0)
         scoreDecrement[iTeam]->setEnabled(false);
 
-    teamLayout->addWidget(scoreLabel,            13, 0, 3, 2, Qt::AlignRight|Qt::AlignVCenter);
-    teamLayout->addWidget(scoreEdit[iTeam],      13, 2, 3, 6, Qt::AlignHCenter|Qt::AlignVCenter);
-    teamLayout->addWidget(scoreIncrement[iTeam], 12, 8, 2, 2, Qt::AlignLeft);
-    teamLayout->addWidget(scoreDecrement[iTeam], 15, 8, 2, 2, Qt::AlignLeft);
+    teamLayout->addWidget(scoreLabel,            iRow, 0, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
+    teamLayout->addWidget(scoreDecrement[iTeam], iRow, 3, 2, 2, Qt::AlignRight);
+    teamLayout->addWidget(scoreEdit[iTeam],      iRow, 5, 2, 3, Qt::AlignHCenter|Qt::AlignVCenter);
+    teamLayout->addWidget(scoreIncrement[iTeam], iRow, 8, 2, 2, Qt::AlignLeft);
 
     teamBox->setLayout(teamLayout);
     return teamBox;
@@ -329,12 +339,12 @@ BasketController::CreateGameBox() {
     if(iPeriod < 2)
         periodDecrement->setEnabled(false);
 
-    gameLayout->addWidget(bonusEdit[0],    1,  0, 2, 2, Qt::AlignRight|Qt::AlignVCenter);
-    gameLayout->addWidget(periodLabel,     1,  2, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
-    gameLayout->addWidget(periodEdit,      1,  5, 2, 3, Qt::AlignHCenter|Qt::AlignVCenter);
+    gameLayout->addWidget(bonusEdit[0],    0,  0, 2, 2, Qt::AlignRight|Qt::AlignVCenter);
+    gameLayout->addWidget(periodLabel,     0,  2, 2, 2, Qt::AlignRight|Qt::AlignVCenter);
+    gameLayout->addWidget(periodDecrement, 0,  4, 2, 2, Qt::AlignRight);
+    gameLayout->addWidget(periodEdit,      0,  6, 2, 2, Qt::AlignHCenter|Qt::AlignVCenter);
     gameLayout->addWidget(periodIncrement, 0,  8, 2, 2, Qt::AlignLeft);
-    gameLayout->addWidget(periodDecrement, 2,  8, 2, 2, Qt::AlignLeft);
-    gameLayout->addWidget(bonusEdit[1],    1, 11, 2, 2, Qt::AlignRight|Qt::AlignVCenter);
+    gameLayout->addWidget(bonusEdit[1],    0, 10, 2, 2, Qt::AlignRight|Qt::AlignVCenter);
     gameBox->setLayout(gameLayout);
     return gameBox;
 }
