@@ -291,13 +291,14 @@ BasketController::CreateGameBox() {
     // Bonus
     for(int iTeam=0; iTeam<2; iTeam++) {
         bonusEdit[iTeam] = new Edit(QString("Bonus"));
+        bonusEdit[iTeam]->setFrame(false);
         bonusEdit[iTeam]->setAlignment(Qt::AlignHCenter);
         bonusEdit[iTeam]->setReadOnly(true);
         if(iFauls[iTeam] >= BONUS_TARGET) {
             bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
         else {
-            bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
+            bonusEdit[iTeam]->setStyleSheet("background:transparent;color:transparent;");
         }
     }
 
@@ -468,7 +469,7 @@ BasketController::onFaulsIncrement(int iTeam) {
     }
     else {
         iBonus[iTeam] = 0;
-        bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
+        bonusEdit[iTeam]->setStyleSheet("background:transparent;color:transparent;");
     }
     faulsDecrement[iTeam]->setEnabled(true);
 
@@ -497,7 +498,7 @@ BasketController::onFaulsDecrement(int iTeam) {
     }
     else {
         iBonus[iTeam] = 0;
-        bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
+        bonusEdit[iTeam]->setStyleSheet("background:transparent;color:transparent;");
     }
     faulsIncrement[iTeam]->setEnabled(true);
 
@@ -570,29 +571,27 @@ BasketController::onButtonChangeFieldClicked() {
                                      QMessageBox::No);
     if(iRes != QMessageBox::Yes) return;
 
+    // Exchange teams order, score, timeouts and team fauls
     QString sText = sTeam[0];
     sTeam[0] = sTeam[1];
     sTeam[1] = sText;
-    teamName[0]->setText(sTeam[0]);
-    teamName[1]->setText(sTeam[1]);
 
     int iVal = iScore[0];
     iScore[0] = iScore[1];
     iScore[1] = iVal;
-    sText.sprintf("%1d", iScore[0]);
-    scoreEdit[0]->setText(sText);
-    sText.sprintf("%1d", iScore[1]);
-    scoreEdit[1]->setText(sText);
 
     iVal = iTimeout[0];
     iTimeout[0] = iTimeout[1];
     iTimeout[1] = iVal;
-    sText.sprintf("%1d", iTimeout[0]);
-    timeoutEdit[0]->setText(sText);
-    sText.sprintf("%1d", iTimeout[1]);
-    timeoutEdit[1]->setText(sText);
 
+    iVal = iFauls[0];
+    iFauls[0] = iFauls[1];
+    iFauls[1] = iVal;
+    // Update panel
     for(int iTeam=0; iTeam<2; iTeam++) {
+        teamName[iTeam]->setText(sTeam[iTeam]);
+        sText.sprintf("%1d", iScore[iTeam]);
+        scoreEdit[iTeam]->setText(sText);
         scoreDecrement[iTeam]->setEnabled(true);
         scoreIncrement[iTeam]->setEnabled(true);
         if(iScore[iTeam] == 0) {
@@ -601,6 +600,8 @@ BasketController::onButtonChangeFieldClicked() {
         if(iScore[iTeam] > 98) {
           scoreIncrement[iTeam]->setEnabled(false);
         }
+        sText.sprintf("%1d", iTimeout[iTeam]);
+        timeoutEdit[iTeam]->setText(sText);
         timeoutIncrement[iTeam]->setEnabled(true);
         timeoutDecrement[iTeam]->setEnabled(true);
         timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
@@ -610,6 +611,22 @@ BasketController::onButtonChangeFieldClicked() {
         }
         if(iTimeout[iTeam] == 0) {
             timeoutDecrement[iTeam]->setEnabled(false);
+        }
+        sText.sprintf("%2d", iFauls[iTeam]);
+        faulsEdit[iTeam]->setText(sText);
+        if(iFauls[iTeam] == 0) {
+           faulsDecrement[iTeam]->setEnabled(false);
+        }
+        if(iFauls[iTeam] == MAX_FAULS) {// To be changed
+            faulsIncrement[iTeam]->setEnabled(false);
+        }
+        if(iFauls[iTeam] >= BONUS_TARGET) {
+            iBonus[iTeam] = 1;
+            bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
+        }
+        else {
+            iBonus[iTeam] = 0;
+            bonusEdit[iTeam]->setStyleSheet("background:transparent;color:transparent;");
         }
     }
     SendToAll(FormatStatusMsg());
@@ -673,7 +690,7 @@ BasketController::onButtonNewPeriodClicked() {
         }
         else {
             iBonus[iTeam] = 0;
-            bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
+            bonusEdit[iTeam]->setStyleSheet("background:transparent;color:transparent;");
         }
     }
     SendToAll(FormatStatusMsg());
