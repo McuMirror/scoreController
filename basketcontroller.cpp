@@ -38,9 +38,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MAX_FAULS    99 // Da definire il comportamento dopo il numer max di falli !
 #define MAX_PERIODS  99 // Da definire il comportamento dopo il numer max di periodi !
 #define BONUS_TARGET  5 // After this value the Bonus is triggered for the team
-
-
-// >>>>>>>>>>> Da aggiungere la durata del periodo nella trasmissione del valore del periodo !
+#define GAME_PERIODS  4 // Oltre questo valore ci sono gli OVERTIMES
+#define REGULAR_TIME 10 // 10 Minuti è la durata di un tempo regolare
+#define OVER_TIME     5 // 5 Minuti è a durata di ciascun overtime
 
 
 BasketController::BasketController()
@@ -400,7 +400,10 @@ BasketController::FormatStatusMsg() {
         sTemp.sprintf("<bonus%1d>%d</bonus%1d>", i, iBonus[i], i);
         sMessage += sTemp;
     }
-    sTemp.sprintf("<period>%d</period>", iPeriod);
+    if(iPeriod > GAME_PERIODS)
+        sTemp.sprintf("<period>%d,%d</period>", iPeriod, OVER_TIME);
+    else
+        sTemp.sprintf("<period>%d,%d</period>", iPeriod, REGULAR_TIME);
     sMessage += sTemp;
     sTemp.sprintf("<possess>%d</possess>", iPossess);
     sMessage += sTemp;
@@ -732,7 +735,10 @@ BasketController::onPeriodIncrement(int iDummy) {
     QString sString, sMessage;
     sString.sprintf("%2d", iPeriod);
     periodEdit->setText(sString);
-    sMessage.sprintf("<period>%d</period>", iPeriod);
+    if(iPeriod > GAME_PERIODS)
+        sMessage.sprintf("<period>%d,%d</period>", iPeriod, OVER_TIME);
+    else
+        sMessage.sprintf("<period>%d,%d</period>", iPeriod, REGULAR_TIME);
     SendToAll(sMessage);
     pSettings->setValue("game/period", iPeriod);
 }
@@ -754,7 +760,10 @@ BasketController::onPeriodDecrement(int iDummy) {
     QString sString, sMessage;
     sString.sprintf("%2d", iPeriod);
     periodEdit->setText(sString);
-    sMessage.sprintf("<period>%d</period>", iPeriod);
+    if(iPeriod > GAME_PERIODS)
+        sMessage.sprintf("<period>%d,%d</period>", iPeriod, OVER_TIME);
+    else
+        sMessage.sprintf("<period>%d,%d</period>", iPeriod, REGULAR_TIME);
     SendToAll(sMessage);
     pSettings->setValue("game/period", iPeriod);
 }
