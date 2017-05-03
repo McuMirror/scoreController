@@ -81,12 +81,33 @@ BasketController::BasketController()
 
     QGridLayout *mainLayout = new QGridLayout();
 
-    int gamePanelWidth  = 15;
-    int gamePanelHeigth = 13;
-    mainLayout->addLayout(CreateGamePanel(),     0,                  0,              gamePanelHeigth,   gamePanelWidth);
-    mainLayout->addWidget(CreateGameBox(),       gamePanelHeigth,    0,              5,                 gamePanelWidth);
-    mainLayout->addWidget(CreateGameButtonBox(), gamePanelHeigth+5,  0,              1,                 gamePanelWidth);
-    mainLayout->addWidget(CreateSpotButtonBox(), 0,                  gamePanelWidth, gamePanelHeigth+6, 1);
+    int gamePanelWidth   = 15;
+    int gamePanelHeight  = 13;
+    int gameBoxHeight    = 3;
+    int gameButtonHeight = 3;
+    mainLayout->addLayout(CreateGamePanel(),
+                          0,
+                          0,
+                          gamePanelHeight,
+                          gamePanelWidth);
+
+    mainLayout->addWidget(CreateGameBox(),
+                          gamePanelHeight,
+                          0,
+                          gameBoxHeight,
+                          gamePanelWidth);
+
+    mainLayout->addWidget(CreateGameButtonBox(),
+                          gamePanelHeight+gameBoxHeight,
+                          0,
+                          gameButtonHeight,
+                          gamePanelWidth);
+
+    mainLayout->addWidget(CreateSpotButtonBox(),
+                          0,
+                          gamePanelWidth,
+                          gamePanelHeight+gameBoxHeight+gameButtonHeight,
+                          2);
     setLayout(mainLayout);
 
     possess[iPossess ? 1 : 0]->setChecked(true);
@@ -241,9 +262,9 @@ BasketController::CreateTeamBox(int iTeam) {
     teamLayout->addWidget(faulsDecrement[iTeam], iRow, 3, 2, 2, Qt::AlignRight);
     teamLayout->addWidget(faulsEdit[iTeam],      iRow, 5, 2, 3, Qt::AlignHCenter|Qt::AlignVCenter);
     teamLayout->addWidget(faulsIncrement[iTeam], iRow, 8, 2, 2, Qt::AlignLeft);
-    teamLayout->addWidget(labelSpacer, iRow+2, 0, 1, 10);
+    //teamLayout->addWidget(labelSpacer, iRow+2, 0, 1, 10);
 
-    iRow += 3;
+    iRow += 2;
     // Possess
     possess[iTeam] = new RadioButton(tr("Possess"), iTeam);
     if(iTeam == 0) {
@@ -252,9 +273,9 @@ BasketController::CreateTeamBox(int iTeam) {
         teamLayout->addWidget(possess[iTeam],   iRow, 4, 1, 4, Qt::AlignLeft|Qt::AlignVCenter);
     }
     teamLayout->addWidget(labelSpacer, iRow+1, 0, 1, 10);
-    connect(possess[iTeam], SIGNAL(buttonClicked(int, bool)), this, SLOT(onPossessClicked(int, bool)));
+    //connect(possess[iTeam], SIGNAL(buttonClicked(int, bool)), this, SLOT(onPossessClicked(int, bool)));
 
-    iRow += 2;
+    iRow += 1;
     // Score
     QLabel *scoreLabel;
     scoreLabel = new QLabel(tr("Score"));
