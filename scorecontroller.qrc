@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>key.wav</file>
+        <file>android/ic_ScorePanel_H.png</file>
+        <file>android/ic_ScorePanel_L.png</file>
+        <file>android/ic_ScorePanel_M.png</file>
     </qresource>
 </RCC>
