@@ -264,19 +264,19 @@ BasketController::CreateTeamBox(int iTeam) {
     teamLayout->addWidget(faulsIncrement[iTeam], iRow, 8, 2, 2, Qt::AlignLeft);
     //teamLayout->addWidget(labelSpacer, iRow+2, 0, 1, 10);
 
-    iRow += 2;
     // Possess
+    iRow += 2;
     possess[iTeam] = new RadioButton(tr("Possess"), iTeam);
     if(iTeam == 0) {
         teamLayout->addWidget(possess[iTeam],   iRow, 4, 1, 4, Qt::AlignLeft|Qt::AlignVCenter);
     } else {
         teamLayout->addWidget(possess[iTeam],   iRow, 4, 1, 4, Qt::AlignLeft|Qt::AlignVCenter);
     }
-    teamLayout->addWidget(labelSpacer, iRow+1, 0, 1, 10);
-    //connect(possess[iTeam], SIGNAL(buttonClicked(int, bool)), this, SLOT(onPossessClicked(int, bool)));
+//    teamLayout->addWidget(labelSpacer, iRow+1, 0, 1, 10);
+    connect(possess[iTeam], SIGNAL(buttonClicked(int, bool)), this, SLOT(onPossessClicked(int, bool)));
 
-    iRow += 1;
     // Score
+    iRow += 1;
     QLabel *scoreLabel;
     scoreLabel = new QLabel(tr("Score"));
     scoreLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
