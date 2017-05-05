@@ -549,7 +549,7 @@ BasketController::onScoreIncrement(int iTeam) {
     QString sMessage;
     iScore[iTeam]++;
     scoreDecrement[iTeam]->setEnabled(true);
-    if(iScore[iTeam] > 98) {
+    if(iScore[iTeam] > 998) {
       scoreIncrement[iTeam]->setEnabled(false);
     }
     sMessage.sprintf("<score%1d>%d</score%1d>", iTeam, iScore[iTeam], iTeam);
