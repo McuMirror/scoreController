@@ -635,9 +635,13 @@ ScoreController::RemoveClient(QHostAddress hAddress) {
     }
     if(connectionList.count() == 0) {
         startStopLoopSpotButton->setDisabled(true);
+        startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
         startStopSpotButton->setDisabled(true);
+        startStopSpotButton->setText(tr("Avvia\nSpot Singolo"));
         startStopSlideShowButton->setDisabled(true);
+        startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
         startStopLiveCameraButton->setDisabled(true);
+        startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
         cameraControlButton->setDisabled(true);
         generalSetupButton->setDisabled(false);
         shutdownButton->setDisabled(true);
@@ -675,7 +679,10 @@ ScoreController::onNewConnection(QWebSocket *pClient) {
         generalSetupButton->setDisabled(true);
         shutdownButton->setDisabled(false);
     }
-    shutdownButton->setText(QString("Spegni %1\nTabelloni").arg(connectionList.count()));
+    if(connectionList.count() == 1)
+        shutdownButton->setText(QString("Spegni %1\nTabellone").arg(connectionList.count()));
+    else
+        shutdownButton->setText(QString("Spegni %1\nTabelloni").arg(connectionList.count()));
     logMessage(logFile,
                sFunctionName,
                QString("Client connected: %1")
