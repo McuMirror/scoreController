@@ -92,6 +92,7 @@ protected:
     bool            PrepareLogFile();
     void            prepareDiscovery();
     virtual QString FormatStatusMsg();
+    void            UpdateUI();
 
 protected:
     struct connection{

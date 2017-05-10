@@ -83,7 +83,6 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
 
     PrepareLogFile();
 
-
     if((panelType < FIRST_PANEL) || (panelType > LAST_PANEL)) {
         logMessage(logFile,
                    sFunctionName,
@@ -336,6 +335,7 @@ ScoreController::onProcessConnectionRequest() {
                        .arg(hostAddress.toString())
                        .arg(port));
             RemoveClient(hostAddress);
+            UpdateUI();
             sMessage = "<serverIP>" + sIpAddresses + "</serverIP>";
             logMessage(logFile,
                        sFunctionName,
@@ -596,6 +596,7 @@ ScoreController::SendToOne(QWebSocket* pClient, QString sMessage) {
                    sFunctionName,
                    QString("Client socket is invalid !"));
         RemoveClient(pClient->peerAddress());
+        UpdateUI();
     }
     return 0;
 }
@@ -625,15 +626,27 @@ ScoreController::RemoveClient(QHostAddress hAddress) {
             pClientListDialog->addItem(connectionList.at(i).clientAddress.toString());
         }
     }
-    if(connectionList.count() == 1)
-        shutdownButton->setText(QString("Spegni %1\nTabellone").arg(connectionList.count()));
-    else
-        shutdownButton->setText(QString("Spegni %1\nTabelloni").arg(connectionList.count()));
     if(pClientToClose != NULL) {
         pClientToClose->abort();
         pClientToClose->deleteLater();
     }
-    if(connectionList.count() == 0) {
+}
+
+
+void
+ScoreController::UpdateUI() {
+    if(connectionList.count() == 1) {
+        startStopLoopSpotButton->setDisabled(false);
+        startStopSpotButton->setDisabled(false);
+        startStopSlideShowButton->setDisabled(false);
+        startStopLiveCameraButton->setDisabled(false);
+        cameraControlButton->setDisabled(false);
+        generalSetupButton->setDisabled(true);
+        shutdownButton->setText(QString("Spegni %1\nTabellone").arg(connectionList.count()));
+        shutdownButton->setDisabled(false);
+        shutdownButton->show();
+    }
+    else if(connectionList.count() == 0) {
         startStopLoopSpotButton->setDisabled(true);
         startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
         startStopSpotButton->setDisabled(true);
@@ -644,7 +657,10 @@ ScoreController::RemoveClient(QHostAddress hAddress) {
         startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
         cameraControlButton->setDisabled(true);
         generalSetupButton->setDisabled(false);
-        shutdownButton->setDisabled(true);
+        shutdownButton->hide();
+    }
+    else {
+        shutdownButton->setText(QString("Spegni %1\nTabelloni").arg(connectionList.count()));
     }
 }
 
@@ -670,19 +686,7 @@ ScoreController::onNewConnection(QWebSocket *pClient) {
     newConnection.clientAddress = address;
     connectionList.append(newConnection);
     pClientListDialog->addItem(sAddress);
-    if(connectionList.count() == 1) {
-        startStopLoopSpotButton->setDisabled(false);
-        startStopSpotButton->setDisabled(false);
-        startStopSlideShowButton->setDisabled(false);
-        startStopLiveCameraButton->setDisabled(false);
-        cameraControlButton->setDisabled(false);
-        generalSetupButton->setDisabled(true);
-        shutdownButton->setDisabled(false);
-    }
-    if(connectionList.count() == 1)
-        shutdownButton->setText(QString("Spegni %1\nTabellone").arg(connectionList.count()));
-    else
-        shutdownButton->setText(QString("Spegni %1\nTabelloni").arg(connectionList.count()));
+    UpdateUI();
     logMessage(logFile,
                sFunctionName,
                QString("Client connected: %1")
@@ -702,6 +706,7 @@ ScoreController::onClientDisconnected() {
                .arg(pClient->closeReason())
                .arg(pClient->closeCode()));
     RemoveClient(pClient->peerAddress());
+    UpdateUI();
 }
 
 
@@ -738,6 +743,7 @@ ScoreController::CreateSpotButtonBox() {
     cameraControlButton->setDisabled(true);
     generalSetupButton->setDisabled(false);
     shutdownButton->setDisabled(true);
+    shutdownButton->hide();
 
     connect(cameraControlButton, SIGNAL(clicked()),
             &buttonClick, SLOT(play()));
