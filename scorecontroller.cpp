@@ -74,7 +74,7 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     if(!sBaseDir.endsWith(QString("/"))) sBaseDir+= QString("/");
     sSlideDir   = QString("%1slides/").arg(sBaseDir);
     sSpotDir    = QString("%1spots/").arg(sBaseDir);
-    logFileName = QString("%1volley_controller.txt").arg(sBaseDir);
+    logFileName = QString("%1score_controller.txt").arg(sBaseDir);
 
     logFile       = Q_NULLPTR;
     slideList     = QStringList();
