@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPushButton>
 #include <QListWidget>
 #include <QListWidgetItem>
+#include <QComboBox>
 #include <QMessageBox>
 
 ClientListDialog::ClientListDialog(QWidget* parent)
@@ -35,9 +36,10 @@ ClientListDialog::ClientListDialog(QWidget* parent)
     , tiltMin(-30)
     , tiltMax(30)
 {
-    QHBoxLayout*  mainLayout = new QHBoxLayout();
-    mainLayout->addWidget(createClientListBox());
-    mainLayout->addWidget(createPanTiltBox());
+    QGridLayout*  mainLayout = new QGridLayout();
+    mainLayout->addWidget(createClientListBox(),  0,  0, 10, 10);
+    mainLayout->addWidget(createOrientationBox(), 0, 10,  2, 10);
+    mainLayout->addWidget(createPanTiltBox(),     2, 10,  8, 10);
     setLayout(mainLayout);
     connect(this, SIGNAL(finished(int)),
             this, SLOT(onCloseCamera()));
@@ -66,6 +68,25 @@ ClientListDialog::createClientListBox() {
     clientListLayout->addWidget(closeButton, 6, 1, 1, 1);
     clientListBox->setLayout(clientListLayout);
     return clientListBox;
+}
+
+
+QGroupBox*
+ClientListDialog::createOrientationBox() {
+    QGroupBox* orientationBox = new QGroupBox();
+    QGridLayout* orientationLayout = new QGridLayout();
+    orientationBox->setTitle(tr("Orientamento"));
+    pPanelOrientation = new QComboBox();
+    pPanelOrientation->addItem(QString("Normale"));
+    pPanelOrientation->addItem(QString("Riflesso"));
+    pPanelOrientation->addItem(QString("Rot. Dx"));
+    pPanelOrientation->addItem(QString("Rot. Sx"));
+//    pPanelOrientation->setDisabled(true);
+    connect(pPanelOrientation, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(onChangePanelOrientation(int)));
+    orientationLayout->addWidget(pPanelOrientation, 0, 0, 2, 3);
+    orientationBox->setLayout(orientationLayout);
+    return orientationBox;
 }
 
 
@@ -204,6 +225,7 @@ ClientListDialog::onClientSelected(QListWidgetItem* selectedClient) {
   downButton->setDisabled(true);
   sSelectedClient = selectedClient->text();
   emit enableVideo(sSelectedClient);
+  emit getOrientation(sSelectedClient);
 }
 
 
@@ -215,6 +237,20 @@ ClientListDialog::onRemotePanTiltReceived(int newPan, int newTilt) {
     rightButton->setDisabled(iPan >= panMax);
     upButton->setDisabled(iTilt >= tiltMax);
     downButton->setDisabled(iTilt <= tiltMin);
+}
+
+
+void
+ClientListDialog::onOrientationReceived(PanelOrientation currentOrientation) {
+    int index = static_cast<int>(currentOrientation);
+    pPanelOrientation->setCurrentIndex(index);
+    pPanelOrientation->setEnabled(true);
+}
+
+
+void
+ClientListDialog::onChangePanelOrientation(int newOrientation) {
+    emit changeOrientation(sSelectedClient, static_cast<PanelOrientation>(newOrientation));
 }
 
 

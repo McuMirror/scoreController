@@ -125,6 +125,12 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     connect(pClientListDialog, SIGNAL(newTiltValue(QString,int)),
             this, SLOT(onSetNewTiltValue(QString, int)));
 
+    // Panel orientation management
+    connect(pClientListDialog, SIGNAL(getOrientation(QString)),
+            this, SLOT(onGetPanelOrientation(QString)));
+    connect(pClientListDialog, SIGNAL(changeOrientation(QString,PanelOrientation)),
+            this, SLOT(onChangePanelOrientation(QString,PanelOrientation)));
+
 }
 
 
@@ -551,6 +557,29 @@ ScoreController::onProcessTextMessage(QString sMessage) {
             SendToOne(pClient, sMessage);
         }
     }// getConf
+    
+    sToken = XML_Parse(sMessage, "orientation");
+    if(sToken != sNoData) {
+        bool ok;
+        int iOrientation = sToken.toInt(&ok);
+        if(!ok) {
+            logMessage(logFile,
+                       sFunctionName,
+                       QString("Illegal orientation received: %1")
+                       .arg(sToken));
+            return;
+        }
+        try {
+            PanelOrientation orientation = static_cast<PanelOrientation>(iOrientation);
+            pClientListDialog->onOrientationReceived(orientation);
+        } catch(...) {
+            logMessage(logFile,
+                       sFunctionName,
+                       QString("Illegal orientation received: %1")
+                       .arg(iOrientation));
+            return;
+        }
+    }// orientation
 }
 
 
@@ -1014,3 +1043,28 @@ ScoreController::FormatStatusMsg() {
 }
 
 
+void
+ScoreController::onGetPanelOrientation(QString sClientIp) {
+    QHostAddress hostAddress(sClientIp);
+    for(int i=0; i<connectionList.count(); i++) {
+        if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
+            QString sMessage = "<getOrientation>1</getOrientation>";
+            SendToOne(connectionList.at(i).pClientSocket, sMessage);
+            return;
+        }
+    }
+}
+
+
+void
+ScoreController::onChangePanelOrientation(QString sClientIp, PanelOrientation orientation) {
+    QHostAddress hostAddress(sClientIp);
+    for(int i=0; i<connectionList.count(); i++) {
+        if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
+            QString sMessage = QString("<setOrientation>%1</setOrientation>")
+                                       .arg(static_cast<int>(orientation));
+            SendToOne(connectionList.at(i).pClientSocket, sMessage);
+            return;
+        }
+    }
+}

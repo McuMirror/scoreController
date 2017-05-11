@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFileInfoList>
 #include <QSoundEffect>
 
+#include "panelorientation.h"
+
 
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
 QT_FORWARD_DECLARE_CLASS(QUdpSocket)
@@ -76,6 +78,9 @@ protected slots:
     void onStopCamera();
     void onSetNewPanValue(QString sClientIp, int newPan);
     void onSetNewTiltValue(QString sClientIp, int newTilt);
+
+    void onGetPanelOrientation(QString sClientIp);
+    void onChangePanelOrientation(QString sClientIp, PanelOrientation orientation);
 
     void onFileServerDone(bool bError);
 

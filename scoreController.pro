@@ -39,7 +39,8 @@ HEADERS  += scorecontroller.h \
     volleycontroller.h \
     button.h \
     edit.h \
-    radioButton.h
+    radioButton.h \
+    panelorientation.h
 
 RESOURCES += scorecontroller.qrc
 

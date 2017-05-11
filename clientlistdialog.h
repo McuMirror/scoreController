@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef CLIENTLISTDIALOG_H
 #define CLIENTLISTDIALOG_H
 
+#include "panelorientation.h"
+
 #include <QObject>
 #include <QDialog>
 
@@ -27,6 +29,7 @@ QT_FORWARD_DECLARE_CLASS(QGroupBox)
 QT_FORWARD_DECLARE_CLASS(QListWidget)
 QT_FORWARD_DECLARE_CLASS(QListWidgetItem)
 QT_FORWARD_DECLARE_CLASS(QSlider)
+QT_FORWARD_DECLARE_CLASS(QComboBox)
 
 class ClientListDialog : public QDialog
 {
@@ -40,6 +43,7 @@ public:
 public slots:
     void onRemotePanTiltReceived(int newPan, int newTilt);
     void onCloseCamera();
+    void onOrientationReceived(PanelOrientation currentOrientation);
 
 signals:
     void enableVideo(QString sIpAdress);
@@ -47,6 +51,8 @@ signals:
     void setPanTilt(int newPan, int newTilt);
     void newPanValue(QString sClientIp, int newPan);
     void newTiltValue(QString sClientIp, int newTilt);
+    void getOrientation(QString sIpAdress);
+    void changeOrientation(QString sIpAdress, PanelOrientation newOrientation);
 
 private slots:
     void onClientSelected(QListWidgetItem* selectedClient);
@@ -54,10 +60,12 @@ private slots:
     void onRightButtonPressed();
     void onUpButtonPressed();
     void onDownButtonPressed();
+    void onChangePanelOrientation(int);
 
 private:
     QGroupBox* createClientListBox();
     QGroupBox* createPanTiltBox();
+    QGroupBox* createOrientationBox();
 
 private:
     QWidget*      pMyParent;
@@ -74,6 +82,7 @@ private:
     int           panMax;
     int           tiltMin;
     int           tiltMax;
+    QComboBox*    pPanelOrientation;
 
 public:
     void clear();
