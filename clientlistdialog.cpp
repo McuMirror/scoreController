@@ -81,7 +81,7 @@ ClientListDialog::createOrientationBox() {
     pPanelOrientation->addItem(QString("Riflesso"));
     pPanelOrientation->addItem(QString("Rot. Dx"));
     pPanelOrientation->addItem(QString("Rot. Sx"));
-//    pPanelOrientation->setDisabled(true);
+    pPanelOrientation->setDisabled(true);
     connect(pPanelOrientation, SIGNAL(currentIndexChanged(int)),
             this, SLOT(onChangePanelOrientation(int)));
     orientationLayout->addWidget(pPanelOrientation, 0, 0, 2, 3);
