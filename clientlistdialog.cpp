@@ -257,5 +257,6 @@ ClientListDialog::onChangePanelOrientation(int newOrientation) {
 int
 ClientListDialog::exec() {
   clientListWidget->clearSelection();
+  pPanelOrientation->setEnabled(false);
   return QDialog::exec();
 }
