@@ -29,6 +29,7 @@ int
 main(int argc, char *argv[]) {
 
     QApplication app(argc, argv);
+    int iresult;
 
     QFont myFont = QApplication::font();
     myFont.setPointSize(32);
@@ -38,23 +39,23 @@ main(int argc, char *argv[]) {
     app.setFont(myFont, "QLabel");
 
     ChooseDiscilpline *pChooser = new ChooseDiscilpline();
-    pChooser->exec();
-
     ScoreController* pController;
-    if(pChooser->getDiscipline() == BASKET_PANEL)
-        pController = new BasketController();
-    else
-        pController = new VolleyController();
-    pChooser->close();
-    delete pChooser;
+
+    while(pChooser->exec() != QDialog::Rejected) {
+        pChooser->close();
+        if(pChooser->getDiscipline() == BASKET_PANEL)
+            pController = new BasketController();
+        else
+            pController = new VolleyController();
 
 #ifdef Q_OS_ANDROID
-    pController->showFullScreen();
+        pController->showFullScreen();
 #else
-    pController->showMaximized();
-    //pController->show();
+        pController->showMaximized();
+//        pController->show();
 #endif
-
-    int iresult = app.exec();
+        iresult = app.exec();
+        delete pController;
+    }
     return iresult;
 }

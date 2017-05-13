@@ -29,6 +29,8 @@ private slots:
     void on_VolleyRadioButton_clicked();
     void on_goPushButton_clicked();
 
+    void on_closePushButton_clicked();
+
 private:
     Ui::ChooseDiscilpline *ui;
     int discipline;

@@ -160,6 +160,8 @@ ScoreController::WaitForNetworkReady() {
 
 
 ScoreController::~ScoreController() {
+    if(logFile)
+        logFile->flush();
 }
 
 

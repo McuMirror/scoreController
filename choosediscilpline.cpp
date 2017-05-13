@@ -40,3 +40,9 @@ int
 ChooseDiscilpline::getDiscipline() {
     return discipline;
 }
+
+
+void
+ChooseDiscilpline::on_closePushButton_clicked() {
+    done(QDialog::Rejected);
+}
