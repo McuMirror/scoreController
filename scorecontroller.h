@@ -139,7 +139,7 @@ protected:
     QPushButton*          startStopSpotButton;
     QPushButton*          startStopSlideShowButton;
     QPushButton*          startStopLiveCameraButton;
-    QPushButton*          cameraControlButton;
+    QPushButton*          panelControlButton;
     QPushButton*          generalSetupButton;
     QPushButton*          shutdownButton;
 

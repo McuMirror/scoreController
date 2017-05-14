@@ -695,7 +695,7 @@ ScoreController::UpdateUI() {
         startStopSpotButton->setDisabled(false);
         startStopSlideShowButton->setDisabled(false);
         startStopLiveCameraButton->setDisabled(false);
-        cameraControlButton->setDisabled(false);
+        panelControlButton->setDisabled(false);
         generalSetupButton->setDisabled(true);
         shutdownButton->setText(QString("Spegni %1\nTabellone").arg(connectionList.count()));
         shutdownButton->setDisabled(false);
@@ -710,7 +710,7 @@ ScoreController::UpdateUI() {
         startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
         startStopLiveCameraButton->setDisabled(true);
         startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
-        cameraControlButton->setDisabled(true);
+        panelControlButton->setDisabled(true);
         generalSetupButton->setDisabled(false);
         shutdownButton->hide();
     }
@@ -785,7 +785,7 @@ ScoreController::CreateSpotButtonBox() {
     startStopSlideShowButton = new QPushButton(tr("Avvia\nSlide Show"));
     startStopLiveCameraButton = new QPushButton(tr("Avvia\nLive Camera"));
 
-    cameraControlButton = new QPushButton(tr("Controlo\nTelecamere"));
+    panelControlButton = new QPushButton(tr("Controlo\nTabelloni"));
 
     generalSetupButton = new QPushButton(tr("Setup\nGenerale"));
     shutdownButton = new QPushButton(QString("Spegni %1\nTabelloni").arg(connectionList.count()));
@@ -795,14 +795,14 @@ ScoreController::CreateSpotButtonBox() {
     startStopSlideShowButton->setDisabled(true);
     startStopLiveCameraButton->setDisabled(true);
 
-    cameraControlButton->setDisabled(true);
+    panelControlButton->setDisabled(true);
     generalSetupButton->setDisabled(false);
     shutdownButton->setDisabled(true);
     shutdownButton->hide();
 
-    connect(cameraControlButton, SIGNAL(clicked()),
+    connect(panelControlButton, SIGNAL(clicked()),
             &buttonClick, SLOT(play()));
-    connect(cameraControlButton, SIGNAL(clicked(bool)),
+    connect(panelControlButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonCameraControlClicked()));
 
     connect(startStopLoopSpotButton, SIGNAL(clicked(bool)),
@@ -844,7 +844,7 @@ ScoreController::CreateSpotButtonBox() {
     spotButtonLayout->addWidget(startStopLiveCameraButton, 5, 0, 1, 1);
 
     spotButtonLayout->addWidget(new QLabel(""),            6, 0, 1, 1);
-    spotButtonLayout->addWidget(cameraControlButton,       7, 0, 1, 1);
+    spotButtonLayout->addWidget(panelControlButton,        7, 0, 1, 1);
 
     spotButtonLayout->addWidget(new QLabel(""),            8, 0, 1, 1);
 
