@@ -29,7 +29,7 @@ int
 main(int argc, char *argv[]) {
 
     QApplication* pApp;
-    int iresult;
+    int iresult = 0;
 
     pApp = new QApplication(argc, argv);
 
