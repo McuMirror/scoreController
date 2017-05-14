@@ -28,21 +28,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 int
 main(int argc, char *argv[]) {
 
-    QApplication app(argc, argv);
+    QApplication* pApp;
     int iresult;
 
-    QFont myFont = QApplication::font();
-    myFont.setPointSize(32);
-    app.setFont(myFont, "Edit");
-    myFont.setPointSize(18);
-    app.setFont(myFont, "QRadioButton");
-    app.setFont(myFont, "QLabel");
+    pApp = new QApplication(argc, argv);
 
     ChooseDiscilpline *pChooser = new ChooseDiscilpline();
     ScoreController* pController;
 
     while(pChooser->exec() != QDialog::Rejected) {
         pChooser->close();
+        QFont myFont = QApplication::font();
+        myFont.setPointSize(32);
+        pApp->setFont(myFont, "Edit");
+        myFont.setPointSize(18);
+        pApp->setFont(myFont, "QRadioButton");
+        pApp->setFont(myFont, "QLabel");
         if(pChooser->getDiscipline() == BASKET_PANEL)
             pController = new BasketController();
         else
@@ -54,8 +55,10 @@ main(int argc, char *argv[]) {
         pController->showMaximized();
 //        pController->show();
 #endif
-        iresult = app.exec();
-        delete pController;
+        iresult = pApp->exec();
+//        ScoreController* pTemp = pController;
+//        pTemp->deleteLater();
+        pApp = new QApplication(argc, argv);
     }
     return iresult;
 }

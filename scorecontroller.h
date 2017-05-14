@@ -57,6 +57,7 @@ public:
 
 signals:
     void startFileServer();
+    void closeFileServer();
 
 protected slots:
     void onButtonStartStopSpotClicked();

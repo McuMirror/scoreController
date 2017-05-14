@@ -37,12 +37,10 @@ public:
     explicit FileServer(QFile *_logFile = Q_NULLPTR, QObject *parent = 0);
     void setServerPort(quint16 _port);
     bool setDirs(QString _sSlideDir, QString _sSpotDir);
+    void closeServer();
 
 private:
     int SendToOne(QWebSocket* pSocket, QString sMessage);
-
-protected:
-    QString XML_Parse(QString input_string, QString token);
 
 signals:
     void fileServerDone(bool);
@@ -50,7 +48,8 @@ signals:
     void serverAddress(QString);
 
 public slots:
-    void startServer();
+    void onStartServer();
+    void onCloseServer();
     void senderThreadFinished();
     void onFileTransferDone(bool bSuccess);
 
@@ -63,7 +62,6 @@ private slots:
     void onFileServerError(QWebSocketProtocol::CloseCode);
 
 private:
-    QString       sNoData;
     quint16       port;
     QString       sSlideDir;
     QStringList   slideList;

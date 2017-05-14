@@ -112,7 +112,9 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     pFileServerThread = new QThread();
     pFileUpdaterServer->moveToThread(pFileServerThread);
     connect(this, SIGNAL(startFileServer()),
-            pFileUpdaterServer, SLOT(startServer()));
+            pFileUpdaterServer, SLOT(onStartServer()));
+    connect(this, SIGNAL(closeFileServer()),
+            pFileUpdaterServer, SLOT(onCloseServer()));
     pFileServerThread->start(QThread::LowestPriority);
 
     // Pan-Tilt Camera management
@@ -160,8 +162,7 @@ ScoreController::WaitForNetworkReady() {
 
 
 ScoreController::~ScoreController() {
-    if(logFile)
-        logFile->flush();
+    QString sFunctionName = QString("ScoreController::~ScoreController");
 }
 
 
@@ -336,6 +337,8 @@ ScoreController::onProcessConnectionRequest() {
         pDiscoverySocket->readDatagram(datagram.data(), datagram.size(), &hostAddress, &port);
         sToken = XML_Parse(datagram.data(), "getServer");
         if(sToken != sNoData) {
+            sMessage = "<serverIP>" + sIpAddresses + "</serverIP>";
+            sendAcceptConnection(pDiscoverySocket, sMessage, hostAddress, port);
             logMessage(logFile,
                        sFunctionName,
                        QString("Connection request from: %1 at Address %2:%3")
@@ -343,13 +346,11 @@ ScoreController::onProcessConnectionRequest() {
                        .arg(hostAddress.toString())
                        .arg(port));
             RemoveClient(hostAddress);
-            UpdateUI();
-            sMessage = "<serverIP>" + sIpAddresses + "</serverIP>";
             logMessage(logFile,
                        sFunctionName,
                        QString("Sent: %1")
                        .arg(sMessage));
-            sendAcceptConnection(pDiscoverySocket, sMessage, hostAddress, port);
+            UpdateUI();
         }
     }
 }
@@ -383,6 +384,25 @@ ScoreController::closeEvent(QCloseEvent *event) {
     Q_UNUSED(sFunctionName)
     QString sMessage;
 
+    // Close all the discovery sockets
+    for(int i=0; i<discoverySocketArray.count(); i++)
+        discoverySocketArray.at(i)->close();
+    emit closeFileServer();
+//    if(pFileServerThread->isRunning()) {
+//        pFileServerThread->requestInterruption();
+//        if(pFileServerThread->wait(3000)) {
+//            logMessage(logFile,
+//                       sFunctionName,
+//                       QString("File Server Thread regularly closed"));
+//        }
+//        else {
+//            logMessage(logFile,
+//                       sFunctionName,
+//                       QString("File Server Thread forced to close"));
+//            pFileServerThread->terminate();
+//        }
+//    }
+
     if(connectionList.count() > 0) {
         int answer = QMessageBox::question(this,
                                            sFunctionName,
@@ -404,9 +424,13 @@ ScoreController::closeEvent(QCloseEvent *event) {
             sMessage = "<kill>1</kill>";
             SendToAll(sMessage);
         }
-        if(logFile) {
-            logFile->close();
-        }
+    }
+    pPanelServer->closeServer();
+    if(logFile) {
+        logFile->flush();
+        logFile->close();
+        delete logFile;
+        logFile = Q_NULLPTR;
     }
 }
 
