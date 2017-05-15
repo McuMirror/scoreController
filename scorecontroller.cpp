@@ -40,9 +40,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "fileserver.h"
 
 
-#define DISCOVERY_PORT     45453
-#define SERVER_SOCKET_PORT 45454
-#define FILE_UPDATER_PORT  45455
+#define DISCOVERY_PORT      45453
+#define SERVER_SOCKET_PORT  45454
+#define SPOT_UPDATER_PORT   45455
+#define SLIDE_UPDATER_PORT  45456
 
 
 //#define QT_DEBUG
@@ -56,8 +57,9 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     , connectionList(QList<connection>())
     , discoveryPort(DISCOVERY_PORT)
     , serverPort(SERVER_SOCKET_PORT)
-    , updaterPort(FILE_UPDATER_PORT)
     , discoveryAddress(QHostAddress("224.0.0.1"))
+    , slideUpdaterPort(SLIDE_UPDATER_PORT)
+    , spotUpdaterPort(SPOT_UPDATER_PORT)
 {
     QString sFunctionName = QString(" ScoreController::Volley_Controller ");
     Q_UNUSED(sFunctionName)
@@ -77,7 +79,7 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     logFileName = QString("%1score_controller.txt").arg(sBaseDir);
 
     logFile       = Q_NULLPTR;
-    slideList     = QStringList();
+    slideList     = QFileInfoList();
     iCurrentSlide = 0;
     iCurrentSpot  = 0;
 
@@ -104,18 +106,31 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
         return;
     }
 
-    // Creating a File Update Service
-    pFileUpdaterServer = new FileServer(logFile, Q_NULLPTR);
-    connect(pFileUpdaterServer, SIGNAL(fileServerDone(bool)),
-            this, SLOT(onFileServerDone(bool)));
-    pFileUpdaterServer->setServerPort(updaterPort);
-    pFileServerThread = new QThread();
-    pFileUpdaterServer->moveToThread(pFileServerThread);
-    connect(this, SIGNAL(startFileServer()),
-            pFileUpdaterServer, SLOT(onStartServer()));
-    connect(this, SIGNAL(closeFileServer()),
-            pFileUpdaterServer, SLOT(onCloseServer()));
-    pFileServerThread->start(QThread::LowestPriority);
+    // Creating a Spot Update Service
+    pSpotUpdaterServer = new FileServer(QString("SpotUpdater"), logFile, Q_NULLPTR);
+    connect(pSpotUpdaterServer, SIGNAL(fileServerDone(bool)),
+            this, SLOT(onSpotServerDone(bool)));
+    pSpotUpdaterServer->setServerPort(spotUpdaterPort);
+    pSpotServerThread = new QThread();
+    pSpotUpdaterServer->moveToThread(pSpotServerThread);
+    connect(this, SIGNAL(startSpotServer()),
+            pSpotUpdaterServer, SLOT(onStartServer()));
+    connect(this, SIGNAL(closeSpotServer()),
+            pSpotUpdaterServer, SLOT(onCloseServer()));
+    pSpotServerThread->start(QThread::LowestPriority);
+
+    // Creating a Slide Update Service
+    pSlideUpdaterServer = new FileServer(QString("SlideUpdater"), logFile, Q_NULLPTR);
+    connect(pSlideUpdaterServer, SIGNAL(fileServerDone(bool)),
+            this, SLOT(onSlideServerDone(bool)));
+    pSlideUpdaterServer->setServerPort(slideUpdaterPort);
+    pSlideServerThread = new QThread();
+    pSlideUpdaterServer->moveToThread(pSlideServerThread);
+    connect(this, SIGNAL(startSlideServer()),
+            pSlideUpdaterServer, SLOT(onStartServer()));
+    connect(this, SIGNAL(closeSlideServer()),
+            pSlideUpdaterServer, SLOT(onCloseServer()));
+    pSlideServerThread->start(QThread::LowestPriority);
 
     // Pan-Tilt Camera management
     connect(pClientListDialog, SIGNAL(disableVideo()),
@@ -167,17 +182,33 @@ ScoreController::~ScoreController() {
 
 
 void
-ScoreController::onFileServerDone(bool bError) {
-    QString sFunctionName = QString(" ScoreController::onFileServerDone ");
+ScoreController::onSlideServerDone(bool bError) {
+    QString sFunctionName = QString(" ScoreController::onSlideServerDone ");
     if(bError) {
         logMessage(logFile,
                    sFunctionName,
-                   QString("File server stopped with errors"));
+                   QString("Slide server stopped with errors"));
     }
     else {
         logMessage(logFile,
                    sFunctionName,
-                   QString("File server stopped without errors"));
+                   QString("Slide server stopped without errors"));
+    }
+}
+
+
+void
+ScoreController::onSpotServerDone(bool bError) {
+    QString sFunctionName = QString(" ScoreController::onSpotServerDone ");
+    if(bError) {
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Spot server stopped with errors"));
+    }
+    else {
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Spot server stopped without errors"));
     }
 }
 
@@ -387,7 +418,8 @@ ScoreController::closeEvent(QCloseEvent *event) {
     // Close all the discovery sockets
     for(int i=0; i<discoverySocketArray.count(); i++)
         discoverySocketArray.at(i)->close();
-    emit closeFileServer();
+    emit closeSpotServer();
+    emit closeSlideServer();
 //    if(pFileServerThread->isRunning()) {
 //        pFileServerThread->requestInterruption();
 //        if(pFileServerThread->wait(3000)) {
@@ -482,7 +514,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         QStringList values = QStringList(sToken.split(tr(","),QString::SkipEmptyParts));
         pClientListDialog->onRemotePanTiltReceived(values.at(0).toInt(), values.at(1).toInt());
     }// pan_tilt
-
+/*
     sToken = XML_Parse(sMessage, "image_size");
     if(sToken != sNoData) {
         QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
@@ -546,14 +578,15 @@ ScoreController::onProcessTextMessage(QString sMessage) {
             iCurrentSlide = (iCurrentSlide + 1) % slideList.count();
         }
     }// send_image
-
-    sToken = XML_Parse(sMessage, "send_spot_list");
+*/
+/*
+    sToken = XML_Parse(sMessage, "send_file_list");
     if(sToken != sNoData) {
         if(spotList.isEmpty())
             return;
         QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
         if(pClient->isValid()) {
-            sMessage = QString("<spot_list>");
+            sMessage = QString("<file_list>");
             for(int i=0; i<spotList.count()-1; i++) {
                 sMessage += spotList.at(i).fileName();
                 sMessage += QString(";%1,").arg(spotList.at(i).size());
@@ -564,7 +597,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
             SendToOne(pClient, sMessage);
         }
     }// send_spot_list
-
+*/
     sToken = XML_Parse(sMessage, "send_spot");
     if(sToken != sNoData) {
         if(spotList.isEmpty())
@@ -1019,7 +1052,7 @@ ScoreController::onButtonSetupClicked() {
 //        pSettings->setValue("directories/slides", sSlideDir);
         QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
         slideDir.setNameFilters(filter);
-        slideList = slideDir.entryList();
+        slideList = slideDir.entryInfoList();
     }
     logMessage(logFile,
                sFunctionName,

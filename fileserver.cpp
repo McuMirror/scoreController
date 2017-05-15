@@ -32,14 +32,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define LOG_MESG
 
 
-FileServer::FileServer(QFile* _logFile, QObject *parent)
-    : NetServer(QString("FileServer"), _logFile, parent)
+FileServer::FileServer(QString sName, QFile* _logFile, QObject *parent)
+    : NetServer(sName, _logFile, parent)
 {
     port      = 0;
-    sSlideDir = QString();
-    sSpotDir  = QString();
-    slideList = QStringList();
-    spotList  = QList<QFileInfo>();
+    sFileDir  = QString();
+    fileList  = QList<QFileInfo>();
     connections.clear();
 }
 
@@ -51,35 +49,22 @@ FileServer::setServerPort(quint16 _port) {
 
 
 bool
-FileServer::setDirs(QString _sSlideDir, QString _sSpotDir) {
-    QString sFunctionName = " FileServer::setDirs ";
-    sSlideDir = _sSlideDir;
-    sSpotDir  = _sSpotDir;
-    if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
-    if(!sSpotDir.endsWith(QString("/")))  sSpotDir+= QString("/");
+FileServer::setDir(QString sDirectory, QString sExtensions) {
+    QString sFunctionName = " FileServer::setDir ";
+    sFileDir = sDirectory;
+    if(!sFileDir.endsWith(QString("/")))  sFileDir+= QString("/");
 
-    QDir slideDir(sSlideDir);
-    if(slideDir.exists()) {
-        QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
-        slideDir.setNameFilters(filter);
-        slideList = slideDir.entryList();
+    QDir sDir(sFileDir);
+    if(sDir.exists()) {
+        QStringList nameFilter(QStringList() << sExtensions);
+        sDir.setNameFilters(nameFilter);
+        sDir.setFilter(QDir::Files);
+        fileList = sDir.entryInfoList();
     }
     logMessage(logFile,
                sFunctionName,
-               QString("Found %1 slides")
-               .arg(slideList.count()));
-
-    QDir spotDir(sSpotDir);
-    if(spotDir.exists()) {
-        QStringList nameFilter(QStringList() << "*.mp4");
-        spotDir.setNameFilters(nameFilter);
-        spotDir.setFilter(QDir::Files);
-        spotList = spotDir.entryInfoList();
-    }
-    logMessage(logFile,
-               sFunctionName,
-               QString("Found %1 spots")
-               .arg(spotList.count()));
+               QString("Found %1 files")
+               .arg(fileList.count()));
 
     return true;
 }
@@ -228,12 +213,8 @@ FileServer::onProcessTextMessage(QString sMessage) {
                    .arg(length)
                    .arg(startPos));
         QFile file;
-        QString sFilePath = sSpotDir + sFileName;
+        QString sFilePath = sFileDir + sFileName;
         file.setFileName(sFilePath);
-        if(!file.exists()) {
-            sFilePath = sSlideDir + sFileName;
-            file.setFileName(sFilePath);
-        }
         if(file.exists()) {
             qint64 filesize = file.size();
             if(filesize <= startPos) {
@@ -316,19 +297,19 @@ FileServer::onProcessTextMessage(QString sMessage) {
         }
     }
 
-    sToken = XML_Parse(sMessage, "send_spot_list");
+    sToken = XML_Parse(sMessage, "send_file_list");
     if(sToken != sNoData) {
-        if(spotList.isEmpty())
+        if(fileList.isEmpty())
             return;
         if(pClient->isValid()) {
-            sMessage = QString("<spot_list>");
-            for(int i=0; i<spotList.count()-1; i++) {
-                sMessage += spotList.at(i).fileName();
-                sMessage += QString(";%1,").arg(spotList.at(i).size());
+            sMessage = QString("<file_list>");
+            for(int i=0; i<fileList.count()-1; i++) {
+                sMessage += fileList.at(i).fileName();
+                sMessage += QString(";%1,").arg(fileList.at(i).size());
             }
-            int i = spotList.count()-1;
-            sMessage += spotList.at(i).fileName();
-            sMessage += QString(";%1</spot_list>").arg(spotList.at(i).size());
+            int i = fileList.count()-1;
+            sMessage += fileList.at(i).fileName();
+            sMessage += QString(";%1</file_list>").arg(fileList.at(i).size());
             SendToOne(pClient, sMessage);
         }
     }// send_spot_list

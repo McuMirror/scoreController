@@ -57,7 +57,7 @@ BasketController::BasketController()
     else {
         QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
         slideDir.setNameFilters(filter);
-        slideList = slideDir.entryList();
+        slideList = slideDir.entryInfoList();
         logMessage(logFile,
                    sFunctionName,
                    QString("Slides directory: %1 Found %2 Slides")
@@ -76,8 +76,11 @@ BasketController::BasketController()
     if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
     if(!sSpotDir.endsWith(QString("/")))  sSpotDir+= QString("/");
 
-    pFileUpdaterServer->setDirs(sSlideDir, sSpotDir);
-    emit startFileServer();
+    pSlideUpdaterServer->setDir(sSlideDir,"*.jpg *.jpeg *.png");
+    pSpotUpdaterServer->setDir(sSpotDir, "*.mp4");
+
+    emit startSpotServer();
+    emit startSlideServer();
 
     QGridLayout *mainLayout = new QGridLayout();
 

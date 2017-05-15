@@ -56,8 +56,10 @@ public:
     void closeEvent(QCloseEvent *event);
 
 signals:
-    void startFileServer();
-    void closeFileServer();
+    void startSpotServer();
+    void closeSpotServer();
+    void startSlideServer();
+    void closeSlideServer();
 
 protected slots:
     void onButtonStartStopSpotClicked();
@@ -83,7 +85,8 @@ protected slots:
     void onGetPanelOrientation(QString sClientIp);
     void onChangePanelOrientation(QString sClientIp, PanelOrientation orientation);
 
-    void onFileServerDone(bool bError);
+    void onSlideServerDone(bool bError);
+    void onSpotServerDone(bool bError);
 
 protected:
     QGroupBox      *CreateClientListBox();
@@ -109,8 +112,6 @@ protected:
 
     int                   panelType;
     NetServer            *pPanelServer;
-    QThread              *pFileServerThread;
-    FileServer           *pFileUpdaterServer;
 
     QString               logFileName;
     QFile*                logFile;
@@ -120,18 +121,25 @@ protected:
 
     quint16               discoveryPort;
     quint16               serverPort;
-    quint16               updaterPort;
     QVector<QUdpSocket*>  discoverySocketArray;
 
     QString               sIpAddresses;
     QHostAddress          discoveryAddress;
 
+    QThread              *pSlideServerThread;
+    FileServer           *pSlideUpdaterServer;
+    quint16               slideUpdaterPort;
     QString               sSlideDir;
-    QStringList           slideList;
+    QFileInfoList         slideList;
     int                   iCurrentSlide;
+
+    QThread              *pSpotServerThread;
+    FileServer           *pSpotUpdaterServer;
+    quint16               spotUpdaterPort;
     QString               sSpotDir;
     QFileInfoList         spotList;
     int                   iCurrentSpot;
+
     QSoundEffect          buttonClick;
     QTimer               *pExitTimer;
 

@@ -34,9 +34,9 @@ class FileServer : public NetServer
 {
     Q_OBJECT
 public:
-    explicit FileServer(QFile *_logFile = Q_NULLPTR, QObject *parent = 0);
+    explicit FileServer(QString sName, QFile *_logFile = Q_NULLPTR, QObject *parent = 0);
     void setServerPort(quint16 _port);
-    bool setDirs(QString _sSlideDir, QString _sSpotDir);
+    bool setDir(QString sDirectory, QString sExtensions);
     void closeServer();
 
 private:
@@ -63,14 +63,11 @@ private slots:
 
 private:
     quint16       port;
-    QString       sSlideDir;
-    QStringList   slideList;
-    QString       sSpotDir;
-    QFileInfoList spotList;
+    QString       sFileDir;
+    QFileInfoList fileList;
 
     QVector<QWebSocket*> connections;
-
-    QList<QThread*> senderThreads;
+    QList<QThread*>      senderThreads;
 };
 
 #endif // FILESERVER_H
