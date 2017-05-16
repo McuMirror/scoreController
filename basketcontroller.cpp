@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MAX_TIMEOUTS  3
 #define MAX_FAULS    99 // Da definire il comportamento dopo il numer max di falli !
 #define MAX_PERIODS  99 // Da definire il comportamento dopo il numer max di periodi !
-#define BONUS_TARGET  5 // After this value the Bonus is triggered for the team
+#define BONUS_TARGET  4 // After this value the Bonus is lost for the team
 #define GAME_PERIODS  4 // Oltre questo valore ci sono gli OVERTIMES
 #define REGULAR_TIME 10 // 10 Minuti è la durata di un tempo regolare
 #define OVER_TIME     5 // 5 Minuti è a durata di ciascun overtime
@@ -142,7 +142,7 @@ BasketController::GetSettings() {
     sSpotDir    = pSettings->value("directories/spots", sSpotDir).toString();
 
     for(int iTeam=0; iTeam<2; iTeam++) {
-        if(iFauls[iTeam] >= BONUS_TARGET) {
+        if(iFauls[iTeam] < BONUS_TARGET) {
             iBonus[iTeam] = 1;
         }
         else {
@@ -330,7 +330,7 @@ BasketController::CreateGameBox() {
         bonusEdit[iTeam]->setFrame(false);
         bonusEdit[iTeam]->setAlignment(Qt::AlignHCenter);
         bonusEdit[iTeam]->setReadOnly(true);
-        if(iFauls[iTeam] >= BONUS_TARGET) {
+        if(iFauls[iTeam] < BONUS_TARGET) {
             bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
         else {
@@ -499,7 +499,7 @@ BasketController::onFaulsIncrement(int iTeam) {
     if(iFauls[iTeam] == MAX_FAULS) {// To be changed
         faulsIncrement[iTeam]->setEnabled(false);
     }
-    if(iFauls[iTeam] >= BONUS_TARGET) {
+    if(iFauls[iTeam] < BONUS_TARGET) {
         iBonus[iTeam] = 1;
         bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
@@ -528,7 +528,7 @@ BasketController::onFaulsDecrement(int iTeam) {
     if(iFauls[iTeam] == 0) {
        faulsDecrement[iTeam]->setEnabled(false);
     }
-    if(iFauls[iTeam] >= BONUS_TARGET) {
+    if(iFauls[iTeam] < BONUS_TARGET) {
         iBonus[iTeam] = 1;
         bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
@@ -656,7 +656,7 @@ BasketController::onButtonChangeFieldClicked() {
         if(iFauls[iTeam] == MAX_FAULS) {// To be changed
             faulsIncrement[iTeam]->setEnabled(false);
         }
-        if(iFauls[iTeam] >= BONUS_TARGET) {
+        if(iFauls[iTeam] < BONUS_TARGET) {
             iBonus[iTeam] = 1;
             bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
@@ -720,7 +720,7 @@ BasketController::onButtonNewPeriodClicked() {
         if(iFauls[iTeam] == MAX_FAULS) {// To be changed
             faulsIncrement[iTeam]->setEnabled(false);
         }
-        if(iFauls[iTeam] >= BONUS_TARGET) {
+        if(iFauls[iTeam] < BONUS_TARGET) {
             iBonus[iTeam] = 1;
             bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
