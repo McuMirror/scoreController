@@ -63,5 +63,6 @@ ChooseDiscilpline::on_closePushButton_clicked() {
 
 void
 ChooseDiscilpline::onPanelDone() {
+    pController->deleteLater();
     show();
 }

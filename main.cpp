@@ -37,6 +37,7 @@ main(int argc, char *argv[]) {
     myFont.setPointSize(18);
     pApp->setFont(myFont, "QRadioButton");
     pApp->setFont(myFont, "QLabel");
+
     pChooser->show();
 
     iresult = pApp->exec();

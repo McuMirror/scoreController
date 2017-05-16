@@ -53,6 +53,8 @@ BasketController::BasketController()
     QDir spotDir(sSpotDir);
     if(!slideDir.exists() || !spotDir.exists()) {
         onButtonSetupClicked();
+        pSettings->setValue("directories/slides", sSlideDir);
+        pSettings->setValue("directories/spots", sSpotDir);
     }
     else {
         QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");

@@ -1038,10 +1038,14 @@ ScoreController::onButtonSetupClicked() {
     if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
     slideDir = QDir(sSlideDir);
     if(sSlideDir != QString() && slideDir.exists()) {
-//        pSettings->setValue("directories/slides", sSlideDir);
         QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
         slideDir.setNameFilters(filter);
         slideList = slideDir.entryInfoList();
+    }
+    else {
+        sSlideDir = QDir::homePath();
+        if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
+        slideList = QFileInfoList();
     }
     logMessage(logFile,
                sFunctionName,
@@ -1067,19 +1071,20 @@ ScoreController::onButtonSetupClicked() {
     if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
     spotDir = QDir(sSpotDir);
     if(sSpotDir != QString() && spotDir.exists()) {
-//        pSettings->setValue("directories/spots", sSpotDir);
         QStringList nameFilter(QStringList() << "*.mp4");
         spotDir.setNameFilters(nameFilter);
         spotDir.setFilter(QDir::Files);
         spotList = spotDir.entryInfoList();
     }
+    else {
+        sSpotDir = QDir::homePath();
+        if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
+        spotList = QFileInfoList();
+    }
     logMessage(logFile,
                sFunctionName,
                QString("Found %1 spots")
                .arg(spotList.count()));
-//    pFileUpdaterServer->setDirs(sSlideDir, sSpotDir);
-//    sMessage = QString("<reloadSpot>1</reloadSpot>");
-//    SendToAll(sMessage);
 }
 
 
