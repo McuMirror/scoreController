@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 FileServer::FileServer(QString sName, QFile* _logFile, QObject *parent)
     : NetServer(sName, _logFile, parent)
+    , serverName(sName)
 {
     port      = 0;
     sFileDir  = QString();
@@ -56,15 +57,17 @@ FileServer::setDir(QString sDirectory, QString sExtensions) {
 
     QDir sDir(sFileDir);
     if(sDir.exists()) {
-        QStringList nameFilter(QStringList() << sExtensions);
+        QStringList nameFilter(sExtensions.split(" "));
         sDir.setNameFilters(nameFilter);
         sDir.setFilter(QDir::Files);
         fileList = sDir.entryInfoList();
     }
     logMessage(logFile,
                sFunctionName,
-               QString("Found %1 files")
-               .arg(fileList.count()));
+               serverName +
+               QString(" Found %1 files in %2")
+               .arg(fileList.count())
+               .arg(sFileDir));
 
     return true;
 }
@@ -78,7 +81,8 @@ FileServer::onStartServer() {
     if(port == 0) {
         logMessage(logFile,
                    sFunctionName,
-                   QString("Error! Server port not set."));
+                   serverName +
+                   QString(" Error! Server port not set."));
         emit fileServerDone(true);// Close with errors
         return;
     }
@@ -109,13 +113,15 @@ FileServer::onNewConnection(QWebSocket *pClient) {
         if(connections.at(i)->peerAddress() == pClient->peerAddress()) {
             logMessage(logFile,
                        sFunctionName,
-                       QString("%1 Duplicate requests from %2")
+                       serverName +
+                       QString(" %1 Duplicate requests from %2")
                        .arg(sServerName)
                        .arg(pClient->peerAddress().toString()));
             if(connections.at(i)->isValid() && pClient->isValid()) {
                 logMessage(logFile,
                            sFunctionName,
-                           QString("Both sockets are valid! Removing the old connection"));
+                           serverName +
+                           QString(" Both sockets are valid! Removing the old connection"));
                 connections.at(i)->close(QWebSocketProtocol::CloseCodeNormal, QString("Duplicated request"));
                 connections.at(i)->deleteLater();
             }
@@ -123,14 +129,16 @@ FileServer::onNewConnection(QWebSocket *pClient) {
                 if(pClient->isValid()) {
                     logMessage(logFile,
                                sFunctionName,
-                               QString("Only present socket is valid. Removing the old one"));
+                               serverName +
+                               QString(" Only present socket is valid. Removing the old one"));
                     connections.at(i)->close(QWebSocketProtocol::CloseCodeNormal, QString("Duplicated request"));
                     connections.at(i)->deleteLater();
                 }
                 else {
                     logMessage(logFile,
                                sFunctionName,
-                               QString("Present socket is not valid."));
+                               serverName +
+                               QString(" Present socket is not valid."));
                     pClient->close(QWebSocketProtocol::CloseCodeNormal, QString("Duplicated request"));
                     pClient->deleteLater();
                     return;
@@ -140,7 +148,8 @@ FileServer::onNewConnection(QWebSocket *pClient) {
     }
     logMessage(logFile,
                sFunctionName,
-               QString("Client connected: %1")
+               serverName +
+               QString(" Client connected: %1")
                .arg(pClient->peerAddress().toString()));
     connections.append(pClient);
 
@@ -162,20 +171,23 @@ FileServer::onClientSocketError(QAbstractSocket::SocketError error) {
     QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
     logMessage(logFile,
                sFunctionName,
-               QString("%1 Error %2 %3")
+               serverName +
+               QString(" %1 Error %2 %3")
                .arg(pClient->peerAddress().toString())
                .arg(error)
                .arg(pClient->errorString()));
     if(!disconnect(pClient, 0, 0, 0)) {
         logMessage(logFile,
                    sFunctionName,
-                   QString("Unable to disconnect signals from WebSocket"));
+                   serverName +
+                   QString(" Unable to disconnect signals from WebSocket"));
     }
     pClient->abort();
     if(!connections.removeOne(pClient)) {
         logMessage(logFile,
                    sFunctionName,
-                   QString("Unable to remove %1 from list !")
+                   serverName +
+                   QString(" Unable to remove %1 from list !")
                    .arg(pClient->peerAddress().toString()));
     }
     pClient->deleteLater();
@@ -322,7 +334,8 @@ FileServer::senderThreadFinished() {
     QThread *pThread = qobject_cast<QThread *>(sender());
     logMessage(logFile,
                sFunctionName,
-               QString("Sender Thread terminated"));
+               serverName +
+               QString(" Sender Thread terminated"));
     senderThreads.removeOne(pThread);
     pThread->deleteLater();
 }
@@ -333,7 +346,8 @@ FileServer::onFileTransferDone(bool bSuccess) {
     QString sFunctionName = " FileServer::onFileTransferDone ";
     logMessage(logFile,
                sFunctionName,
-               QString("File Transfer terminated with code %1")
+               serverName +
+               QString(" File Transfer terminated with code %1")
                .arg(bSuccess));
 }
 
@@ -345,13 +359,15 @@ FileServer::SendToOne(QWebSocket* pClient, QString sMessage) {
         qint64 written = pClient->sendTextMessage(sMessage);
         if(written != sMessage.length()) {
             logMessage(logFile,
+                       serverName +
                        sFunctionName,
-                       QString("Error writing %1").arg(sMessage));
+                       QString(" Error writing %1").arg(sMessage));
         }
         else {
             logMessage(logFile,
                        sFunctionName,
-                       QString("Sent %1 to: %2")
+                       serverName +
+                       QString(" Sent %1 to: %2")
                        .arg(sMessage)
                        .arg(pClient->peerAddress().toString()));
         }
@@ -359,7 +375,8 @@ FileServer::SendToOne(QWebSocket* pClient, QString sMessage) {
     else {
         logMessage(logFile,
                    sFunctionName,
-                   QString("Client socket is invalid !"));
+                   serverName +
+                   QString(" Client socket is invalid !"));
     }
     return 0;
 }
@@ -382,14 +399,16 @@ FileServer::onClientDisconnected() {
     QString sDiconnectedAddress = pClient->peerAddress().toString();
     logMessage(logFile,
                sFunctionName,
-               QString("%1 disconnected because %2. Close code: %3")
+               serverName +
+               QString(" %1 disconnected because %2. Close code: %3")
                .arg(sDiconnectedAddress)
                .arg(pClient->closeReason())
                .arg(pClient->closeCode()));
     if(!connections.removeOne(pClient)) {
         logMessage(logFile,
                    sFunctionName,
-                   QString("Unable to remove %1 from list !")
+                   serverName +
+                   QString(" Unable to remove %1 from list !")
                    .arg(sDiconnectedAddress));
     }
 }
@@ -404,13 +423,15 @@ FileServer::onCloseServer() {
         if(senderThreads.at(i)->wait(3000)) {
             logMessage(logFile,
                        sFunctionName,
-                       QString("File Server Thread %1 regularly closed")
+                       serverName +
+                       QString(" File Server Thread %1 regularly closed")
                        .arg(i));
         }
         else {
             logMessage(logFile,
                        sFunctionName,
-                       QString("File Server Thread %1 forced to close")
+                       serverName +
+                       QString(" File Server Thread %1 forced to close")
                        .arg(i));
             senderThreads.at(i)->terminate();
         }

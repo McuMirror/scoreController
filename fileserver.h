@@ -62,6 +62,7 @@ private slots:
     void onFileServerError(QWebSocketProtocol::CloseCode);
 
 private:
+    QString       serverName;
     quint16       port;
     QString       sFileDir;
     QFileInfoList fileList;

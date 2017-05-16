@@ -418,22 +418,9 @@ ScoreController::closeEvent(QCloseEvent *event) {
     // Close all the discovery sockets
     for(int i=0; i<discoverySocketArray.count(); i++)
         discoverySocketArray.at(i)->close();
+
     emit closeSpotServer();
     emit closeSlideServer();
-//    if(pFileServerThread->isRunning()) {
-//        pFileServerThread->requestInterruption();
-//        if(pFileServerThread->wait(3000)) {
-//            logMessage(logFile,
-//                       sFunctionName,
-//                       QString("File Server Thread regularly closed"));
-//        }
-//        else {
-//            logMessage(logFile,
-//                       sFunctionName,
-//                       QString("File Server Thread forced to close"));
-//            pFileServerThread->terminate();
-//        }
-//    }
 
     if(connectionList.count() > 0) {
         int answer = QMessageBox::question(this,

@@ -70,7 +70,7 @@ VolleyController::VolleyController()
     if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
     if(!sSpotDir.endsWith(QString("/")))  sSpotDir+= QString("/");
 
-    pSlideUpdaterServer->setDir(sSlideDir,"*.jpg *.jpeg *.png");
+    pSlideUpdaterServer->setDir(sSlideDir, "*.jpg *.jpeg *.png");
     pSpotUpdaterServer->setDir(sSpotDir, "*.mp4");
 
     emit startSpotServer();
