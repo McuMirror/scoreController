@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+QT_FORWARD_DECLARE_CLASS(ScoreController)
+
 
 #define VOLLEY_PANEL 0
 #define FIRST_PANEL  VOLLEY_PANEL
@@ -24,6 +26,9 @@ public:
     ~ChooseDiscilpline();
     int getDiscipline();
 
+public slots:
+    void onPanelDone();
+
 private slots:
     void on_basketRadioButton_clicked();
     void on_VolleyRadioButton_clicked();
@@ -34,6 +39,7 @@ private slots:
 private:
     Ui::ChooseDiscilpline *ui;
     int discipline;
+    ScoreController* pController;
 };
 
 #endif // CHOOSEDISCILPLINE_H

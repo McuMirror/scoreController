@@ -435,6 +435,7 @@ ScoreController::closeEvent(QCloseEvent *event) {
         } else
         if(answer == QMessageBox::No) {
             for(int i=0; i<connectionList.count(); i++) {
+                disconnect(connectionList.at(i).pClientSocket, 0, 0, 0);
                 connectionList.at(i).pClientSocket->close(QWebSocketProtocol::CloseCodeNormal, "Server Closed");
             }
             connectionList.clear();
@@ -451,6 +452,7 @@ ScoreController::closeEvent(QCloseEvent *event) {
         delete logFile;
         logFile = Q_NULLPTR;
     }
+    emit panelDone();
 }
 
 

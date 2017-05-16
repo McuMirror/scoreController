@@ -1,5 +1,7 @@
 #include "choosediscilpline.h"
 #include "ui_choosediscilpline.h"
+#include "volleycontroller.h"
+#include "basketcontroller.h"
 
 
 
@@ -32,7 +34,19 @@ ChooseDiscilpline::on_VolleyRadioButton_clicked() {
 
 void
 ChooseDiscilpline::on_goPushButton_clicked() {
-    done(QDialog::Accepted);
+    hide();
+    if(getDiscipline() == BASKET_PANEL)
+        pController = new BasketController();
+    else
+        pController = new VolleyController();
+    connect(pController, SIGNAL(panelDone()),
+            this, SLOT(onPanelDone()));
+#ifdef Q_OS_ANDROID
+    pController->showFullScreen();
+#else
+    pController->showMaximized();
+//        pController->show();
+#endif
 }
 
 
@@ -45,4 +59,9 @@ ChooseDiscilpline::getDiscipline() {
 void
 ChooseDiscilpline::on_closePushButton_clicked() {
     done(QDialog::Rejected);
+}
+
+void
+ChooseDiscilpline::onPanelDone() {
+    show();
 }

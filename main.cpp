@@ -17,12 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
 
-//#include "scorecontroller.h"
-#include "volleycontroller.h"
-#include "basketcontroller.h"
 #include "choosediscilpline.h"
 #include <QApplication>
-#include <QMessageBox>
 
 
 int
@@ -34,31 +30,15 @@ main(int argc, char *argv[]) {
     pApp = new QApplication(argc, argv);
 
     ChooseDiscilpline *pChooser = new ChooseDiscilpline();
-    ScoreController* pController;
 
-    while(pChooser->exec() != QDialog::Rejected) {
-        pChooser->close();
-        QFont myFont = QApplication::font();
-        myFont.setPointSize(32);
-        pApp->setFont(myFont, "Edit");
-        myFont.setPointSize(18);
-        pApp->setFont(myFont, "QRadioButton");
-        pApp->setFont(myFont, "QLabel");
-        if(pChooser->getDiscipline() == BASKET_PANEL)
-            pController = new BasketController();
-        else
-            pController = new VolleyController();
+    QFont myFont = QApplication::font();
+    myFont.setPointSize(32);
+    pApp->setFont(myFont, "Edit");
+    myFont.setPointSize(18);
+    pApp->setFont(myFont, "QRadioButton");
+    pApp->setFont(myFont, "QLabel");
+    pChooser->show();
 
-#ifdef Q_OS_ANDROID
-        pController->showFullScreen();
-#else
-        pController->showMaximized();
-//        pController->show();
-#endif
-        iresult = pApp->exec();
-//        ScoreController* pTemp = pController;
-//        pTemp->deleteLater();
-        pApp = new QApplication(argc, argv);
-    }
+    iresult = pApp->exec();
     return iresult;
 }

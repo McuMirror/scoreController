@@ -60,6 +60,7 @@ signals:
     void closeSpotServer();
     void startSlideServer();
     void closeSlideServer();
+    void panelDone();
 
 protected slots:
     void onButtonStartStopSpotClicked();
