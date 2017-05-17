@@ -41,5 +41,6 @@ main(int argc, char *argv[]) {
     pChooser->show();
 
     iresult = pApp->exec();
+    delete pApp;
     return iresult;
 }
