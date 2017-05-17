@@ -418,6 +418,10 @@ void
 FileServer::onCloseServer() {
     QString sFunctionName = " FileServer::onCloseServer ";
     Q_UNUSED(sFunctionName)
+    for(int i=0; i<connections.count(); i++) {
+        disconnect(connections.at(i), 0, 0, 0);
+        connections.at(i)->close();
+    }
     for(int i=0; i<senderThreads.count(); i++) {
         senderThreads.at(i)->requestInterruption();
         if(senderThreads.at(i)->wait(3000)) {

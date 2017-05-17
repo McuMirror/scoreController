@@ -416,8 +416,10 @@ ScoreController::closeEvent(QCloseEvent *event) {
     QString sMessage;
 
     // Close all the discovery sockets
-    for(int i=0; i<discoverySocketArray.count(); i++)
+    for(int i=0; i<discoverySocketArray.count(); i++) {
+        disconnect(discoverySocketArray.at(i), 0, 0, 0);
         discoverySocketArray.at(i)->close();
+    }
 
     emit closeSpotServer();
     emit closeSlideServer();
@@ -503,90 +505,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         QStringList values = QStringList(sToken.split(tr(","),QString::SkipEmptyParts));
         pClientListDialog->onRemotePanTiltReceived(values.at(0).toInt(), values.at(1).toInt());
     }// pan_tilt
-/*
-    sToken = XML_Parse(sMessage, "image_size");
-    if(sToken != sNoData) {
-        QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-        logMessage(logFile,
-                   sFunctionName,
-                   QString("%1 received %2 bytes")
-                   .arg(pClient->peerAddress().toString())
-                   .arg(sToken));
-    }// image_size
 
-    sToken = XML_Parse(sMessage, "send_image");
-    if(sToken != sNoData) {
-        if(slideList.isEmpty()) {
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Empty slide list"));
-            return;
-        }
-        QImage image;
-        if(!image.load(sSlideDir+slideList[iCurrentSlide])) {
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Unable to read:  %1")
-                       .arg(sSlideDir+slideList[iCurrentSlide]));
-            return;
-        }
-        QByteArray ba;
-        QBuffer buffer(&ba);
-        if(!buffer.open(QIODevice::WriteOnly)) {
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Unable to open image buffer"));
-            return;
-        }
-        if(!image.save(&buffer, "JPG", -1)) {// writes image into ba in JPEG format
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Unable to save image into buffer"));
-            buffer.close();
-            return;
-        }
-        buffer.close();
-        QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-        if(!pClient->isValid()) {
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Client socket is Invalid !"));
-        }
-        else {
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Sending image %1 to %2")
-                       .arg(iCurrentSlide)
-                       .arg(pClient->peerAddress().toString()));
-            int bytesSent = pClient->sendBinaryMessage(ba);
-            if(bytesSent != ba.size()) {
-                logMessage(logFile,
-                           sFunctionName,
-                           QString("Unable to send the image to client"));
-            }
-            iCurrentSlide = (iCurrentSlide + 1) % slideList.count();
-        }
-    }// send_image
-*/
-/*
-    sToken = XML_Parse(sMessage, "send_file_list");
-    if(sToken != sNoData) {
-        if(spotList.isEmpty())
-            return;
-        QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-        if(pClient->isValid()) {
-            sMessage = QString("<file_list>");
-            for(int i=0; i<spotList.count()-1; i++) {
-                sMessage += spotList.at(i).fileName();
-                sMessage += QString(";%1,").arg(spotList.at(i).size());
-            }
-            int i = spotList.count()-1;
-            sMessage += spotList.at(i).fileName();
-            sMessage += QString(";%1</spot_list>").arg(spotList.at(i).size());
-            SendToOne(pClient, sMessage);
-        }
-    }// send_spot_list
-*/
     sToken = XML_Parse(sMessage, "send_spot");
     if(sToken != sNoData) {
         if(spotList.isEmpty())

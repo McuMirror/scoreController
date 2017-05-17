@@ -34,13 +34,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "fileserver.h"
 
 
-#define MAX_TIMEOUTS  3
-#define MAX_FAULS    99 // Da definire il comportamento dopo il numer max di falli !
-#define MAX_PERIODS  99 // Da definire il comportamento dopo il numer max di periodi !
-#define BONUS_TARGET  4 // After this value the Bonus is lost for the team
-#define GAME_PERIODS  4 // Oltre questo valore ci sono gli OVERTIMES
-#define REGULAR_TIME 10 // 10 Minuti è la durata di un tempo regolare
-#define OVER_TIME     5 // 5 Minuti è a durata di ciascun overtime
+#define MAX_TIMEOUTS_1  2 // Numero massimo di sospensioni nella prima metà di gara
+#define MAX_TIMEOUTS_2  3 // Numero massimo di sospensioni nella seconda metà di gara
+#define MAX_TIMEOUTS_3  1 // Numero massimo di sospensioni negli OVERTIMES
+#define MAX_FAULS      99 // Da definire il comportamento dopo il numero max di falli !
+#define MAX_PERIODS    99 // Da definire il comportamento dopo il numero max di periodi !
+#define BONUS_TARGET    4 // Dopo questo valore il Bonus per il team è finito !
+#define GAME_PERIODS    4 // Oltre questo valore ci sono gli OVERTIMES
+#define REGULAR_TIME   10 // 10 Minuti è la durata di un tempo regolare
+#define OVER_TIME       5 // 5 Minuti è a durata di ciascun overtime
 
 
 BasketController::BasketController()
@@ -222,10 +224,6 @@ BasketController::CreateTeamBox(int iTeam) {
 
     if(iTimeout[iTeam] == 0)
         timeoutDecrement[iTeam]->setEnabled(false);
-    if(iTimeout[iTeam] == MAX_TIMEOUTS) {
-        timeoutIncrement[iTeam]->setEnabled(false);
-        timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
-    }
 
     iRow += 3;
     teamLayout->addWidget(timeoutLabel,            iRow, 0, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
@@ -457,7 +455,15 @@ void
 BasketController::onTimeOutIncrement(int iTeam) {
     QString sMessage;
     iTimeout[iTeam]++;
-    if(iTimeout[iTeam] == MAX_TIMEOUTS) {
+    if((iPeriod < 3) && (iTimeout[iTeam] == MAX_TIMEOUTS_1)) {
+        timeoutIncrement[iTeam]->setEnabled(false);
+        timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
+    }
+    else if((iPeriod > GAME_PERIODS) && (iTimeout[iTeam] == MAX_TIMEOUTS_3)) {
+        timeoutIncrement[iTeam]->setEnabled(false);
+        timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
+    }
+    else if((iPeriod > 2) && (iTimeout[iTeam] == MAX_TIMEOUTS_2)) {
         timeoutIncrement[iTeam]->setEnabled(false);
         timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
@@ -641,7 +647,15 @@ BasketController::onButtonChangeFieldClicked() {
         timeoutIncrement[iTeam]->setEnabled(true);
         timeoutDecrement[iTeam]->setEnabled(true);
         timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
-        if(iTimeout[iTeam] == MAX_TIMEOUTS) {
+        if((iPeriod < 3) && (iTimeout[iTeam] == MAX_TIMEOUTS_1)) {
+            timeoutIncrement[iTeam]->setEnabled(false);
+            timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
+        }
+        else if((iPeriod > GAME_PERIODS) && (iTimeout[iTeam] == MAX_TIMEOUTS_3)) {
+            timeoutIncrement[iTeam]->setEnabled(false);
+            timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
+        }
+        else if((iPeriod > 2) && (iTimeout[iTeam] == MAX_TIMEOUTS_2)) {
             timeoutIncrement[iTeam]->setEnabled(false);
             timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
@@ -698,9 +712,15 @@ BasketController::onButtonNewPeriodClicked() {
     int iVal = iScore[0];
     iScore[0] = iScore[1];
     iScore[1] = iVal;
-    iVal = iFauls[0];
-    iFauls[0] = iFauls[1];
-    iFauls[1] = iVal;
+    if(iPeriod > GAME_PERIODS) {// Art. 41.1.3 - Tutti i falli di squadra commessi in un tempo
+                                //supplementare devono essere considerati come avvenuti nel quarto periodo.
+        iVal = iFauls[0];
+        iFauls[0] = iFauls[1];
+        iFauls[1] = iVal;
+     }
+    else {
+        iFauls[0] = iFauls[1] = 0;
+    }
     // Update panel
     for(int iTeam=0; iTeam<2; iTeam++) {
         teamName[iTeam]->setText(sTeam[iTeam]);
@@ -767,7 +787,7 @@ BasketController::onButtonNewGameClicked() {
         faulsEdit[iTeam]->setText(sText);
         faulsIncrement[iTeam]->setEnabled(true);
         faulsDecrement[iTeam]->setEnabled(false);
-        bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
+        bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
     SendToAll(FormatStatusMsg());
     SaveStatus();
