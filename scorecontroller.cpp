@@ -799,7 +799,8 @@ ScoreController::onProcessBinaryMessage(QByteArray message) {
 
 QGroupBox*
 ScoreController::CreateSpotButtonBox() {
-    QGroupBox* spotButtonBox = new QGroupBox(tr("Controlli"));
+//    QGroupBox* spotButtonBox = new QGroupBox(tr("Controlli"));
+    QGroupBox* spotButtonBox = new QGroupBox();
     QGridLayout* spotButtonLayout = new QGridLayout();
 
     startStopLoopSpotButton = new QPushButton(tr("Avvia\nSpot Loop"));
