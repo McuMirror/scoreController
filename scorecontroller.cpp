@@ -32,6 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGridLayout>
 #include <QLabel>
 #include <QCloseEvent>
+#include <QProcessEnvironment>
+#include <QStandardPaths>
 
 #include "scorecontroller.h"
 #include "clientlistdialog.h"
@@ -69,7 +71,8 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
 
     QString sBaseDir;
 #ifdef Q_OS_ANDROID
-    sBaseDir = QString("/storage/extSdCard/");
+    QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
+    sBaseDir = environment.value(QString("EXTERNAL_STORAGE"), QString("/storage/extSdCard/"));
 #else
     sBaseDir = QDir::homePath();
 #endif
@@ -937,6 +940,14 @@ ScoreController::onButtonSetupClicked() {
     QFileDialog chooseDir(this, Qt::Dialog);
     chooseDir.setViewMode(QFileDialog::List);
 
+    QString sBaseDir;
+#ifdef Q_OS_ANDROID
+    QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
+    sBaseDir = environment.value(QString("EXTERNAL_STORAGE"), QString("/storage/extSdCard/"));
+#else
+    sBaseDir = QDir::homePath();
+#endif
+
     QDir slideDir(sSlideDir);
     if(slideDir.exists()) {
         sSlideDir = chooseDir.getExistingDirectory(
@@ -950,7 +961,7 @@ ScoreController::onButtonSetupClicked() {
         sSlideDir = chooseDir.getExistingDirectory(
                         this,
                         "Seleziona la cartella con le Slide",
-                        QDir::homePath(),
+                        sBaseDir,
                         QFileDialog::ShowDirsOnly |
                         QFileDialog::DontResolveSymlinks);
     }
@@ -983,7 +994,7 @@ ScoreController::onButtonSetupClicked() {
         sSpotDir = chooseDir.getExistingDirectory(
                        this,
                        tr("Seleziona la cartella con gli Spot"),
-                       QDir::homePath(),
+                       sBaseDir,
                        QFileDialog::ShowDirsOnly |
                        QFileDialog::DontResolveSymlinks);
     }

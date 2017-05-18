@@ -4,7 +4,6 @@
 #include "basketcontroller.h"
 
 
-
 ChooseDiscilpline::ChooseDiscilpline(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ChooseDiscilpline)

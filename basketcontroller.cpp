@@ -53,8 +53,13 @@ BasketController::BasketController()
 
     QDir slideDir(sSlideDir);
     QDir spotDir(sSpotDir);
+
     if(!slideDir.exists() || !spotDir.exists()) {
         onButtonSetupClicked();
+        slideDir.setPath(sSlideDir);
+        if(!slideDir.exists()) sSlideDir = QDir::homePath();
+        spotDir.setPath(sSpotDir);
+        if(!spotDir.exists()) sSpotDir = QDir::homePath();
         pSettings->setValue("directories/slides", sSlideDir);
         pSettings->setValue("directories/spots", sSpotDir);
     }
