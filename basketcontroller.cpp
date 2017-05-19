@@ -447,6 +447,14 @@ BasketController::FormatStatusMsg() {
     sMessage += sTemp;
     sTemp.sprintf("<possess>%d</possess>", iPossess);
     sMessage += sTemp;
+    if(!startStopSlideShowButton->text().contains(QString("Avvia")))
+        sMessage += "<slideshow>1</slideshow>";
+    else if(!startStopLiveCameraButton->text().contains(QString("Avvia")))
+        sMessage += QString("<live>1</live>");
+    else if(!startStopLoopSpotButton->text().contains(QString("Avvia")))
+        sMessage += QString("<spotloop>1</spotloop>");
+    else if(!startStopSpotButton->text().contains(QString("Avvia")))
+        sMessage += QString("<spot>1</spot>");
     return sMessage;
 }
 

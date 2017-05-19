@@ -842,10 +842,8 @@ ScoreController::onButtonStartStopSpotLoopClicked() {
         return;
     }
     if(startStopLoopSpotButton->text().contains(QString("Avvia"))) {
-        for(int i=0; i<connectionList.count(); i++) {
-            sMessage = QString("<spotloop>1</spotloop>");
-            SendToOne(connectionList.at(i).pClientSocket, sMessage);
-        }
+        sMessage = QString("<spotloop>1</spotloop>");
+        SendToAll(sMessage);
         startStopLoopSpotButton->setText(tr("Chiudi\nSpot Loop"));
         startStopSpotButton->setDisabled(true);
         startStopSlideShowButton->setDisabled(true);
@@ -871,10 +869,8 @@ ScoreController::onButtonStartStopLiveCameraClicked() {
         return;
     }
     if(startStopLiveCameraButton->text().contains(QString("Avvia"))) {
-        for(int i=0; i<connectionList.count(); i++) {
-            sMessage = QString("<live>1</live>");
-            SendToOne(connectionList.at(i).pClientSocket, sMessage);
-        }
+        sMessage = QString("<live>1</live>");
+        SendToAll(sMessage);
         startStopLiveCameraButton->setText(tr("Chiudi\nLive Camera"));
         startStopLoopSpotButton->setDisabled(true);
         startStopSpotButton->setDisabled(true);
@@ -1026,7 +1022,8 @@ QString
 ScoreController::FormatStatusMsg() {
     QString sFunctionName = " ScoreController::FormatStatusMsg ";
     Q_UNUSED(sFunctionName)
-    return QString();
+    QString sMessage = QString();
+    return sMessage;
 }
 
 
