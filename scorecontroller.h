@@ -124,7 +124,7 @@ protected:
     quint16               serverPort;
     QVector<QUdpSocket*>  discoverySocketArray;
 
-    QString               sIpAddresses;
+    QStringList           sIpAddresses;
     QHostAddress          discoveryAddress;
 
     QThread              *pSlideServerThread;

@@ -67,7 +67,7 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     Q_UNUSED(sFunctionName)
 
     buttonClick.setSource(QUrl::fromLocalFile(":/key.wav"));
-    sIpAddresses = QString();
+    sIpAddresses = QStringList();
 
     QString sBaseDir;
 #ifdef Q_OS_ANDROID
@@ -219,7 +219,7 @@ ScoreController::onSpotServerDone(bool bError) {
 void
 ScoreController::prepareDiscovery() {
     QString sFunctionName = QString(" ScoreController::prepareDiscovery ");
-    sIpAddresses = QString();
+    sIpAddresses = QStringList();
     QList<QNetworkInterface> interfaceList = QNetworkInterface::allInterfaces();
     for(int i=0; i<interfaceList.count(); i++)
     {
@@ -236,7 +236,7 @@ ScoreController::prepareDiscovery() {
                 if(list[j].ip().protocol() == QAbstractSocket::IPv4Protocol) {
                     if(pDiscoverySocket->bind(QHostAddress::AnyIPv4, discoveryPort, QUdpSocket::ShareAddress)) {
                         pDiscoverySocket->joinMulticastGroup(discoveryAddress);
-                        sIpAddresses += list[j].ip().toString() + tr(",");
+                        sIpAddresses.append(list[j].ip().toString());
                         discoverySocketArray.append(pDiscoverySocket);
                         connect(pDiscoverySocket, SIGNAL(readyRead()),
                                 this, SLOT(onProcessConnectionRequest()));
@@ -371,7 +371,11 @@ ScoreController::onProcessConnectionRequest() {
         pDiscoverySocket->readDatagram(datagram.data(), datagram.size(), &hostAddress, &port);
         sToken = XML_Parse(datagram.data(), "getServer");
         if(sToken != sNoData) {
-            sMessage = "<serverIP>" + sIpAddresses + "</serverIP>";
+            QString sString = QString("%1,%2").arg(sIpAddresses.at(0)).arg(panelType);
+            for(int i=1; i<sIpAddresses.count(); i++) {
+                sString += QString(";%1,%2").arg(sIpAddresses.at(i)).arg(panelType);
+            }
+            sMessage = "<serverIP>" + sString + "</serverIP>";
             sendAcceptConnection(pDiscoverySocket, sMessage, hostAddress, port);
             logMessage(logFile,
                        sFunctionName,
