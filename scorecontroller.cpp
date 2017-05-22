@@ -113,31 +113,8 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
         return;
     }
 
-    // Creating a Spot Update Service
-    pSpotUpdaterServer = new FileServer(QString("SpotUpdater"), logFile, Q_NULLPTR);
-    connect(pSpotUpdaterServer, SIGNAL(fileServerDone(bool)),
-            this, SLOT(onSpotServerDone(bool)));
-    pSpotUpdaterServer->setServerPort(spotUpdaterPort);
-    pSpotServerThread = new QThread();
-    pSpotUpdaterServer->moveToThread(pSpotServerThread);
-    connect(this, SIGNAL(startSpotServer()),
-            pSpotUpdaterServer, SLOT(onStartServer()));
-    connect(this, SIGNAL(closeSpotServer()),
-            pSpotUpdaterServer, SLOT(onCloseServer()));
-    pSpotServerThread->start(QThread::LowestPriority);
-
-    // Creating a Slide Update Service
-    pSlideUpdaterServer = new FileServer(QString("SlideUpdater"), logFile, Q_NULLPTR);
-    connect(pSlideUpdaterServer, SIGNAL(fileServerDone(bool)),
-            this, SLOT(onSlideServerDone(bool)));
-    pSlideUpdaterServer->setServerPort(slideUpdaterPort);
-    pSlideServerThread = new QThread();
-    pSlideUpdaterServer->moveToThread(pSlideServerThread);
-    connect(this, SIGNAL(startSlideServer()),
-            pSlideUpdaterServer, SLOT(onStartServer()));
-    connect(this, SIGNAL(closeSlideServer()),
-            pSlideUpdaterServer, SLOT(onCloseServer()));
-    pSlideServerThread->start(QThread::LowestPriority);
+    prepareSpotUpdateService();
+    prepareSlideUpdateService();
 
     // Pan-Tilt Camera management
     connect(pClientListDialog, SIGNAL(disableVideo()),
@@ -154,7 +131,39 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
             this, SLOT(onGetPanelOrientation(QString)));
     connect(pClientListDialog, SIGNAL(changeOrientation(QString,PanelOrientation)),
             this, SLOT(onChangePanelOrientation(QString,PanelOrientation)));
+}
 
+
+void
+ScoreController::prepareSpotUpdateService() {
+    // Creating a Spot Update Service
+    pSpotUpdaterServer = new FileServer(QString("SpotUpdater"), logFile, Q_NULLPTR);
+    connect(pSpotUpdaterServer, SIGNAL(fileServerDone(bool)),
+            this, SLOT(onSpotServerDone(bool)));
+    pSpotUpdaterServer->setServerPort(spotUpdaterPort);
+    pSpotServerThread = new QThread();
+    pSpotUpdaterServer->moveToThread(pSpotServerThread);
+    connect(this, SIGNAL(startSpotServer()),
+            pSpotUpdaterServer, SLOT(onStartServer()));
+    connect(this, SIGNAL(closeSpotServer()),
+            pSpotUpdaterServer, SLOT(onCloseServer()));
+    pSpotServerThread->start(QThread::LowestPriority);
+}
+
+void
+ScoreController::prepareSlideUpdateService() {
+    // Creating a Slide Update Service
+    pSlideUpdaterServer = new FileServer(QString("SlideUpdater"), logFile, Q_NULLPTR);
+    connect(pSlideUpdaterServer, SIGNAL(fileServerDone(bool)),
+            this, SLOT(onSlideServerDone(bool)));
+    pSlideUpdaterServer->setServerPort(slideUpdaterPort);
+    pSlideServerThread = new QThread();
+    pSlideUpdaterServer->moveToThread(pSlideServerThread);
+    connect(this, SIGNAL(startSlideServer()),
+            pSlideUpdaterServer, SLOT(onStartServer()));
+    connect(this, SIGNAL(closeSlideServer()),
+            pSlideUpdaterServer, SLOT(onCloseServer()));
+    pSlideServerThread->start(QThread::LowestPriority);
 }
 
 
@@ -184,7 +193,9 @@ ScoreController::WaitForNetworkReady() {
 
 
 ScoreController::~ScoreController() {
+    // All the housekeeping is done in "closeEvent()" manager
     QString sFunctionName = QString("ScoreController::~ScoreController");
+    Q_UNUSED(sFunctionName)
 }
 
 

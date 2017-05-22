@@ -90,6 +90,8 @@ protected slots:
     void onSpotServerDone(bool bError);
 
 protected:
+    void            prepareSpotUpdateService();
+    void            prepareSlideUpdateService();
     QGroupBox      *CreateClientListBox();
     QGroupBox      *CreateSpotButtonBox();
     void            WaitForNetworkReady();
