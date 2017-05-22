@@ -33,7 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QLabel>
 #include <QCloseEvent>
 #include <QProcessEnvironment>
-#include <QStandardPaths>
 
 #include "scorecontroller.h"
 #include "clientlistdialog.h"
@@ -72,7 +71,14 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     QString sBaseDir;
 #ifdef Q_OS_ANDROID
     QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
-    sBaseDir = environment.value(QString("EXTERNAL_STORAGE"), QString("/storage/extSdCard/"));
+    sBaseDir = environment.value(QString("SECONDARY_STORAGE"), QString(""));
+    if(sBaseDir == QString("")) {
+        sBaseDir = environment.value(QString("EXTERNAL_STORAGE"), QString("/storage/extSdCard/"));
+    }
+    else {
+        QStringList secondaryList = sBaseDir.split(":", QString::SkipEmptyParts);
+        sBaseDir = secondaryList.at(0);
+    }
 #else
     sBaseDir = QDir::homePath();
 #endif
@@ -100,8 +106,6 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
             this, SLOT(close()));
 
     WaitForNetworkReady();
-
-    sHostName = QHostInfo::localHostName();
 
     prepareDiscovery();
 
@@ -357,39 +361,39 @@ ScoreController::isConnectedToNetwork() {
 void
 ScoreController::onProcessConnectionRequest() {
     QString sFunctionName = " ScoreController::onProcessConnectionRequest ";
-    QByteArray datagram;
+    QByteArray datagram, request;
     QString sToken;
     QUdpSocket* pDiscoverySocket = qobject_cast<QUdpSocket*>(sender());
     QString sNoData = QString("NoData");
     QString sMessage;
+    QHostAddress hostAddress;
+    quint16 port;
 
     while(pDiscoverySocket->hasPendingDatagrams()) {
         datagram.resize(pDiscoverySocket->pendingDatagramSize());
-
-        QHostAddress hostAddress;
-        quint16 port;
         pDiscoverySocket->readDatagram(datagram.data(), datagram.size(), &hostAddress, &port);
-        sToken = XML_Parse(datagram.data(), "getServer");
-        if(sToken != sNoData) {
-            QString sString = QString("%1,%2").arg(sIpAddresses.at(0)).arg(panelType);
-            for(int i=1; i<sIpAddresses.count(); i++) {
-                sString += QString(";%1,%2").arg(sIpAddresses.at(i)).arg(panelType);
-            }
-            sMessage = "<serverIP>" + sString + "</serverIP>";
-            sendAcceptConnection(pDiscoverySocket, sMessage, hostAddress, port);
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Connection request from: %1 at Address %2:%3")
-                       .arg(sToken)
-                       .arg(hostAddress.toString())
-                       .arg(port));
-            RemoveClient(hostAddress);
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Sent: %1")
-                       .arg(sMessage));
-            UpdateUI();
+        request.append(datagram.data());
+    }
+    sToken = XML_Parse(request.data(), "getServer");
+    if(sToken != sNoData) {
+        QString sString = QString("%1,%2").arg(sIpAddresses.at(0)).arg(panelType);
+        for(int i=1; i<sIpAddresses.count(); i++) {
+            sString += QString(";%1,%2").arg(sIpAddresses.at(i)).arg(panelType);
         }
+        sMessage = "<serverIP>" + sString + "</serverIP>";
+        sendAcceptConnection(pDiscoverySocket, sMessage, hostAddress, port);
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Connection request from: %1 at Address %2:%3")
+                   .arg(sToken)
+                   .arg(hostAddress.toString())
+                   .arg(port));
+        RemoveClient(hostAddress);
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Sent: %1")
+                   .arg(sMessage));
+        UpdateUI();
     }
 }
 
@@ -937,30 +941,35 @@ ScoreController::onButtonCameraControlClicked() {
 void
 ScoreController::onButtonSetupClicked() {
     QString sFunctionName = QString(" ScoreController::onButtonSetupClicked ");
-    QFileDialog chooseDir(this, Qt::Dialog);
-    chooseDir.setViewMode(QFileDialog::List);
 
     QString sBaseDir;
 #ifdef Q_OS_ANDROID
     QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
-    sBaseDir = environment.value(QString("EXTERNAL_STORAGE"), QString("/storage/extSdCard/"));
+    sBaseDir = environment.value(QString("SECONDARY_STORAGE"), QString(""));
+    if(sBaseDir == QString("")) {
+        sBaseDir = environment.value(QString("EXTERNAL_STORAGE"), QString("/storage/extSdCard/"));
+    }
+    else {
+        QStringList secondaryList = sBaseDir.split(":", QString::SkipEmptyParts);
+        sBaseDir = secondaryList.at(0);
+    }
 #else
     sBaseDir = QDir::homePath();
 #endif
 
     QDir slideDir(sSlideDir);
     if(slideDir.exists()) {
-        sSlideDir = chooseDir.getExistingDirectory(
+        sSlideDir = QFileDialog::getExistingDirectory(
                         this,
-                        "Seleziona la cartella con le Slide",
+                        "Slide Dir",
                         sSlideDir,
                         QFileDialog::ShowDirsOnly |
                         QFileDialog::DontResolveSymlinks);
     }
     else {
-        sSlideDir = chooseDir.getExistingDirectory(
+        sSlideDir = QFileDialog::getExistingDirectory(
                         this,
-                        "Seleziona la cartella con le Slide",
+                        "Slide Dir",
                         sBaseDir,
                         QFileDialog::ShowDirsOnly |
                         QFileDialog::DontResolveSymlinks);
@@ -983,17 +992,17 @@ ScoreController::onButtonSetupClicked() {
 
     QDir spotDir(sSpotDir);
     if(spotDir.exists()) {
-        sSpotDir = chooseDir.getExistingDirectory(
+        sSpotDir = QFileDialog::getExistingDirectory(
                        this,
-                       tr("Seleziona la cartella con gli Spot"),
+                       tr("Spot Dir"),
                        sSpotDir,
                        QFileDialog::ShowDirsOnly |
                        QFileDialog::DontResolveSymlinks);
     }
     else {
-        sSpotDir = chooseDir.getExistingDirectory(
+        sSpotDir = QFileDialog::getExistingDirectory(
                        this,
-                       tr("Seleziona la cartella con gli Spot"),
+                       tr("Spot Dir"),
                        sBaseDir,
                        QFileDialog::ShowDirsOnly |
                        QFileDialog::DontResolveSymlinks);

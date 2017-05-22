@@ -109,7 +109,6 @@ protected:
       QWebSocket*     pClientSocket;
       QHostAddress    clientAddress;
     };
-    QString               sHostName;
 
     int                   panelType;
     NetServer            *pPanelServer;
