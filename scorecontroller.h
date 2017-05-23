@@ -98,7 +98,7 @@ protected:
     int             SendToAll(QString sMessage);
     int             SendToOne(QWebSocket* pSocket, QString sMessage);
     int             prepareServer();
-    int             sendAcceptConnection(QUdpSocket *pDiscoverySocket, QString sMessage, QHostAddress hostAddress, quint16 port);
+    int             sendAcceptConnection(QUdpSocket *pDiscoverySocket, QHostAddress hostAddress, quint16 port);
     void            RemoveClient(QHostAddress hAddress);
     bool            isConnectedToNetwork();
     bool            PrepareLogFile();

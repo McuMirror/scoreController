@@ -48,7 +48,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 //#define QT_DEBUG
-#define LOG_MESG
 
 
 ScoreController::ScoreController(int _panelType, QWidget *parent)
@@ -255,11 +254,13 @@ ScoreController::prepareDiscovery() {
                         discoverySocketArray.append(pDiscoverySocket);
                         connect(pDiscoverySocket, SIGNAL(readyRead()),
                                 this, SLOT(onProcessConnectionRequest()));
+#ifdef LOG_VERBOSE
                         logMessage(logFile,
                                    sFunctionName,
                                    QString("Listening for connections at address: %1 port:%2")
                                    .arg(discoveryAddress.toString())
                                    .arg(discoveryPort));
+#endif
                     }
                     else {
                         logMessage(logFile,
@@ -324,7 +325,7 @@ ScoreController::onSetNewTiltValue(QString sClientIp, int newTilt) {
 
 bool
 ScoreController::PrepareLogFile() {
-#ifdef LOG_MESG
+#if defined(LOG_MESG) || defined(LOG_VERBOSE)
     QFileInfo checkFile(logFileName);
     if(checkFile.exists() && checkFile.isFile()) {
         QDir renamed;
@@ -362,9 +363,11 @@ ScoreController::isConnectedToNetwork() {
             }
         }
     }
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                sFunctionName,
                result ? QString("true") : QString("false"));
+#endif
     return result;
 }
 
@@ -387,12 +390,7 @@ ScoreController::onProcessConnectionRequest() {
     }
     sToken = XML_Parse(request.data(), "getServer");
     if(sToken != sNoData) {
-        QString sString = QString("%1,%2").arg(sIpAddresses.at(0)).arg(panelType);
-        for(int i=1; i<sIpAddresses.count(); i++) {
-            sString += QString(";%1,%2").arg(sIpAddresses.at(i)).arg(panelType);
-        }
-        sMessage = "<serverIP>" + sString + "</serverIP>";
-        sendAcceptConnection(pDiscoverySocket, sMessage, hostAddress, port);
+        sendAcceptConnection(pDiscoverySocket, hostAddress, port);
         logMessage(logFile,
                    sFunctionName,
                    QString("Connection request from: %1 at Address %2:%3")
@@ -400,19 +398,26 @@ ScoreController::onProcessConnectionRequest() {
                    .arg(hostAddress.toString())
                    .arg(port));
         RemoveClient(hostAddress);
+#ifdef LOG_VERBOSE
         logMessage(logFile,
                    sFunctionName,
                    QString("Sent: %1")
                    .arg(sMessage));
+#endif
         UpdateUI();
     }
 }
 
 
 int
-ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, QString sMessage, QHostAddress hostAddress, quint16 port) {
+ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, QHostAddress hostAddress, quint16 port) {
     QString sFunctionName = " ScoreController::sendAcceptConnection ";
     Q_UNUSED(sFunctionName)
+    QString sString = QString("%1,%2").arg(sIpAddresses.at(0)).arg(panelType);
+    for(int i=1; i<sIpAddresses.count(); i++) {
+        sString += QString(";%1,%2").arg(sIpAddresses.at(i)).arg(panelType);
+    }
+    QString sMessage = "<serverIP>" + sString + "</serverIP>";
     QByteArray datagram = sMessage.toUtf8();
     if(!pDiscoverySocket->isValid()) {
         logMessage(logFile,
@@ -558,16 +563,8 @@ ScoreController::onProcessTextMessage(QString sMessage) {
                        .arg(sToken));
             return;
         }
-        try {
-            PanelOrientation orientation = static_cast<PanelOrientation>(iOrientation);
-            pClientListDialog->onOrientationReceived(orientation);
-        } catch(...) {
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Illegal orientation received: %1")
-                       .arg(iOrientation));
-            return;
-        }
+        PanelOrientation orientation = static_cast<PanelOrientation>(iOrientation);
+        pClientListDialog->onOrientationReceived(orientation);
     }// orientation
 }
 
@@ -598,6 +595,7 @@ ScoreController::SendToOne(QWebSocket* pClient, QString sMessage) {
                                sFunctionName,
                                QString("Error writing %1").arg(sMessage));
                 }
+#ifdef LOG_VERBOSE
                 else {
                     logMessage(logFile,
                                sFunctionName,
@@ -605,6 +603,7 @@ ScoreController::SendToOne(QWebSocket* pClient, QString sMessage) {
                                .arg(sMessage)
                                .arg(pClient->peerAddress().toString()));
                 }
+#endif
                 break;
             }
         }
@@ -634,12 +633,14 @@ ScoreController::RemoveClient(QHostAddress hAddress) {
             disconnect(pClientToClose, 0, 0, 0); // No more events from this socket
             pClientToClose->close(QWebSocketProtocol::CloseCodeAbnormalDisconnection, tr("Timeout in connection"));
             connectionList.removeAt(i);
+#ifdef LOG_VERBOSE
             sFound = " Removed !";
             logMessage(logFile,
                        sFunctionName,
                        QString("%1 %2")
                        .arg(hAddress.toString())
                        .arg(sFound));
+#endif
         } else {
             pClientListDialog->addItem(connectionList.at(i).clientAddress.toString());
         }
