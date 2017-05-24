@@ -31,12 +31,12 @@ main(int argc, char *argv[]) {
 
     ChooseDiscilpline *pChooser = new ChooseDiscilpline();
 
-    QFont myFont = QApplication::font();
-    myFont.setPointSize(32);
-    pApp->setFont(myFont, "Edit");
-    myFont.setPointSize(18);
-    pApp->setFont(myFont, "QRadioButton");
-    pApp->setFont(myFont, "QLabel");
+//    QFont myFont = QApplication::font();
+//    myFont.setPointSize(32);
+//    pApp->setFont(myFont, "Edit");
+//    myFont.setPointSize(18);
+//    pApp->setFont(myFont, "QRadioButton");
+//    pApp->setFont(myFont, "QLabel");
 
     pChooser->show();
 
