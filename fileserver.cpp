@@ -29,8 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QBuffer>
 
 
-#define LOG_MESG
-
 
 FileServer::FileServer(QString sName, QFile* _logFile, QObject *parent)
     : NetServer(sName, _logFile, parent)
@@ -62,13 +60,14 @@ FileServer::setDir(QString sDirectory, QString sExtensions) {
         sDir.setFilter(QDir::Files);
         fileList = sDir.entryInfoList();
     }
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                sFunctionName,
                serverName +
                QString(" Found %1 files in %2")
                .arg(fileList.count())
                .arg(sFileDir));
-
+#endif
     return true;
 }
 
@@ -217,6 +216,7 @@ FileServer::onProcessTextMessage(QString sMessage) {
         QString sFileName = argumentList.at(0);
         qint64 startPos = argumentList.at(1).toInt();
         qint64 length   = argumentList.at(2).toInt();
+#ifdef LOG_VERBOSE
         logMessage(logFile,
                    sFunctionName,
                    QString("%1 asked for: %2 %3 bytes, starting form %4 ")
@@ -224,6 +224,7 @@ FileServer::onProcessTextMessage(QString sMessage) {
                    .arg(sFileName)
                    .arg(length)
                    .arg(startPos));
+#endif
         QFile file;
         QString sFilePath = sFileDir + sFileName;
         file.setFileName(sFilePath);
@@ -262,12 +263,14 @@ FileServer::onProcessTextMessage(QString sMessage) {
                                        QString("Unable to send the file %1")
                                        .arg(sFileName));
                         }
+#ifdef LOG_VERBOSE
                         else {
                             logMessage(logFile,
                                        sFunctionName,
                                        QString("File %1 correctly sent")
                                        .arg(sFileName));
                         }
+#endif
                     }
                     else { // Client disconnected
                         file.close();
@@ -363,6 +366,7 @@ FileServer::SendToOne(QWebSocket* pClient, QString sMessage) {
                        sFunctionName,
                        QString(" Error writing %1").arg(sMessage));
         }
+#ifdef LOG_VERBOSE
         else {
             logMessage(logFile,
                        sFunctionName,
@@ -371,6 +375,7 @@ FileServer::SendToOne(QWebSocket* pClient, QString sMessage) {
                        .arg(sMessage)
                        .arg(pClient->peerAddress().toString()));
         }
+#endif
     }
     else {
         logMessage(logFile,
