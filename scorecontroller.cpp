@@ -564,7 +564,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
             return;
         }
         PanelOrientation orientation = static_cast<PanelOrientation>(iOrientation);
-        pClientListDialog->onOrientationReceived(orientation);
+        pClientListDialog->onRemoteOrientationReceived(orientation);
     }// orientation
 }
 

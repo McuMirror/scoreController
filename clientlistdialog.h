@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define CLIENTLISTDIALOG_H
 
 #include "panelorientation.h"
+#include "panelconfigurator.h"
 
 #include <QObject>
 #include <QDialog>
@@ -42,8 +43,11 @@ public:
 
 public slots:
     void onRemotePanTiltReceived(int newPan, int newTilt);
+    void onSetNewPan(int newPan);
+    void onSetNewTilt(int newTilt);
     void onCloseCamera();
-    void onOrientationReceived(PanelOrientation currentOrientation);
+    void onRemoteOrientationReceived(PanelOrientation currentOrientation);
+    void onChangePanelOrientation(PanelOrientation newOrientation);
 
 signals:
     void enableVideo(QString sIpAdress);
@@ -56,11 +60,6 @@ signals:
 
 private slots:
     void onClientSelected(QListWidgetItem* selectedClient);
-    void onLeftButtonPressed();
-    void onRightButtonPressed();
-    void onUpButtonPressed();
-    void onDownButtonPressed();
-    void onChangePanelOrientation(int);
 
 private:
     QGroupBox* createClientListBox();
@@ -68,21 +67,11 @@ private:
     QGroupBox* createOrientationBox();
 
 private:
-    QWidget*      pMyParent;
-    QListWidget*  clientListWidget;
-    QPushButton*  closeButton;
-    QPushButton*  upButton;
-    QPushButton*  downButton;
-    QPushButton*  leftButton;
-    QPushButton*  rightButton;
-    QString       sSelectedClient;
-    int           iPan;
-    int           iTilt;
-    int           panMin;
-    int           panMax;
-    int           tiltMin;
-    int           tiltMax;
-    QComboBox*    pPanelOrientation;
+    QWidget           *pMyParent;
+    QListWidget       *clientListWidget;
+    QPushButton       *closeButton;
+    QString            sSelectedClient;
+    PanelConfigurator *pConfigurator;
 
 public:
     void clear();
