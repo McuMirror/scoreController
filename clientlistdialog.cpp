@@ -94,7 +94,7 @@ ClientListDialog::onCloseCamera() {
 void
 ClientListDialog::onClientSelected(QListWidgetItem* selectedClient) {
     emit disableVideo();
-    pConfigurator->exec();
+    pConfigurator->show();
     sSelectedClient = selectedClient->text();
     emit enableVideo(sSelectedClient);
     emit getOrientation(sSelectedClient);
@@ -114,13 +114,13 @@ ClientListDialog::onSetNewTilt(int newTilt) {
 
 
 void
-ClientListDialog::onRemotePanTiltReceived(int newPan, int newTilt) {
+ClientListDialog::remotePanTiltReceived(int newPan, int newTilt) {
     pConfigurator->SetCurrentPanTilt(newPan, newTilt);
 }
 
 
 void
-ClientListDialog::onRemoteOrientationReceived(PanelOrientation currentOrientation) {
+ClientListDialog::remoteOrientationReceived(PanelOrientation currentOrientation) {
     int index = static_cast<int>(currentOrientation);
     pConfigurator->SetCurrrentOrientaton(index);
 }

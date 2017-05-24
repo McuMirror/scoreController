@@ -42,11 +42,11 @@ public:
     int exec();
 
 public slots:
-    void onRemotePanTiltReceived(int newPan, int newTilt);
+    void remotePanTiltReceived(int newPan, int newTilt);
     void onSetNewPan(int newPan);
     void onSetNewTilt(int newTilt);
     void onCloseCamera();
-    void onRemoteOrientationReceived(PanelOrientation currentOrientation);
+    void remoteOrientationReceived(PanelOrientation currentOrientation);
     void onChangePanelOrientation(PanelOrientation newOrientation);
 
 signals:

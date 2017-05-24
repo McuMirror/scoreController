@@ -530,7 +530,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
     sToken = XML_Parse(sMessage, "pan_tilt");
     if(sToken != sNoData) {
         QStringList values = QStringList(sToken.split(tr(","),QString::SkipEmptyParts));
-        pClientListDialog->onRemotePanTiltReceived(values.at(0).toInt(), values.at(1).toInt());
+        pClientListDialog->remotePanTiltReceived(values.at(0).toInt(), values.at(1).toInt());
     }// pan_tilt
 
     sToken = XML_Parse(sMessage, "send_spot");
@@ -564,7 +564,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
             return;
         }
         PanelOrientation orientation = static_cast<PanelOrientation>(iOrientation);
-        pClientListDialog->onRemoteOrientationReceived(orientation);
+        pClientListDialog->remoteOrientationReceived(orientation);
     }// orientation
 }
 

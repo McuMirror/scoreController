@@ -17,6 +17,7 @@ public:
     explicit PanelConfigurator(QWidget *parent = 0);
     ~PanelConfigurator();
     int exec();
+    void show();
     void SetCurrentPanTilt(int newPan, int newTilt);
     void SetCurrrentOrientaton(int index);
 

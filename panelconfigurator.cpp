@@ -10,6 +10,7 @@ PanelConfigurator::PanelConfigurator(QWidget *parent)
     , tiltMax(30)
 {
     ui->setupUi(this);
+    SetupButtons();
     ui->orientationCombo->addItem(QString("Normale"));
     ui->orientationCombo->addItem(QString("Riflesso"));
     ui->orientationCombo->addItem(QString("Rot. Dx"));
@@ -30,7 +31,19 @@ PanelConfigurator::exec() {
     ui->upButton->setDisabled(true);
     ui->downButton->setDisabled(true);
     ui->orientationCombo->setDisabled(true);
-    return QDialog::exec();
+    if(!isVisible()) QDialog::show();
+    return 0;
+}
+
+
+void
+PanelConfigurator::show() {
+    ui->leftButton->setDisabled(true);
+    ui->rightButton->setDisabled(true);
+    ui->upButton->setDisabled(true);
+    ui->downButton->setDisabled(true);
+    ui->orientationCombo->setDisabled(true);
+    if(!isVisible()) QDialog::show();
 }
 
 
