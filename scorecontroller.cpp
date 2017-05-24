@@ -47,8 +47,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SLIDE_UPDATER_PORT  45456
 
 
-//#define QT_DEBUG
-
 
 ScoreController::ScoreController(int _panelType, QWidget *parent)
     : QWidget(parent)

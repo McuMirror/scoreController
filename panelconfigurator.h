@@ -34,8 +34,7 @@ private slots:
     void on_downButton_pressed();
     void on_leftButton_pressed();
     void on_rightButton_pressed();
-
-    void on_comboBox_currentIndexChanged(int index);
+    void on_orientationCombo_currentIndexChanged(int index);
 
 private:
     Ui::PanelConfigurator *ui;

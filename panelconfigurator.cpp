@@ -145,6 +145,6 @@ PanelConfigurator::on_rightButton_pressed() {
 
 
 void
-PanelConfigurator::on_comboBox_currentIndexChanged(int index) {
+PanelConfigurator::on_orientationCombo_currentIndexChanged(int index) {
     emit changeOrientation(static_cast<PanelOrientation>(index));
 }
