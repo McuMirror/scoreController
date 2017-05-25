@@ -42,7 +42,7 @@ ClientListDialog::ClientListDialog(QWidget* parent)
     connect(pConfigurator, SIGNAL(newPanValue(int)),
             this, SLOT(onSetNewPan(int)));
     connect(pConfigurator, SIGNAL(newTiltValue(int)),
-            this, SLOT(onTiltNewPan(int)));
+            this, SLOT(onSetNewTilt(int)));
     connect(pConfigurator, SIGNAL(changeOrientation(PanelOrientation)),
             this, SLOT(onChangePanelOrientation(PanelOrientation)));
 }

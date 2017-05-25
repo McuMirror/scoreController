@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPushButton>
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QGuiApplication>
+#include <QScreen>
 
 #include "basketcontroller.h"
 #include "utility.h"
@@ -194,6 +196,11 @@ BasketController::CreateTeamBox(int iTeam) {
     QGridLayout* teamLayout = new QGridLayout();
     QLabel* labelSpacer = new QLabel(QString(""));
 
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->geometry();
+    int width = screenGeometry.width();
+    int rW;
+
     // Team
     int iRow = 0;
     teamName[iTeam] = new Edit(sTeam[iTeam], iTeam);
@@ -204,16 +211,48 @@ BasketController::CreateTeamBox(int iTeam) {
     teamLayout->addWidget(teamName[iTeam], iRow, 0, 2, 10);
     teamLayout->addWidget(labelSpacer, iRow+2, 0, 1, 10);
 
+    QFont font(teamName[iTeam]->font());
+    int iTeamFontSize = font.pointSize();
+    for(int i=iTeamFontSize; i<100; i++) {
+        font.setPointSize(i);
+        QFontMetrics f(font);
+        rW = teamName[iTeam]->maxLength()*f.width("W");
+        if(rW > width/3) {
+            iTeamFontSize = i-1;
+            break;
+        }
+    }
+    font.setPointSize(iTeamFontSize);
+    teamName[iTeam]->setFont(font);
+
     // Timeout
     QLabel *timeoutLabel;
     timeoutLabel = new QLabel(tr("Timeout"));
     timeoutLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
+
+    font = timeoutLabel->font();
+    int iTimeoutLabelFontSize = font.pointSize();
+    for(int i=iTimeoutLabelFontSize; i<100; i++) {
+        font.setPointSize(i);
+        QFontMetrics f(font);
+        rW = f.width(timeoutLabel->text());
+        if(rW > width/10) {
+            iTimeoutLabelFontSize = i-1;
+            break;
+        }
+    }
+    font.setPointSize(iTimeoutLabelFontSize);
+    timeoutLabel->setFont(font);
 
     sString.sprintf("%1d", iTimeout[iTeam]);
     timeoutEdit[iTeam] = new Edit(sString);
     timeoutEdit[iTeam]->setMaxLength(1);
     timeoutEdit[iTeam]->setAlignment(Qt::AlignHCenter);
     timeoutEdit[iTeam]->setReadOnly(true);
+
+    font = timeoutEdit[iTeam]->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    timeoutEdit[iTeam]->setFont(font);
 
     timeoutIncrement[iTeam] = new Button(tr("+"), iTeam);
     timeoutDecrement[iTeam] = new Button(tr("-"), iTeam);
@@ -243,10 +282,18 @@ BasketController::CreateTeamBox(int iTeam) {
     faulsLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
     sString.sprintf("%1d", iFauls[iTeam]);
 
+    font = faulsLabel->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    faulsLabel->setFont(font);
+
     faulsEdit[iTeam] = new Edit(sString);
     faulsEdit[iTeam]->setMaxLength(2);
     faulsEdit[iTeam]->setAlignment(Qt::AlignHCenter);
     faulsEdit[iTeam]->setReadOnly(true);
+
+    font = faulsEdit[iTeam]->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    faulsEdit[iTeam]->setFont(font);
 
     faulsIncrement[iTeam] = new Button(tr("+"), iTeam);
     faulsDecrement[iTeam] = new Button(tr("-"), iTeam);
@@ -281,6 +328,11 @@ BasketController::CreateTeamBox(int iTeam) {
         teamLayout->addWidget(possess[iTeam],   iRow, 4, 1, 4, Qt::AlignLeft|Qt::AlignVCenter);
     }
 //    teamLayout->addWidget(labelSpacer, iRow+1, 0, 1, 10);
+
+    font = possess[iTeam]->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    possess[iTeam]->setFont(font);
+
     connect(possess[iTeam], SIGNAL(buttonClicked(int, bool)), this, SLOT(onPossessClicked(int, bool)));
 
     // Score
@@ -289,12 +341,20 @@ BasketController::CreateTeamBox(int iTeam) {
     scoreLabel = new QLabel(tr("Score"));
     scoreLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
 
+    font = scoreLabel->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    scoreLabel->setFont(font);
+
     scoreEdit[iTeam] = new Edit();
     scoreEdit[iTeam]->setMaxLength(3);
     scoreEdit[iTeam]->setReadOnly(true);
     scoreEdit[iTeam]->setAlignment(Qt::AlignRight);
     sString.sprintf("%3d", iScore[iTeam]);
     scoreEdit[iTeam]->setText(sString);
+
+    font = scoreEdit[iTeam]->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    scoreEdit[iTeam]->setFont(font);
 
     scoreIncrement[iTeam] = new Button(tr("+"), iTeam);
     scoreDecrement[iTeam] = new Button(tr("-"), iTeam);
@@ -327,6 +387,11 @@ BasketController::CreateGameBox() {
     QGroupBox* gameBox      = new QGroupBox();
     QGridLayout* gameLayout = new QGridLayout();
 
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->geometry();
+    int width = screenGeometry.width();
+    int rW;
+
     // Bonus
     for(int iTeam=0; iTeam<2; iTeam++) {
         bonusEdit[iTeam] = new Edit(QString("Bonus"));
@@ -341,10 +406,30 @@ BasketController::CreateGameBox() {
         }
     }
 
+    QFont font = bonusEdit[0]->font();
+    int iBonusEditFontSize = font.pointSize();
+    for(int i=iBonusEditFontSize; i<100; i++) {
+        font.setPointSize(i);
+        QFontMetrics f(font);
+        rW = f.width(bonusEdit[0]->text());
+        if(rW > width/10) {
+            iBonusEditFontSize = i-1;
+            break;
+        }
+    }
+    font.setPointSize(iBonusEditFontSize);
+    for(int iTeam=0; iTeam<2; iTeam++) {
+        bonusEdit[iTeam]->setFont(font);
+    }
+
     // Period
     QLabel *periodLabel;
     periodLabel = new QLabel(tr("Period"));
     periodLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
+
+    font = periodLabel->font();
+    font.setPointSize(iBonusEditFontSize);
+    periodLabel->setFont(font);
 
     periodEdit = new Edit();
     periodEdit->setMaxLength(2);
@@ -352,6 +437,10 @@ BasketController::CreateGameBox() {
     periodEdit->setAlignment(Qt::AlignRight);
     sString.sprintf("%2d", iPeriod);
     periodEdit->setText(sString);
+
+    font = periodEdit->font();
+    font.setPointSize(iBonusEditFontSize);
+    periodEdit->setFont(font);
 
     periodIncrement = new Button(tr("+"), 0);
     periodDecrement = new Button(tr("-"), 0);
