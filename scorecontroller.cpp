@@ -765,7 +765,7 @@ ScoreController::CreateSpotButtonBox() {
     connect(panelControlButton, SIGNAL(clicked()),
             &buttonClick, SLOT(play()));
     connect(panelControlButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonCameraControlClicked()));
+            this, SLOT(onButtonPanelControlClicked()));
 
     connect(startStopLoopSpotButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonStartStopSpotLoopClicked()));
@@ -943,7 +943,7 @@ ScoreController::onButtonShutdownClicked() {
 
 
 void
-ScoreController::onButtonCameraControlClicked() {
+ScoreController::onButtonPanelControlClicked() {
     pClientListDialog->exec();
 }
 

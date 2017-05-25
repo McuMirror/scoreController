@@ -41,6 +41,10 @@ ClientListDialog::ClientListDialog(QWidget* parent)
     pConfigurator = new PanelConfigurator(this);
     connect(pConfigurator, SIGNAL(newPanValue(int)),
             this, SLOT(onSetNewPan(int)));
+    connect(pConfigurator, SIGNAL(startCamera()),
+            this, SLOT(onStartCamera()));
+    connect(pConfigurator, SIGNAL(stopCamera()),
+            this, SLOT(onCloseCamera()));
     connect(pConfigurator, SIGNAL(newTiltValue(int)),
             this, SLOT(onSetNewTilt(int)));
     connect(pConfigurator, SIGNAL(changeOrientation(PanelOrientation)),
@@ -86,6 +90,12 @@ ClientListDialog::addItem(QString sAddress) {
 
 
 void
+ClientListDialog::onStartCamera() {
+    emit enableVideo(sSelectedClient);
+}
+
+
+void
 ClientListDialog::onCloseCamera() {
     emit disableVideo();
 }
@@ -96,7 +106,6 @@ ClientListDialog::onClientSelected(QListWidgetItem* selectedClient) {
     emit disableVideo();
     pConfigurator->show();
     sSelectedClient = selectedClient->text();
-    emit enableVideo(sSelectedClient);
     emit getOrientation(sSelectedClient);
 }
 

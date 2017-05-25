@@ -25,6 +25,9 @@ signals:
     void newPanValue(int newPan);
     void newTiltValue(int newTilt);
     void changeOrientation(PanelOrientation newOrientation);
+    void startCamera();
+    void stopCamera();
+    void scoreOnly(bool);
 
 private:
     void SetupButtons();
@@ -35,6 +38,9 @@ private slots:
     void on_leftButton_pressed();
     void on_rightButton_pressed();
     void on_orientationCombo_currentIndexChanged(int index);
+    void on_tabWidget_tabBarClicked(int index);
+    void on_scoreOnlyCheckBox_clicked(bool checked);
+    void on_closeButton_clicked();
 
 private:
     Ui::PanelConfigurator *ui;

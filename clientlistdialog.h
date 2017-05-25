@@ -45,6 +45,7 @@ public slots:
     void remotePanTiltReceived(int newPan, int newTilt);
     void onSetNewPan(int newPan);
     void onSetNewTilt(int newTilt);
+    void onStartCamera();
     void onCloseCamera();
     void remoteOrientationReceived(PanelOrientation currentOrientation);
     void onChangePanelOrientation(PanelOrientation newOrientation);

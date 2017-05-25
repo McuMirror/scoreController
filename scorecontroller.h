@@ -68,7 +68,7 @@ protected slots:
     void onButtonStartStopSlideShowClicked();
     void onButtonStartStopLiveCameraClicked();
 
-    void onButtonCameraControlClicked();
+    void onButtonPanelControlClicked();
     void onButtonSetupClicked();
     void onButtonShutdownClicked();
 
