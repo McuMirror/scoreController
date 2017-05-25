@@ -46,6 +46,7 @@ PanelConfigurator::show() {
     ui->upButton->setDisabled(true);
     ui->downButton->setDisabled(true);
     ui->orientationCombo->setDisabled(true);
+    ui->scoreOnlyCheckBox->setDisabled(true);
     ui->tabWidget->setCurrentIndex(0);
     emit stopCamera();
     if(!isVisible()) QDialog::show();
@@ -168,6 +169,7 @@ PanelConfigurator::on_tabWidget_tabBarClicked(int index) {
 
 void
 PanelConfigurator::on_closeButton_clicked() {
+    emit stopCamera();
     close();
 }
 
@@ -175,4 +177,10 @@ PanelConfigurator::on_closeButton_clicked() {
 void
 PanelConfigurator::on_scoreOnlyCheckBox_clicked(bool checked) {
     emit scoreOnly(checked);
+}
+
+void
+PanelConfigurator::SetIsScoreOnly(bool bScoreOnly) {
+    ui->scoreOnlyCheckBox->setChecked(bScoreOnly);
+    ui->scoreOnlyCheckBox->setEnabled(true);
 }

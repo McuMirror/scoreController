@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHostAddress>
 #include <QFileInfoList>
 #include <QSoundEffect>
+#include <QTimer>
+#include <QSettings>
 
 #include "panelorientation.h"
 
@@ -86,6 +88,9 @@ protected slots:
     void onGetPanelOrientation(QString sClientIp);
     void onChangePanelOrientation(QString sClientIp, PanelOrientation orientation);
 
+    void onGetIsPanelScoreOnly(QString sClientIp);
+    void onSetScoreOnly(QString sClientIp, bool bScoreOnly);
+
     void onSlideServerDone(bool bError);
     void onSpotServerDone(bool bError);
 
@@ -107,6 +112,7 @@ protected:
     void            UpdateUI();
 
 protected:
+    QSettings    *pSettings;
     struct connection{
       QWebSocket*     pClientSocket;
       QHostAddress    clientAddress;
@@ -143,7 +149,7 @@ protected:
     int                   iCurrentSpot;
 
     QSoundEffect          buttonClick;
-    QTimer               *pExitTimer;
+    QTimer                exitTimer;
 
     QPushButton*          startStopLoopSpotButton;
     QPushButton*          startStopSpotButton;

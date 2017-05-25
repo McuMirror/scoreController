@@ -4,9 +4,11 @@
 #include "basketcontroller.h"
 
 
-ChooseDiscilpline::ChooseDiscilpline(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::ChooseDiscilpline)
+ChooseDiscilpline::ChooseDiscilpline(QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::ChooseDiscilpline)
+    , discipline(VOLLEY_PANEL)
+    , pController(Q_NULLPTR)
 {
     ui->setupUi(this);
     ui->VolleyRadioButton->setChecked(true);
@@ -15,6 +17,8 @@ ChooseDiscilpline::ChooseDiscilpline(QWidget *parent) :
 
 
 ChooseDiscilpline::~ChooseDiscilpline() {
+    if(pController != Q_NULLPTR)
+        delete pController;
     delete ui;
 }
 
@@ -33,8 +37,8 @@ ChooseDiscilpline::on_VolleyRadioButton_clicked() {
 
 void
 ChooseDiscilpline::on_goPushButton_clicked() {
-    hide();
-    if(getDiscipline() == BASKET_PANEL)
+    int iDiscipline = getDiscipline();
+    if(iDiscipline == BASKET_PANEL)
         pController = new BasketController();
     else
         pController = new VolleyController();
@@ -43,9 +47,10 @@ ChooseDiscilpline::on_goPushButton_clicked() {
 #ifdef Q_OS_ANDROID
     pController->showFullScreen();
 #else
-    pController->showMaximized();
-//        pController->show();
+//    pController->showMaximized();
+        pController->show();
 #endif
+        hide();
 }
 
 
@@ -57,11 +62,13 @@ ChooseDiscilpline::getDiscipline() {
 
 void
 ChooseDiscilpline::on_closePushButton_clicked() {
-    done(QDialog::Rejected);
+    done(QDialog::Accepted);
 }
+
 
 void
 ChooseDiscilpline::onPanelDone() {
     pController->deleteLater();
-    show();
+    pController = Q_NULLPTR;
+    setVisible(true);
 }

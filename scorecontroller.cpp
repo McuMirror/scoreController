@@ -62,6 +62,8 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     QString sFunctionName = QString(" ScoreController::Volley_Controller ");
     Q_UNUSED(sFunctionName)
 
+    pSettings = Q_NULLPTR;
+
     buttonClick.setSource(QUrl::fromLocalFile(":/key.wav"));
     sIpAddresses = QStringList();
 
@@ -98,8 +100,7 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
         panelType = FIRST_PANEL;
      }
 
-    pExitTimer = new QTimer(this);
-    connect(pExitTimer, SIGNAL(timeout()),
+    connect(&exitTimer, SIGNAL(timeout()),
             this, SLOT(close()));
 
     WaitForNetworkReady();
@@ -128,6 +129,11 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
             this, SLOT(onGetPanelOrientation(QString)));
     connect(pClientListDialog, SIGNAL(changeOrientation(QString,PanelOrientation)),
             this, SLOT(onChangePanelOrientation(QString,PanelOrientation)));
+    // Panel Score Only
+    connect(pClientListDialog, SIGNAL(getScoreOnly(QString)),
+            this, SLOT(onGetIsPanelScoreOnly(QString)));
+    connect(pClientListDialog, SIGNAL(changeScoreOnly(QString, bool)),
+            this, SLOT(onSetScoreOnly(QString, bool)));
 }
 
 
@@ -178,7 +184,7 @@ ScoreController::WaitForNetworkReady() {
         if(iResponse == QMessageBox::Ignore) {
             break;
         } else if(iResponse == QMessageBox::Abort) {
-            pExitTimer->start(1000);
+            exitTimer.start(1000);
             QCursor waitCursor;
             waitCursor.setShape(Qt::WaitCursor);
             setCursor(waitCursor);
@@ -318,6 +324,19 @@ ScoreController::onSetNewTiltValue(QString sClientIp, int newTilt) {
           return;
       }
   }
+}
+
+
+void
+ScoreController::onSetScoreOnly(QString sClientIp, bool bScoreOnly) {
+    QHostAddress hostAddress(sClientIp);
+    for(int i=0; i<connectionList.count(); i++) {
+        if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
+            QString sMessage = tr("<setScoreOnly>%1</setScoreOnly>").arg(bScoreOnly);
+            SendToOne(connectionList.at(i).pClientSocket, sMessage);
+            return;
+        }
+    }
 }
 
 
@@ -479,6 +498,7 @@ ScoreController::closeEvent(QCloseEvent *event) {
         delete logFile;
         logFile = Q_NULLPTR;
     }
+    if(pSettings != Q_NULLPTR) delete pSettings;
     emit panelDone();
 }
 
@@ -564,15 +584,32 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         PanelOrientation orientation = static_cast<PanelOrientation>(iOrientation);
         pClientListDialog->remoteOrientationReceived(orientation);
     }// orientation
+
+    sToken = XML_Parse(sMessage, "isScoreOnly");
+    if(sToken != sNoData) {
+        bool ok;
+        bool isScoreOnly = bool(sToken.toInt(&ok));
+        if(!ok) {
+            logMessage(logFile,
+                       sFunctionName,
+                       QString("Illegal orientation received: %1")
+                       .arg(sToken));
+            return;
+        }
+        pClientListDialog->remoteScoreOnlyValueReceived(isScoreOnly);
+    }// orientation
 }
 
 
 int
 ScoreController::SendToAll(QString sMessage) {
     QString sFunctionName = " ScoreController::SendToAll ";
+    Q_UNUSED(sFunctionName)
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                sFunctionName,
                sMessage);
+#endif
     for(int i=0; i< connectionList.count(); i++) {
         SendToOne(connectionList.at(i).pClientSocket, sMessage);
     }
@@ -1052,6 +1089,19 @@ ScoreController::onGetPanelOrientation(QString sClientIp) {
     for(int i=0; i<connectionList.count(); i++) {
         if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
             QString sMessage = "<getOrientation>1</getOrientation>";
+            SendToOne(connectionList.at(i).pClientSocket, sMessage);
+            return;
+        }
+    }
+}
+
+
+void
+ScoreController::onGetIsPanelScoreOnly(QString sClientIp) {
+    QHostAddress hostAddress(sClientIp);
+    for(int i=0; i<connectionList.count(); i++) {
+        if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
+            QString sMessage = "<getScoreOnly>1</getScoreOnly>";
             SendToOne(connectionList.at(i).pClientSocket, sMessage);
             return;
         }

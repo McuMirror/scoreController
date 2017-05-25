@@ -49,6 +49,8 @@ ClientListDialog::ClientListDialog(QWidget* parent)
             this, SLOT(onSetNewTilt(int)));
     connect(pConfigurator, SIGNAL(changeOrientation(PanelOrientation)),
             this, SLOT(onChangePanelOrientation(PanelOrientation)));
+    connect(pConfigurator, SIGNAL(scoreOnly(bool)),
+            this, SLOT(onChangeScoreOnly(bool)));
 }
 
 
@@ -64,12 +66,9 @@ ClientListDialog::createClientListBox() {
     connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(accept()));
 
     clientListBox->setTitle(tr("Client Connessi"));
-    clientListWidget = new QListWidget();
-    QFont *font;
-    font = new QFont("Arial", 24);
-    clientListWidget->setFont(*font);
-    clientListLayout->addWidget(clientListWidget, 0, 0, 6, 3);
-    connect(clientListWidget, SIGNAL(itemClicked(QListWidgetItem*)),
+    clientListWidget.setFont(QFont("Arial", 24));
+    clientListLayout->addWidget(&clientListWidget, 0, 0, 6, 3);
+    connect(&clientListWidget, SIGNAL(itemClicked(QListWidgetItem*)),
             this, SLOT(onClientSelected(QListWidgetItem*)));
     clientListLayout->addWidget(closeButton, 6, 1, 1, 1);
     clientListBox->setLayout(clientListLayout);
@@ -79,13 +78,13 @@ ClientListDialog::createClientListBox() {
 
 void
 ClientListDialog::clear() {
-    clientListWidget->clear();
+    clientListWidget.clear();
 }
 
 
 void
 ClientListDialog::addItem(QString sAddress) {
-    clientListWidget->addItem(sAddress);
+    clientListWidget.addItem(sAddress);
 }
 
 
@@ -107,6 +106,7 @@ ClientListDialog::onClientSelected(QListWidgetItem* selectedClient) {
     pConfigurator->show();
     sSelectedClient = selectedClient->text();
     emit getOrientation(sSelectedClient);
+    emit getScoreOnly(sSelectedClient);
 }
 
 
@@ -141,8 +141,20 @@ ClientListDialog::onChangePanelOrientation(PanelOrientation newOrientation) {
 }
 
 
+void
+ClientListDialog::remoteScoreOnlyValueReceived(bool bScoreOnly) {
+    pConfigurator->SetIsScoreOnly(bScoreOnly);
+}
+
+
+void
+ClientListDialog::onChangeScoreOnly(bool bScoreOnly) {
+    emit changeScoreOnly(sSelectedClient, bScoreOnly);
+}
+
+
 int
 ClientListDialog::exec() {
-  clientListWidget->clearSelection();
+  clientListWidget.clearSelection();
   return QDialog::exec();
 }

@@ -50,8 +50,6 @@ private:
     void          SaveStatus() ;
 
 private:
-    QSettings    *pSettings;
-
     QString       sTeam[2];
     int           iTimeout[2];
     int           iScore[2];

@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-#include <QSettings>
 #include <QDir>
 #include <QVBoxLayout>
 #include <QGridLayout>
@@ -42,6 +41,7 @@ VolleyController::VolleyController()
     : ScoreController(VOLLEY_PANEL, Q_NULLPTR)
 {
     QString sFunctionName = QString(" VolleyController::VolleyController ");
+    pSettings = Q_NULLPTR;
     GetSettings();
 
     QDir slideDir(sSlideDir);

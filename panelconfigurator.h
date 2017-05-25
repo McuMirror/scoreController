@@ -20,6 +20,7 @@ public:
     void show();
     void SetCurrentPanTilt(int newPan, int newTilt);
     void SetCurrrentOrientaton(int index);
+    void SetIsScoreOnly(bool bScoreOnly);
 
 signals:
     void newPanValue(int newPan);
