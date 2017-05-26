@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGridLayout>
 #include <QLabel>
 #include <QCloseEvent>
+#include <QProcessEnvironment>
 
 #include "scorecontroller.h"
 #include "clientlistdialog.h"
@@ -45,9 +46,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SPOT_UPDATER_PORT   45455
 #define SLIDE_UPDATER_PORT  45456
 
-
-//#define QT_DEBUG
-#define LOG_MESG
 
 
 ScoreController::ScoreController(int _panelType, QWidget *parent)
@@ -64,12 +62,22 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     QString sFunctionName = QString(" ScoreController::Volley_Controller ");
     Q_UNUSED(sFunctionName)
 
+    pSettings = Q_NULLPTR;
+
     buttonClick.setSource(QUrl::fromLocalFile(":/key.wav"));
-    sIpAddresses = QString();
+    sIpAddresses = QStringList();
 
     QString sBaseDir;
 #ifdef Q_OS_ANDROID
-    sBaseDir = QString("/storage/extSdCard/");
+    QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
+    sBaseDir = environment.value(QString("SECONDARY_STORAGE"), QString(""));
+    if(sBaseDir == QString("")) {
+        sBaseDir = environment.value(QString("EXTERNAL_STORAGE"), QString("/storage/extSdCard/"));
+    }
+    else {
+        QStringList secondaryList = sBaseDir.split(":", QString::SkipEmptyParts);
+        sBaseDir = secondaryList.at(0);
+    }
 #else
     sBaseDir = QDir::homePath();
 #endif
@@ -92,13 +100,10 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
         panelType = FIRST_PANEL;
      }
 
-    pExitTimer = new QTimer(this);
-    connect(pExitTimer, SIGNAL(timeout()),
+    connect(&exitTimer, SIGNAL(timeout()),
             this, SLOT(close()));
 
     WaitForNetworkReady();
-
-    sHostName = QHostInfo::localHostName();
 
     prepareDiscovery();
 
@@ -106,31 +111,8 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
         return;
     }
 
-    // Creating a Spot Update Service
-    pSpotUpdaterServer = new FileServer(QString("SpotUpdater"), logFile, Q_NULLPTR);
-    connect(pSpotUpdaterServer, SIGNAL(fileServerDone(bool)),
-            this, SLOT(onSpotServerDone(bool)));
-    pSpotUpdaterServer->setServerPort(spotUpdaterPort);
-    pSpotServerThread = new QThread();
-    pSpotUpdaterServer->moveToThread(pSpotServerThread);
-    connect(this, SIGNAL(startSpotServer()),
-            pSpotUpdaterServer, SLOT(onStartServer()));
-    connect(this, SIGNAL(closeSpotServer()),
-            pSpotUpdaterServer, SLOT(onCloseServer()));
-    pSpotServerThread->start(QThread::LowestPriority);
-
-    // Creating a Slide Update Service
-    pSlideUpdaterServer = new FileServer(QString("SlideUpdater"), logFile, Q_NULLPTR);
-    connect(pSlideUpdaterServer, SIGNAL(fileServerDone(bool)),
-            this, SLOT(onSlideServerDone(bool)));
-    pSlideUpdaterServer->setServerPort(slideUpdaterPort);
-    pSlideServerThread = new QThread();
-    pSlideUpdaterServer->moveToThread(pSlideServerThread);
-    connect(this, SIGNAL(startSlideServer()),
-            pSlideUpdaterServer, SLOT(onStartServer()));
-    connect(this, SIGNAL(closeSlideServer()),
-            pSlideUpdaterServer, SLOT(onCloseServer()));
-    pSlideServerThread->start(QThread::LowestPriority);
+    prepareSpotUpdateService();
+    prepareSlideUpdateService();
 
     // Pan-Tilt Camera management
     connect(pClientListDialog, SIGNAL(disableVideo()),
@@ -147,7 +129,44 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
             this, SLOT(onGetPanelOrientation(QString)));
     connect(pClientListDialog, SIGNAL(changeOrientation(QString,PanelOrientation)),
             this, SLOT(onChangePanelOrientation(QString,PanelOrientation)));
+    // Panel Score Only
+    connect(pClientListDialog, SIGNAL(getScoreOnly(QString)),
+            this, SLOT(onGetIsPanelScoreOnly(QString)));
+    connect(pClientListDialog, SIGNAL(changeScoreOnly(QString, bool)),
+            this, SLOT(onSetScoreOnly(QString, bool)));
+}
 
+
+void
+ScoreController::prepareSpotUpdateService() {
+    // Creating a Spot Update Service
+    pSpotUpdaterServer = new FileServer(QString("SpotUpdater"), logFile, Q_NULLPTR);
+    connect(pSpotUpdaterServer, SIGNAL(fileServerDone(bool)),
+            this, SLOT(onSpotServerDone(bool)));
+    pSpotUpdaterServer->setServerPort(spotUpdaterPort);
+    pSpotServerThread = new QThread();
+    pSpotUpdaterServer->moveToThread(pSpotServerThread);
+    connect(this, SIGNAL(startSpotServer()),
+            pSpotUpdaterServer, SLOT(onStartServer()));
+    connect(this, SIGNAL(closeSpotServer()),
+            pSpotUpdaterServer, SLOT(onCloseServer()));
+    pSpotServerThread->start(QThread::LowestPriority);
+}
+
+void
+ScoreController::prepareSlideUpdateService() {
+    // Creating a Slide Update Service
+    pSlideUpdaterServer = new FileServer(QString("SlideUpdater"), logFile, Q_NULLPTR);
+    connect(pSlideUpdaterServer, SIGNAL(fileServerDone(bool)),
+            this, SLOT(onSlideServerDone(bool)));
+    pSlideUpdaterServer->setServerPort(slideUpdaterPort);
+    pSlideServerThread = new QThread();
+    pSlideUpdaterServer->moveToThread(pSlideServerThread);
+    connect(this, SIGNAL(startSlideServer()),
+            pSlideUpdaterServer, SLOT(onStartServer()));
+    connect(this, SIGNAL(closeSlideServer()),
+            pSlideUpdaterServer, SLOT(onCloseServer()));
+    pSlideServerThread->start(QThread::LowestPriority);
 }
 
 
@@ -165,7 +184,7 @@ ScoreController::WaitForNetworkReady() {
         if(iResponse == QMessageBox::Ignore) {
             break;
         } else if(iResponse == QMessageBox::Abort) {
-            pExitTimer->start(1000);
+            exitTimer.start(1000);
             QCursor waitCursor;
             waitCursor.setShape(Qt::WaitCursor);
             setCursor(waitCursor);
@@ -177,7 +196,9 @@ ScoreController::WaitForNetworkReady() {
 
 
 ScoreController::~ScoreController() {
+    // All the housekeeping is done in "closeEvent()" manager
     QString sFunctionName = QString("ScoreController::~ScoreController");
+    Q_UNUSED(sFunctionName)
 }
 
 
@@ -216,7 +237,7 @@ ScoreController::onSpotServerDone(bool bError) {
 void
 ScoreController::prepareDiscovery() {
     QString sFunctionName = QString(" ScoreController::prepareDiscovery ");
-    sIpAddresses = QString();
+    sIpAddresses = QStringList();
     QList<QNetworkInterface> interfaceList = QNetworkInterface::allInterfaces();
     for(int i=0; i<interfaceList.count(); i++)
     {
@@ -233,15 +254,17 @@ ScoreController::prepareDiscovery() {
                 if(list[j].ip().protocol() == QAbstractSocket::IPv4Protocol) {
                     if(pDiscoverySocket->bind(QHostAddress::AnyIPv4, discoveryPort, QUdpSocket::ShareAddress)) {
                         pDiscoverySocket->joinMulticastGroup(discoveryAddress);
-                        sIpAddresses += list[j].ip().toString() + tr(",");
+                        sIpAddresses.append(list[j].ip().toString());
                         discoverySocketArray.append(pDiscoverySocket);
                         connect(pDiscoverySocket, SIGNAL(readyRead()),
                                 this, SLOT(onProcessConnectionRequest()));
+#ifdef LOG_VERBOSE
                         logMessage(logFile,
                                    sFunctionName,
                                    QString("Listening for connections at address: %1 port:%2")
                                    .arg(discoveryAddress.toString())
                                    .arg(discoveryPort));
+#endif
                     }
                     else {
                         logMessage(logFile,
@@ -304,9 +327,22 @@ ScoreController::onSetNewTiltValue(QString sClientIp, int newTilt) {
 }
 
 
+void
+ScoreController::onSetScoreOnly(QString sClientIp, bool bScoreOnly) {
+    QHostAddress hostAddress(sClientIp);
+    for(int i=0; i<connectionList.count(); i++) {
+        if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
+            QString sMessage = tr("<setScoreOnly>%1</setScoreOnly>").arg(bScoreOnly);
+            SendToOne(connectionList.at(i).pClientSocket, sMessage);
+            return;
+        }
+    }
+}
+
+
 bool
 ScoreController::PrepareLogFile() {
-#ifdef LOG_MESG
+#if defined(LOG_MESG) || defined(LOG_VERBOSE)
     QFileInfo checkFile(logFileName);
     if(checkFile.exists() && checkFile.isFile()) {
         QDir renamed;
@@ -344,9 +380,11 @@ ScoreController::isConnectedToNetwork() {
             }
         }
     }
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                sFunctionName,
                result ? QString("true") : QString("false"));
+#endif
     return result;
 }
 
@@ -354,43 +392,49 @@ ScoreController::isConnectedToNetwork() {
 void
 ScoreController::onProcessConnectionRequest() {
     QString sFunctionName = " ScoreController::onProcessConnectionRequest ";
-    QByteArray datagram;
+    QByteArray datagram, request;
     QString sToken;
     QUdpSocket* pDiscoverySocket = qobject_cast<QUdpSocket*>(sender());
     QString sNoData = QString("NoData");
     QString sMessage;
+    QHostAddress hostAddress;
+    quint16 port;
 
     while(pDiscoverySocket->hasPendingDatagrams()) {
         datagram.resize(pDiscoverySocket->pendingDatagramSize());
-
-        QHostAddress hostAddress;
-        quint16 port;
         pDiscoverySocket->readDatagram(datagram.data(), datagram.size(), &hostAddress, &port);
-        sToken = XML_Parse(datagram.data(), "getServer");
-        if(sToken != sNoData) {
-            sMessage = "<serverIP>" + sIpAddresses + "</serverIP>";
-            sendAcceptConnection(pDiscoverySocket, sMessage, hostAddress, port);
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Connection request from: %1 at Address %2:%3")
-                       .arg(sToken)
-                       .arg(hostAddress.toString())
-                       .arg(port));
-            RemoveClient(hostAddress);
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Sent: %1")
-                       .arg(sMessage));
-            UpdateUI();
-        }
+        request.append(datagram.data());
+    }
+    sToken = XML_Parse(request.data(), "getServer");
+    if(sToken != sNoData) {
+        sendAcceptConnection(pDiscoverySocket, hostAddress, port);
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Connection request from: %1 at Address %2:%3")
+                   .arg(sToken)
+                   .arg(hostAddress.toString())
+                   .arg(port));
+        RemoveClient(hostAddress);
+#ifdef LOG_VERBOSE
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Sent: %1")
+                   .arg(sMessage));
+#endif
+        UpdateUI();
     }
 }
 
 
 int
-ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, QString sMessage, QHostAddress hostAddress, quint16 port) {
+ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, QHostAddress hostAddress, quint16 port) {
     QString sFunctionName = " ScoreController::sendAcceptConnection ";
     Q_UNUSED(sFunctionName)
+    QString sString = QString("%1,%2").arg(sIpAddresses.at(0)).arg(panelType);
+    for(int i=1; i<sIpAddresses.count(); i++) {
+        sString += QString(";%1,%2").arg(sIpAddresses.at(i)).arg(panelType);
+    }
+    QString sMessage = "<serverIP>" + sString + "</serverIP>";
     QByteArray datagram = sMessage.toUtf8();
     if(!pDiscoverySocket->isValid()) {
         logMessage(logFile,
@@ -416,8 +460,10 @@ ScoreController::closeEvent(QCloseEvent *event) {
     QString sMessage;
 
     // Close all the discovery sockets
-    for(int i=0; i<discoverySocketArray.count(); i++)
+    for(int i=0; i<discoverySocketArray.count(); i++) {
+        disconnect(discoverySocketArray.at(i), 0, 0, 0);
         discoverySocketArray.at(i)->close();
+    }
 
     emit closeSpotServer();
     emit closeSlideServer();
@@ -452,6 +498,7 @@ ScoreController::closeEvent(QCloseEvent *event) {
         delete logFile;
         logFile = Q_NULLPTR;
     }
+    if(pSettings != Q_NULLPTR) delete pSettings;
     emit panelDone();
 }
 
@@ -501,92 +548,9 @@ ScoreController::onProcessTextMessage(QString sMessage) {
     sToken = XML_Parse(sMessage, "pan_tilt");
     if(sToken != sNoData) {
         QStringList values = QStringList(sToken.split(tr(","),QString::SkipEmptyParts));
-        pClientListDialog->onRemotePanTiltReceived(values.at(0).toInt(), values.at(1).toInt());
+        pClientListDialog->remotePanTiltReceived(values.at(0).toInt(), values.at(1).toInt());
     }// pan_tilt
-/*
-    sToken = XML_Parse(sMessage, "image_size");
-    if(sToken != sNoData) {
-        QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-        logMessage(logFile,
-                   sFunctionName,
-                   QString("%1 received %2 bytes")
-                   .arg(pClient->peerAddress().toString())
-                   .arg(sToken));
-    }// image_size
 
-    sToken = XML_Parse(sMessage, "send_image");
-    if(sToken != sNoData) {
-        if(slideList.isEmpty()) {
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Empty slide list"));
-            return;
-        }
-        QImage image;
-        if(!image.load(sSlideDir+slideList[iCurrentSlide])) {
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Unable to read:  %1")
-                       .arg(sSlideDir+slideList[iCurrentSlide]));
-            return;
-        }
-        QByteArray ba;
-        QBuffer buffer(&ba);
-        if(!buffer.open(QIODevice::WriteOnly)) {
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Unable to open image buffer"));
-            return;
-        }
-        if(!image.save(&buffer, "JPG", -1)) {// writes image into ba in JPEG format
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Unable to save image into buffer"));
-            buffer.close();
-            return;
-        }
-        buffer.close();
-        QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-        if(!pClient->isValid()) {
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Client socket is Invalid !"));
-        }
-        else {
-            logMessage(logFile,
-                       sFunctionName,
-                       QString("Sending image %1 to %2")
-                       .arg(iCurrentSlide)
-                       .arg(pClient->peerAddress().toString()));
-            int bytesSent = pClient->sendBinaryMessage(ba);
-            if(bytesSent != ba.size()) {
-                logMessage(logFile,
-                           sFunctionName,
-                           QString("Unable to send the image to client"));
-            }
-            iCurrentSlide = (iCurrentSlide + 1) % slideList.count();
-        }
-    }// send_image
-*/
-/*
-    sToken = XML_Parse(sMessage, "send_file_list");
-    if(sToken != sNoData) {
-        if(spotList.isEmpty())
-            return;
-        QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
-        if(pClient->isValid()) {
-            sMessage = QString("<file_list>");
-            for(int i=0; i<spotList.count()-1; i++) {
-                sMessage += spotList.at(i).fileName();
-                sMessage += QString(";%1,").arg(spotList.at(i).size());
-            }
-            int i = spotList.count()-1;
-            sMessage += spotList.at(i).fileName();
-            sMessage += QString(";%1</spot_list>").arg(spotList.at(i).size());
-            SendToOne(pClient, sMessage);
-        }
-    }// send_spot_list
-*/
     sToken = XML_Parse(sMessage, "send_spot");
     if(sToken != sNoData) {
         if(spotList.isEmpty())
@@ -617,16 +581,22 @@ ScoreController::onProcessTextMessage(QString sMessage) {
                        .arg(sToken));
             return;
         }
-        try {
-            PanelOrientation orientation = static_cast<PanelOrientation>(iOrientation);
-            pClientListDialog->onOrientationReceived(orientation);
-        } catch(...) {
+        PanelOrientation orientation = static_cast<PanelOrientation>(iOrientation);
+        pClientListDialog->remoteOrientationReceived(orientation);
+    }// orientation
+
+    sToken = XML_Parse(sMessage, "isScoreOnly");
+    if(sToken != sNoData) {
+        bool ok;
+        bool isScoreOnly = bool(sToken.toInt(&ok));
+        if(!ok) {
             logMessage(logFile,
                        sFunctionName,
                        QString("Illegal orientation received: %1")
-                       .arg(iOrientation));
+                       .arg(sToken));
             return;
         }
+        pClientListDialog->remoteScoreOnlyValueReceived(isScoreOnly);
     }// orientation
 }
 
@@ -634,9 +604,12 @@ ScoreController::onProcessTextMessage(QString sMessage) {
 int
 ScoreController::SendToAll(QString sMessage) {
     QString sFunctionName = " ScoreController::SendToAll ";
+    Q_UNUSED(sFunctionName)
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                sFunctionName,
                sMessage);
+#endif
     for(int i=0; i< connectionList.count(); i++) {
         SendToOne(connectionList.at(i).pClientSocket, sMessage);
     }
@@ -657,6 +630,7 @@ ScoreController::SendToOne(QWebSocket* pClient, QString sMessage) {
                                sFunctionName,
                                QString("Error writing %1").arg(sMessage));
                 }
+#ifdef LOG_VERBOSE
                 else {
                     logMessage(logFile,
                                sFunctionName,
@@ -664,6 +638,7 @@ ScoreController::SendToOne(QWebSocket* pClient, QString sMessage) {
                                .arg(sMessage)
                                .arg(pClient->peerAddress().toString()));
                 }
+#endif
                 break;
             }
         }
@@ -693,12 +668,14 @@ ScoreController::RemoveClient(QHostAddress hAddress) {
             disconnect(pClientToClose, 0, 0, 0); // No more events from this socket
             pClientToClose->close(QWebSocketProtocol::CloseCodeAbnormalDisconnection, tr("Timeout in connection"));
             connectionList.removeAt(i);
+#ifdef LOG_VERBOSE
             sFound = " Removed !";
             logMessage(logFile,
                        sFunctionName,
                        QString("%1 %2")
                        .arg(hAddress.toString())
                        .arg(sFound));
+#endif
         } else {
             pClientListDialog->addItem(connectionList.at(i).clientAddress.toString());
         }
@@ -799,7 +776,7 @@ ScoreController::onProcessBinaryMessage(QByteArray message) {
 
 QGroupBox*
 ScoreController::CreateSpotButtonBox() {
-    QGroupBox* spotButtonBox = new QGroupBox(tr("Controlli"));
+    QGroupBox* spotButtonBox = new QGroupBox();
     QGridLayout* spotButtonLayout = new QGridLayout();
 
     startStopLoopSpotButton = new QPushButton(tr("Avvia\nSpot Loop"));
@@ -825,7 +802,7 @@ ScoreController::CreateSpotButtonBox() {
     connect(panelControlButton, SIGNAL(clicked()),
             &buttonClick, SLOT(play()));
     connect(panelControlButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonCameraControlClicked()));
+            this, SLOT(onButtonPanelControlClicked()));
 
     connect(startStopLoopSpotButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonStartStopSpotLoopClicked()));
@@ -916,10 +893,8 @@ ScoreController::onButtonStartStopSpotLoopClicked() {
         return;
     }
     if(startStopLoopSpotButton->text().contains(QString("Avvia"))) {
-        for(int i=0; i<connectionList.count(); i++) {
-            sMessage = QString("<spotloop>1</spotloop>");
-            SendToOne(connectionList.at(i).pClientSocket, sMessage);
-        }
+        sMessage = QString("<spotloop>1</spotloop>");
+        SendToAll(sMessage);
         startStopLoopSpotButton->setText(tr("Chiudi\nSpot Loop"));
         startStopSpotButton->setDisabled(true);
         startStopSlideShowButton->setDisabled(true);
@@ -945,10 +920,8 @@ ScoreController::onButtonStartStopLiveCameraClicked() {
         return;
     }
     if(startStopLiveCameraButton->text().contains(QString("Avvia"))) {
-        for(int i=0; i<connectionList.count(); i++) {
-            sMessage = QString("<live>1</live>");
-            SendToOne(connectionList.at(i).pClientSocket, sMessage);
-        }
+        sMessage = QString("<live>1</live>");
+        SendToAll(sMessage);
         startStopLiveCameraButton->setText(tr("Chiudi\nLive Camera"));
         startStopLoopSpotButton->setDisabled(true);
         startStopSpotButton->setDisabled(true);
@@ -1007,7 +980,7 @@ ScoreController::onButtonShutdownClicked() {
 
 
 void
-ScoreController::onButtonCameraControlClicked() {
+ScoreController::onButtonPanelControlClicked() {
     pClientListDialog->exec();
 }
 
@@ -1015,33 +988,50 @@ ScoreController::onButtonCameraControlClicked() {
 void
 ScoreController::onButtonSetupClicked() {
     QString sFunctionName = QString(" ScoreController::onButtonSetupClicked ");
-    QFileDialog chooseDir(this, Qt::Dialog);
-    chooseDir.setViewMode(QFileDialog::List);
+
+    QString sBaseDir;
+#ifdef Q_OS_ANDROID
+    QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
+    sBaseDir = environment.value(QString("SECONDARY_STORAGE"), QString(""));
+    if(sBaseDir == QString("")) {
+        sBaseDir = environment.value(QString("EXTERNAL_STORAGE"), QString("/storage/extSdCard/"));
+    }
+    else {
+        QStringList secondaryList = sBaseDir.split(":", QString::SkipEmptyParts);
+        sBaseDir = secondaryList.at(0);
+    }
+#else
+    sBaseDir = QDir::homePath();
+#endif
 
     QDir slideDir(sSlideDir);
     if(slideDir.exists()) {
-        sSlideDir = chooseDir.getExistingDirectory(
+        sSlideDir = QFileDialog::getExistingDirectory(
                         this,
-                        "Seleziona la cartella con le Slide",
+                        "Slide Dir",
                         sSlideDir,
                         QFileDialog::ShowDirsOnly |
                         QFileDialog::DontResolveSymlinks);
     }
     else {
-        sSlideDir = chooseDir.getExistingDirectory(
+        sSlideDir = QFileDialog::getExistingDirectory(
                         this,
-                        "Seleziona la cartella con le Slide",
-                        QDir::homePath(),
+                        "Slide Dir",
+                        sBaseDir,
                         QFileDialog::ShowDirsOnly |
                         QFileDialog::DontResolveSymlinks);
     }
     if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
     slideDir = QDir(sSlideDir);
     if(sSlideDir != QString() && slideDir.exists()) {
-//        pSettings->setValue("directories/slides", sSlideDir);
         QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
         slideDir.setNameFilters(filter);
         slideList = slideDir.entryInfoList();
+    }
+    else {
+        sSlideDir = QDir::homePath();
+        if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
+        slideList = QFileInfoList();
     }
     logMessage(logFile,
                sFunctionName,
@@ -1049,37 +1039,38 @@ ScoreController::onButtonSetupClicked() {
 
     QDir spotDir(sSpotDir);
     if(spotDir.exists()) {
-        sSpotDir = chooseDir.getExistingDirectory(
+        sSpotDir = QFileDialog::getExistingDirectory(
                        this,
-                       tr("Seleziona la cartella con gli Spot"),
+                       tr("Spot Dir"),
                        sSpotDir,
                        QFileDialog::ShowDirsOnly |
                        QFileDialog::DontResolveSymlinks);
     }
     else {
-        sSpotDir = chooseDir.getExistingDirectory(
+        sSpotDir = QFileDialog::getExistingDirectory(
                        this,
-                       tr("Seleziona la cartella con gli Spot"),
-                       QDir::homePath(),
+                       tr("Spot Dir"),
+                       sBaseDir,
                        QFileDialog::ShowDirsOnly |
                        QFileDialog::DontResolveSymlinks);
     }
     if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
     spotDir = QDir(sSpotDir);
     if(sSpotDir != QString() && spotDir.exists()) {
-//        pSettings->setValue("directories/spots", sSpotDir);
         QStringList nameFilter(QStringList() << "*.mp4");
         spotDir.setNameFilters(nameFilter);
         spotDir.setFilter(QDir::Files);
         spotList = spotDir.entryInfoList();
     }
+    else {
+        sSpotDir = QDir::homePath();
+        if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
+        spotList = QFileInfoList();
+    }
     logMessage(logFile,
                sFunctionName,
                QString("Found %1 spots")
                .arg(spotList.count()));
-//    pFileUpdaterServer->setDirs(sSlideDir, sSpotDir);
-//    sMessage = QString("<reloadSpot>1</reloadSpot>");
-//    SendToAll(sMessage);
 }
 
 
@@ -1087,7 +1078,8 @@ QString
 ScoreController::FormatStatusMsg() {
     QString sFunctionName = " ScoreController::FormatStatusMsg ";
     Q_UNUSED(sFunctionName)
-    return QString();
+    QString sMessage = QString();
+    return sMessage;
 }
 
 
@@ -1097,6 +1089,19 @@ ScoreController::onGetPanelOrientation(QString sClientIp) {
     for(int i=0; i<connectionList.count(); i++) {
         if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
             QString sMessage = "<getOrientation>1</getOrientation>";
+            SendToOne(connectionList.at(i).pClientSocket, sMessage);
+            return;
+        }
+    }
+}
+
+
+void
+ScoreController::onGetIsPanelScoreOnly(QString sClientIp) {
+    QHostAddress hostAddress(sClientIp);
+    for(int i=0; i<connectionList.count(); i++) {
+        if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
+            QString sMessage = "<getScoreOnly>1</getScoreOnly>";
             SendToOne(connectionList.at(i).pClientSocket, sMessage);
             return;
         }

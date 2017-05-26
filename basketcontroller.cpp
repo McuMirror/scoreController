@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-#include <QSettings>
 #include <QDir>
 #include <QVBoxLayout>
 #include <QGridLayout>
@@ -25,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPushButton>
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QGuiApplication>
+#include <QScreen>
 
 #include "basketcontroller.h"
 #include "utility.h"
@@ -34,13 +35,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "fileserver.h"
 
 
-#define MAX_TIMEOUTS  3
-#define MAX_FAULS    99 // Da definire il comportamento dopo il numer max di falli !
-#define MAX_PERIODS  99 // Da definire il comportamento dopo il numer max di periodi !
-#define BONUS_TARGET  5 // After this value the Bonus is triggered for the team
-#define GAME_PERIODS  4 // Oltre questo valore ci sono gli OVERTIMES
-#define REGULAR_TIME 10 // 10 Minuti è la durata di un tempo regolare
-#define OVER_TIME     5 // 5 Minuti è a durata di ciascun overtime
+#define MAX_TIMEOUTS_1  2 // Numero massimo di sospensioni nella prima metà di gara
+#define MAX_TIMEOUTS_2  3 // Numero massimo di sospensioni nella seconda metà di gara
+#define MAX_TIMEOUTS_3  1 // Numero massimo di sospensioni negli OVERTIMES
+#define MAX_FAULS      99 // Da definire il comportamento dopo il numero max di falli !
+#define MAX_PERIODS    99 // Da definire il comportamento dopo il numero max di periodi !
+#define BONUS_TARGET    4 // Dopo questo valore il Bonus per il team è finito !
+#define GAME_PERIODS    4 // Oltre questo valore ci sono gli OVERTIMES
+#define REGULAR_TIME   10 // 10 Minuti è la durata di un tempo regolare
+#define OVER_TIME       5 // 5 Minuti è a durata di ciascun overtime
 
 
 BasketController::BasketController()
@@ -51,8 +54,15 @@ BasketController::BasketController()
 
     QDir slideDir(sSlideDir);
     QDir spotDir(sSpotDir);
+
     if(!slideDir.exists() || !spotDir.exists()) {
         onButtonSetupClicked();
+        slideDir.setPath(sSlideDir);
+        if(!slideDir.exists()) sSlideDir = QDir::homePath();
+        spotDir.setPath(sSpotDir);
+        if(!spotDir.exists()) sSpotDir = QDir::homePath();
+        pSettings->setValue("directories/slides", sSlideDir);
+        pSettings->setValue("directories/spots", sSpotDir);
     }
     else {
         QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
@@ -140,7 +150,7 @@ BasketController::GetSettings() {
     sSpotDir    = pSettings->value("directories/spots", sSpotDir).toString();
 
     for(int iTeam=0; iTeam<2; iTeam++) {
-        if(iFauls[iTeam] >= BONUS_TARGET) {
+        if(iFauls[iTeam] < BONUS_TARGET) {
             iBonus[iTeam] = 1;
         }
         else {
@@ -185,6 +195,11 @@ BasketController::CreateTeamBox(int iTeam) {
     QGridLayout* teamLayout = new QGridLayout();
     QLabel* labelSpacer = new QLabel(QString(""));
 
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->geometry();
+    int width = screenGeometry.width();
+    int rW;
+
     // Team
     int iRow = 0;
     teamName[iTeam] = new Edit(sTeam[iTeam], iTeam);
@@ -195,16 +210,48 @@ BasketController::CreateTeamBox(int iTeam) {
     teamLayout->addWidget(teamName[iTeam], iRow, 0, 2, 10);
     teamLayout->addWidget(labelSpacer, iRow+2, 0, 1, 10);
 
+    QFont font(teamName[iTeam]->font());
+    int iTeamFontSize = font.pointSize();
+    for(int i=iTeamFontSize; i<100; i++) {
+        font.setPointSize(i);
+        QFontMetrics f(font);
+        rW = teamName[iTeam]->maxLength()*f.width("W");
+        if(rW > width/3) {
+            iTeamFontSize = i-1;
+            break;
+        }
+    }
+    font.setPointSize(iTeamFontSize);
+    teamName[iTeam]->setFont(font);
+
     // Timeout
     QLabel *timeoutLabel;
     timeoutLabel = new QLabel(tr("Timeout"));
     timeoutLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
+
+    font = timeoutLabel->font();
+    int iTimeoutLabelFontSize = font.pointSize();
+    for(int i=iTimeoutLabelFontSize; i<100; i++) {
+        font.setPointSize(i);
+        QFontMetrics f(font);
+        rW = f.width(timeoutLabel->text());
+        if(rW > width/10) {
+            iTimeoutLabelFontSize = i-1;
+            break;
+        }
+    }
+    font.setPointSize(iTimeoutLabelFontSize);
+    timeoutLabel->setFont(font);
 
     sString.sprintf("%1d", iTimeout[iTeam]);
     timeoutEdit[iTeam] = new Edit(sString);
     timeoutEdit[iTeam]->setMaxLength(1);
     timeoutEdit[iTeam]->setAlignment(Qt::AlignHCenter);
     timeoutEdit[iTeam]->setReadOnly(true);
+
+    font = timeoutEdit[iTeam]->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    timeoutEdit[iTeam]->setFont(font);
 
     timeoutIncrement[iTeam] = new Button(tr("+"), iTeam);
     timeoutDecrement[iTeam] = new Button(tr("-"), iTeam);
@@ -220,10 +267,6 @@ BasketController::CreateTeamBox(int iTeam) {
 
     if(iTimeout[iTeam] == 0)
         timeoutDecrement[iTeam]->setEnabled(false);
-    if(iTimeout[iTeam] == MAX_TIMEOUTS) {
-        timeoutIncrement[iTeam]->setEnabled(false);
-        timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
-    }
 
     iRow += 3;
     teamLayout->addWidget(timeoutLabel,            iRow, 0, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
@@ -238,10 +281,18 @@ BasketController::CreateTeamBox(int iTeam) {
     faulsLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
     sString.sprintf("%1d", iFauls[iTeam]);
 
+    font = faulsLabel->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    faulsLabel->setFont(font);
+
     faulsEdit[iTeam] = new Edit(sString);
     faulsEdit[iTeam]->setMaxLength(2);
     faulsEdit[iTeam]->setAlignment(Qt::AlignHCenter);
     faulsEdit[iTeam]->setReadOnly(true);
+
+    font = faulsEdit[iTeam]->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    faulsEdit[iTeam]->setFont(font);
 
     faulsIncrement[iTeam] = new Button(tr("+"), iTeam);
     faulsDecrement[iTeam] = new Button(tr("-"), iTeam);
@@ -276,6 +327,11 @@ BasketController::CreateTeamBox(int iTeam) {
         teamLayout->addWidget(possess[iTeam],   iRow, 4, 1, 4, Qt::AlignLeft|Qt::AlignVCenter);
     }
 //    teamLayout->addWidget(labelSpacer, iRow+1, 0, 1, 10);
+
+    font = possess[iTeam]->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    possess[iTeam]->setFont(font);
+
     connect(possess[iTeam], SIGNAL(buttonClicked(int, bool)), this, SLOT(onPossessClicked(int, bool)));
 
     // Score
@@ -284,12 +340,20 @@ BasketController::CreateTeamBox(int iTeam) {
     scoreLabel = new QLabel(tr("Score"));
     scoreLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
 
+    font = scoreLabel->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    scoreLabel->setFont(font);
+
     scoreEdit[iTeam] = new Edit();
     scoreEdit[iTeam]->setMaxLength(3);
     scoreEdit[iTeam]->setReadOnly(true);
     scoreEdit[iTeam]->setAlignment(Qt::AlignRight);
     sString.sprintf("%3d", iScore[iTeam]);
     scoreEdit[iTeam]->setText(sString);
+
+    font = scoreEdit[iTeam]->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    scoreEdit[iTeam]->setFont(font);
 
     scoreIncrement[iTeam] = new Button(tr("+"), iTeam);
     scoreDecrement[iTeam] = new Button(tr("-"), iTeam);
@@ -322,13 +386,18 @@ BasketController::CreateGameBox() {
     QGroupBox* gameBox      = new QGroupBox();
     QGridLayout* gameLayout = new QGridLayout();
 
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->geometry();
+    int width = screenGeometry.width();
+    int rW;
+
     // Bonus
     for(int iTeam=0; iTeam<2; iTeam++) {
         bonusEdit[iTeam] = new Edit(QString("Bonus"));
         bonusEdit[iTeam]->setFrame(false);
         bonusEdit[iTeam]->setAlignment(Qt::AlignHCenter);
         bonusEdit[iTeam]->setReadOnly(true);
-        if(iFauls[iTeam] >= BONUS_TARGET) {
+        if(iFauls[iTeam] < BONUS_TARGET) {
             bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
         else {
@@ -336,10 +405,30 @@ BasketController::CreateGameBox() {
         }
     }
 
+    QFont font = bonusEdit[0]->font();
+    int iBonusEditFontSize = font.pointSize();
+    for(int i=iBonusEditFontSize; i<100; i++) {
+        font.setPointSize(i);
+        QFontMetrics f(font);
+        rW = f.width(bonusEdit[0]->text());
+        if(rW > width/10) {
+            iBonusEditFontSize = i-1;
+            break;
+        }
+    }
+    font.setPointSize(iBonusEditFontSize);
+    for(int iTeam=0; iTeam<2; iTeam++) {
+        bonusEdit[iTeam]->setFont(font);
+    }
+
     // Period
     QLabel *periodLabel;
     periodLabel = new QLabel(tr("Period"));
     periodLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
+
+    font = periodLabel->font();
+    font.setPointSize(iBonusEditFontSize);
+    periodLabel->setFont(font);
 
     periodEdit = new Edit();
     periodEdit->setMaxLength(2);
@@ -347,6 +436,10 @@ BasketController::CreateGameBox() {
     periodEdit->setAlignment(Qt::AlignRight);
     sString.sprintf("%2d", iPeriod);
     periodEdit->setText(sString);
+
+    font = periodEdit->font();
+    font.setPointSize(iBonusEditFontSize);
+    periodEdit->setFont(font);
 
     periodIncrement = new Button(tr("+"), 0);
     periodDecrement = new Button(tr("-"), 0);
@@ -442,6 +535,14 @@ BasketController::FormatStatusMsg() {
     sMessage += sTemp;
     sTemp.sprintf("<possess>%d</possess>", iPossess);
     sMessage += sTemp;
+    if(!startStopSlideShowButton->text().contains(QString("Avvia")))
+        sMessage += "<slideshow>1</slideshow>";
+    else if(!startStopLiveCameraButton->text().contains(QString("Avvia")))
+        sMessage += QString("<live>1</live>");
+    else if(!startStopLoopSpotButton->text().contains(QString("Avvia")))
+        sMessage += QString("<spotloop>1</spotloop>");
+    else if(!startStopSpotButton->text().contains(QString("Avvia")))
+        sMessage += QString("<spot>1</spot>");
     return sMessage;
 }
 
@@ -455,7 +556,15 @@ void
 BasketController::onTimeOutIncrement(int iTeam) {
     QString sMessage;
     iTimeout[iTeam]++;
-    if(iTimeout[iTeam] == MAX_TIMEOUTS) {
+    if((iPeriod < 3) && (iTimeout[iTeam] == MAX_TIMEOUTS_1)) {
+        timeoutIncrement[iTeam]->setEnabled(false);
+        timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
+    }
+    else if((iPeriod > GAME_PERIODS) && (iTimeout[iTeam] == MAX_TIMEOUTS_3)) {
+        timeoutIncrement[iTeam]->setEnabled(false);
+        timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
+    }
+    else if((iPeriod > 2) && (iTimeout[iTeam] == MAX_TIMEOUTS_2)) {
         timeoutIncrement[iTeam]->setEnabled(false);
         timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
@@ -497,7 +606,7 @@ BasketController::onFaulsIncrement(int iTeam) {
     if(iFauls[iTeam] == MAX_FAULS) {// To be changed
         faulsIncrement[iTeam]->setEnabled(false);
     }
-    if(iFauls[iTeam] >= BONUS_TARGET) {
+    if(iFauls[iTeam] < BONUS_TARGET) {
         iBonus[iTeam] = 1;
         bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
@@ -526,7 +635,7 @@ BasketController::onFaulsDecrement(int iTeam) {
     if(iFauls[iTeam] == 0) {
        faulsDecrement[iTeam]->setEnabled(false);
     }
-    if(iFauls[iTeam] >= BONUS_TARGET) {
+    if(iFauls[iTeam] < BONUS_TARGET) {
         iBonus[iTeam] = 1;
         bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
@@ -639,7 +748,15 @@ BasketController::onButtonChangeFieldClicked() {
         timeoutIncrement[iTeam]->setEnabled(true);
         timeoutDecrement[iTeam]->setEnabled(true);
         timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
-        if(iTimeout[iTeam] == MAX_TIMEOUTS) {
+        if((iPeriod < 3) && (iTimeout[iTeam] == MAX_TIMEOUTS_1)) {
+            timeoutIncrement[iTeam]->setEnabled(false);
+            timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
+        }
+        else if((iPeriod > GAME_PERIODS) && (iTimeout[iTeam] == MAX_TIMEOUTS_3)) {
+            timeoutIncrement[iTeam]->setEnabled(false);
+            timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
+        }
+        else if((iPeriod > 2) && (iTimeout[iTeam] == MAX_TIMEOUTS_2)) {
             timeoutIncrement[iTeam]->setEnabled(false);
             timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
@@ -654,7 +771,7 @@ BasketController::onButtonChangeFieldClicked() {
         if(iFauls[iTeam] == MAX_FAULS) {// To be changed
             faulsIncrement[iTeam]->setEnabled(false);
         }
-        if(iFauls[iTeam] >= BONUS_TARGET) {
+        if(iFauls[iTeam] < BONUS_TARGET) {
             iBonus[iTeam] = 1;
             bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
@@ -696,9 +813,15 @@ BasketController::onButtonNewPeriodClicked() {
     int iVal = iScore[0];
     iScore[0] = iScore[1];
     iScore[1] = iVal;
-    iVal = iFauls[0];
-    iFauls[0] = iFauls[1];
-    iFauls[1] = iVal;
+    if(iPeriod > GAME_PERIODS) {// Art. 41.1.3 - Tutti i falli di squadra commessi in un tempo
+                                //supplementare devono essere considerati come avvenuti nel quarto periodo.
+        iVal = iFauls[0];
+        iFauls[0] = iFauls[1];
+        iFauls[1] = iVal;
+     }
+    else {
+        iFauls[0] = iFauls[1] = 0;
+    }
     // Update panel
     for(int iTeam=0; iTeam<2; iTeam++) {
         teamName[iTeam]->setText(sTeam[iTeam]);
@@ -718,7 +841,7 @@ BasketController::onButtonNewPeriodClicked() {
         if(iFauls[iTeam] == MAX_FAULS) {// To be changed
             faulsIncrement[iTeam]->setEnabled(false);
         }
-        if(iFauls[iTeam] >= BONUS_TARGET) {
+        if(iFauls[iTeam] < BONUS_TARGET) {
             iBonus[iTeam] = 1;
             bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
@@ -765,7 +888,7 @@ BasketController::onButtonNewGameClicked() {
         faulsEdit[iTeam]->setText(sText);
         faulsIncrement[iTeam]->setEnabled(true);
         faulsDecrement[iTeam]->setEnabled(false);
-        bonusEdit[iTeam]->setStyleSheet("background:white;color:white;");
+        bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
     SendToAll(FormatStatusMsg());
     SaveStatus();

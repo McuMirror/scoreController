@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHostAddress>
 #include <QFileInfoList>
 #include <QSoundEffect>
+#include <QTimer>
+#include <QSettings>
 
 #include "panelorientation.h"
 
@@ -68,7 +70,7 @@ protected slots:
     void onButtonStartStopSlideShowClicked();
     void onButtonStartStopLiveCameraClicked();
 
-    void onButtonCameraControlClicked();
+    void onButtonPanelControlClicked();
     void onButtonSetupClicked();
     void onButtonShutdownClicked();
 
@@ -86,17 +88,22 @@ protected slots:
     void onGetPanelOrientation(QString sClientIp);
     void onChangePanelOrientation(QString sClientIp, PanelOrientation orientation);
 
+    void onGetIsPanelScoreOnly(QString sClientIp);
+    void onSetScoreOnly(QString sClientIp, bool bScoreOnly);
+
     void onSlideServerDone(bool bError);
     void onSpotServerDone(bool bError);
 
 protected:
+    void            prepareSpotUpdateService();
+    void            prepareSlideUpdateService();
     QGroupBox      *CreateClientListBox();
     QGroupBox      *CreateSpotButtonBox();
     void            WaitForNetworkReady();
     int             SendToAll(QString sMessage);
     int             SendToOne(QWebSocket* pSocket, QString sMessage);
     int             prepareServer();
-    int             sendAcceptConnection(QUdpSocket *pDiscoverySocket, QString sMessage, QHostAddress hostAddress, quint16 port);
+    int             sendAcceptConnection(QUdpSocket *pDiscoverySocket, QHostAddress hostAddress, quint16 port);
     void            RemoveClient(QHostAddress hAddress);
     bool            isConnectedToNetwork();
     bool            PrepareLogFile();
@@ -105,11 +112,11 @@ protected:
     void            UpdateUI();
 
 protected:
+    QSettings    *pSettings;
     struct connection{
       QWebSocket*     pClientSocket;
       QHostAddress    clientAddress;
     };
-    QString               sHostName;
 
     int                   panelType;
     NetServer            *pPanelServer;
@@ -124,7 +131,7 @@ protected:
     quint16               serverPort;
     QVector<QUdpSocket*>  discoverySocketArray;
 
-    QString               sIpAddresses;
+    QStringList           sIpAddresses;
     QHostAddress          discoveryAddress;
 
     QThread              *pSlideServerThread;
@@ -142,7 +149,7 @@ protected:
     int                   iCurrentSpot;
 
     QSoundEffect          buttonClick;
-    QTimer               *pExitTimer;
+    QTimer                exitTimer;
 
     QPushButton*          startStopLoopSpotButton;
     QPushButton*          startStopSpotButton;

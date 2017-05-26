@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     volleycontroller.cpp \
     button.cpp \
     edit.cpp \
-    radioButton.cpp
+    radioButton.cpp \
+    panelconfigurator.cpp
 
 HEADERS  += scorecontroller.h \
     clientlistdialog.h \
@@ -40,14 +41,16 @@ HEADERS  += scorecontroller.h \
     button.h \
     edit.h \
     radioButton.h \
-    panelorientation.h
+    panelorientation.h \
+    panelconfigurator.h
 
 RESOURCES += scorecontroller.qrc
 
 CONFIG += mobility
 MOBILITY = 
 
-FORMS    += choosediscilpline.ui
+FORMS    += choosediscilpline.ui \
+    panelconfigurator.ui
 
 DISTFILES += \
     android/AndroidManifest.xml \

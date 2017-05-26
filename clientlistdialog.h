@@ -21,12 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define CLIENTLISTDIALOG_H
 
 #include "panelorientation.h"
+#include "panelconfigurator.h"
 
 #include <QObject>
 #include <QDialog>
+#include <QListWidget>
 
 QT_FORWARD_DECLARE_CLASS(QGroupBox)
-QT_FORWARD_DECLARE_CLASS(QListWidget)
 QT_FORWARD_DECLARE_CLASS(QListWidgetItem)
 QT_FORWARD_DECLARE_CLASS(QSlider)
 QT_FORWARD_DECLARE_CLASS(QComboBox)
@@ -39,11 +40,17 @@ public:
     explicit ClientListDialog(QWidget *parent);
     ~ClientListDialog();
     int exec();
+    void remotePanTiltReceived(int newPan, int newTilt);
+    void remoteOrientationReceived(PanelOrientation currentOrientation);
+    void remoteScoreOnlyValueReceived(bool bScoreOnly);
 
 public slots:
-    void onRemotePanTiltReceived(int newPan, int newTilt);
+    void onSetNewPan(int newPan);
+    void onSetNewTilt(int newTilt);
+    void onStartCamera();
     void onCloseCamera();
-    void onOrientationReceived(PanelOrientation currentOrientation);
+    void onChangePanelOrientation(PanelOrientation newOrientation);
+    void onChangeScoreOnly(bool bScoreOnly);
 
 signals:
     void enableVideo(QString sIpAdress);
@@ -52,15 +59,12 @@ signals:
     void newPanValue(QString sClientIp, int newPan);
     void newTiltValue(QString sClientIp, int newTilt);
     void getOrientation(QString sIpAdress);
+    void getScoreOnly(QString sIpAdress);
     void changeOrientation(QString sIpAdress, PanelOrientation newOrientation);
+    void changeScoreOnly(QString sIpAdress, bool bScoreOnly);
 
 private slots:
     void onClientSelected(QListWidgetItem* selectedClient);
-    void onLeftButtonPressed();
-    void onRightButtonPressed();
-    void onUpButtonPressed();
-    void onDownButtonPressed();
-    void onChangePanelOrientation(int);
 
 private:
     QGroupBox* createClientListBox();
@@ -68,21 +72,11 @@ private:
     QGroupBox* createOrientationBox();
 
 private:
-    QWidget*      pMyParent;
-    QListWidget*  clientListWidget;
-    QPushButton*  closeButton;
-    QPushButton*  upButton;
-    QPushButton*  downButton;
-    QPushButton*  leftButton;
-    QPushButton*  rightButton;
-    QString       sSelectedClient;
-    int           iPan;
-    int           iTilt;
-    int           panMin;
-    int           panMax;
-    int           tiltMin;
-    int           tiltMax;
-    QComboBox*    pPanelOrientation;
+    QWidget           *pMyParent;
+    QListWidget       clientListWidget;
+    QPushButton       *closeButton;
+    QString            sSelectedClient;
+    PanelConfigurator *pConfigurator;
 
 public:
     void clear();

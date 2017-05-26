@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-#include <QSettings>
 #include <QDir>
 #include <QVBoxLayout>
 #include <QGridLayout>
@@ -25,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPushButton>
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QGuiApplication>
+#include <QScreen>
 
 #include "volleycontroller.h"
 #include "utility.h"
@@ -40,6 +41,7 @@ VolleyController::VolleyController()
     : ScoreController(VOLLEY_PANEL, Q_NULLPTR)
 {
     QString sFunctionName = QString(" VolleyController::VolleyController ");
+    pSettings = Q_NULLPTR;
     GetSettings();
 
     QDir slideDir(sSlideDir);
@@ -47,6 +49,12 @@ VolleyController::VolleyController()
 
     if(!slideDir.exists() || !spotDir.exists()) {
         onButtonSetupClicked();
+        slideDir.setPath(sSlideDir);
+        if(!slideDir.exists()) sSlideDir = QDir::homePath();
+        spotDir.setPath(sSpotDir);
+        if(!spotDir.exists()) sSpotDir = QDir::homePath();
+        pSettings->setValue("directories/slides", sSlideDir);
+        pSettings->setValue("directories/spots", sSpotDir);
     }
     else {
         QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
@@ -161,11 +169,31 @@ VolleyController::CreateTeamBox(int iTeam) {
     QGridLayout* teamLayout = new QGridLayout();
     QLabel* labelSpacer     = new QLabel(QString(""));
 
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->geometry();
+    int width = screenGeometry.width();
+    int rW;
+
     // Team
     int iRow = 0;
     teamName[iTeam] = new Edit(sTeam[iTeam], iTeam);
     teamName[iTeam]->setAlignment(Qt::AlignHCenter);
     teamName[iTeam]->setMaxLength(15);
+
+    QFont font(teamName[iTeam]->font());
+    int iTeamFontSize = font.pointSize();
+    for(int i=iTeamFontSize; i<100; i++) {
+        font.setPointSize(i);
+        QFontMetrics f(font);
+        rW = teamName[iTeam]->maxLength()*f.width("W");
+        if(rW > width/3) {
+            iTeamFontSize = i-1;
+            break;
+        }
+    }
+    font.setPointSize(iTeamFontSize);
+    teamName[iTeam]->setFont(font);
+
     connect(teamName[iTeam], SIGNAL(textChanged(QString, int)),
             this, SLOT(onTeamTextChanged(QString, int)));
     teamLayout->addWidget(teamName[iTeam], iRow, 0, 2, 10);
@@ -176,11 +204,29 @@ VolleyController::CreateTeamBox(int iTeam) {
     timeoutLabel = new QLabel(tr("Timeout"));
     timeoutLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
 
+    font = timeoutLabel->font();
+    int iTimeoutLabelFontSize = font.pointSize();
+    for(int i=iTimeoutLabelFontSize; i<100; i++) {
+        font.setPointSize(i);
+        QFontMetrics f(font);
+        rW = f.width(timeoutLabel->text());
+        if(rW > width/10) {
+            iTimeoutLabelFontSize = i-1;
+            break;
+        }
+    }
+    font.setPointSize(iTimeoutLabelFontSize);
+    timeoutLabel->setFont(font);
+
     sString.sprintf("%1d", iTimeout[iTeam]);
     timeoutEdit[iTeam] = new Edit(sString);
     timeoutEdit[iTeam]->setMaxLength(1);
     timeoutEdit[iTeam]->setAlignment(Qt::AlignHCenter);
     timeoutEdit[iTeam]->setReadOnly(true);
+
+    font = timeoutEdit[iTeam]->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    timeoutEdit[iTeam]->setFont(font);
 
     timeoutIncrement[iTeam] = new Button(tr("+"), iTeam);
     timeoutDecrement[iTeam] = new Button(tr("-"), iTeam);
@@ -214,10 +260,18 @@ VolleyController::CreateTeamBox(int iTeam) {
     setsLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
     sString.sprintf("%1d", iSet[iTeam]);
 
+    font = setsLabel->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    setsLabel->setFont(font);
+
     setsEdit[iTeam] = new Edit(sString);
     setsEdit[iTeam]->setMaxLength(1);
     setsEdit[iTeam]->setAlignment(Qt::AlignHCenter);
     setsEdit[iTeam]->setReadOnly(true);
+
+    font = setsEdit[iTeam]->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    setsEdit[iTeam]->setFont(font);
 
     setsIncrement[iTeam] = new Button(tr("+"), iTeam);
     setsDecrement[iTeam] = new Button(tr("-"), iTeam);
@@ -246,6 +300,11 @@ VolleyController::CreateTeamBox(int iTeam) {
     // Service
     iRow += 3;
     service[iTeam] = new RadioButton(tr("Servizio"), iTeam);
+
+    font = service[iTeam]->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    service[iTeam]->setFont(font);
+
     if(iTeam == 0) {
         teamLayout->addWidget(service[iTeam],   iRow, 4, 1, 4, Qt::AlignLeft|Qt::AlignVCenter);
     } else {
@@ -260,11 +319,20 @@ VolleyController::CreateTeamBox(int iTeam) {
     scoreLabel = new QLabel(tr("Punti"));
     scoreLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
 
+    font = scoreLabel->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    scoreLabel->setFont(font);
+
     sString.sprintf("%2d", iScore[iTeam]);
     scoreEdit[iTeam] = new Edit(sString);
     scoreEdit[iTeam]->setMaxLength(2);
     scoreEdit[iTeam]->setReadOnly(true);
     scoreEdit[iTeam]->setAlignment(Qt::AlignRight);
+
+    font = scoreEdit[iTeam]->font();
+    font.setPointSize(iTimeoutLabelFontSize);
+    scoreEdit[iTeam]->setFont(font);
+
     scoreIncrement[iTeam] = new Button(tr("+"), iTeam);
 
     scoreDecrement[iTeam] = new Button(tr("-"), iTeam);
@@ -327,8 +395,8 @@ VolleyController::CreateGameButtonBox() {
 QGridLayout*
 VolleyController::CreateGamePanel() {
     QGridLayout* gamePanel = new QGridLayout();
-    gamePanel->addWidget(CreateTeamBox(0),      0, 0, 1, 1);
-    gamePanel->addWidget(CreateTeamBox(1),      0, 1, 1, 1);
+    gamePanel->addWidget(CreateTeamBox(0),  0,  0,  1,  1);
+    gamePanel->addWidget(CreateTeamBox(1),  0,  1,  1,  1);
     return gamePanel;
 }
 
@@ -351,6 +419,14 @@ VolleyController::FormatStatusMsg() {
     }
     sTemp.sprintf("<servizio>%d</servizio>", iServizio);
     sMessage += sTemp;
+    if(!startStopSlideShowButton->text().contains(QString("Avvia")))
+        sMessage += "<slideshow>1</slideshow>";
+    else if(!startStopLiveCameraButton->text().contains(QString("Avvia")))
+        sMessage += QString("<live>1</live>");
+    else if(!startStopLoopSpotButton->text().contains(QString("Avvia")))
+        sMessage += QString("<spotloop>1</spotloop>");
+    else if(!startStopSpotButton->text().contains(QString("Avvia")))
+        sMessage += QString("<spot>1</spot>");
     return sMessage;
 }
 
