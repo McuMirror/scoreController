@@ -51,6 +51,7 @@ public slots:
     void onCloseCamera();
     void onChangePanelOrientation(PanelOrientation newOrientation);
     void onChangeScoreOnly(bool bScoreOnly);
+    void onConfiguratorClosing();
 
 signals:
     void enableVideo(QString sIpAdress);

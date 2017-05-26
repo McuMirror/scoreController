@@ -28,6 +28,7 @@ signals:
     void changeOrientation(PanelOrientation newOrientation);
     void startCamera();
     void stopCamera();
+    void closingDialog();
     void scoreOnly(bool);
 
 private:

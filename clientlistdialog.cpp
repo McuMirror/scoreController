@@ -51,6 +51,8 @@ ClientListDialog::ClientListDialog(QWidget* parent)
             this, SLOT(onChangePanelOrientation(PanelOrientation)));
     connect(pConfigurator, SIGNAL(scoreOnly(bool)),
             this, SLOT(onChangeScoreOnly(bool)));
+    connect(pConfigurator, SIGNAL(closingDialog()),
+            this, SLOT(onConfiguratorClosing()));
 }
 
 
@@ -101,12 +103,20 @@ ClientListDialog::onCloseCamera() {
 
 
 void
+ClientListDialog::onConfiguratorClosing() {
+    emit disableVideo();
+    show();
+}
+
+
+void
 ClientListDialog::onClientSelected(QListWidgetItem* selectedClient) {
     emit disableVideo();
     pConfigurator->show();
     sSelectedClient = selectedClient->text();
     emit getOrientation(sSelectedClient);
     emit getScoreOnly(sSelectedClient);
+    hide();
 }
 
 
