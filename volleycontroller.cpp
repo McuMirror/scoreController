@@ -28,7 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QScreen>
 
 #include "volleycontroller.h"
-#include "utility.h"
 #include "edit.h"
 #include "button.h"
 #include "radioButton.h"

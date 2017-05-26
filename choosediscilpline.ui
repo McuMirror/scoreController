@@ -83,6 +83,19 @@
      <string>Esci</string>
     </property>
    </widget>
+   <widget class="QRadioButton" name="handballRadioButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>90</y>
+      <width>100</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Handball</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

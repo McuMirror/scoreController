@@ -28,7 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QScreen>
 
 #include "basketcontroller.h"
-#include "utility.h"
 #include "edit.h"
 #include "button.h"
 #include "radioButton.h"
@@ -52,39 +51,7 @@ BasketController::BasketController()
     QString sFunctionName = QString(" BasketController::BasketController ");
     GetSettings();
 
-    QDir slideDir(sSlideDir);
-    QDir spotDir(sSpotDir);
-
-    if(!slideDir.exists() || !spotDir.exists()) {
-        onButtonSetupClicked();
-        slideDir.setPath(sSlideDir);
-        if(!slideDir.exists()) sSlideDir = QDir::homePath();
-        spotDir.setPath(sSpotDir);
-        if(!spotDir.exists()) sSpotDir = QDir::homePath();
-        pSettings->setValue("directories/slides", sSlideDir);
-        pSettings->setValue("directories/spots", sSpotDir);
-    }
-    else {
-        QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
-        slideDir.setNameFilters(filter);
-        slideList = slideDir.entryInfoList();
-        logMessage(logFile,
-                   sFunctionName,
-                   QString("Slides directory: %1 Found %2 Slides")
-                   .arg(sSlideDir)
-                   .arg(slideList.count()));
-        QStringList nameFilter(QStringList() << "*.mp4");
-        spotDir.setNameFilters(nameFilter);
-        spotDir.setFilter(QDir::Files);
-        spotList = spotDir.entryInfoList();
-        logMessage(logFile,
-                   sFunctionName,
-                   QString("Spot directory: %1 Found %2 Spots")
-                   .arg(sSpotDir)
-                   .arg(spotList.count()));
-    }
-    if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
-    if(!sSpotDir.endsWith(QString("/")))  sSpotDir+= QString("/");
+    PrepareDirectories();
 
     pSlideUpdaterServer->setDir(sSlideDir,"*.jpg *.jpeg *.png");
     pSpotUpdaterServer->setDir(sSpotDir, "*.mp4");
@@ -125,6 +92,45 @@ BasketController::BasketController()
 
     possess[iPossess ? 1 : 0]->setChecked(true);
     possess[iPossess ? 0 : 1]->setChecked(false);
+}
+
+
+void
+BasketController::PrepareDirectories() {
+    QString sFunctionName = QString(" BasketController::PrepareDirectories ");
+    QDir slideDir(sSlideDir);
+    QDir spotDir(sSpotDir);
+
+    if(!slideDir.exists() || !spotDir.exists()) {
+        onButtonSetupClicked();
+        slideDir.setPath(sSlideDir);
+        if(!slideDir.exists()) sSlideDir = QDir::homePath();
+        spotDir.setPath(sSpotDir);
+        if(!spotDir.exists()) sSpotDir = QDir::homePath();
+        pSettings->setValue("directories/slides", sSlideDir);
+        pSettings->setValue("directories/spots", sSpotDir);
+    }
+    else {
+        QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
+        slideDir.setNameFilters(filter);
+        slideList = slideDir.entryInfoList();
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Slides directory: %1 Found %2 Slides")
+                   .arg(sSlideDir)
+                   .arg(slideList.count()));
+        QStringList nameFilter(QStringList() << "*.mp4");
+        spotDir.setNameFilters(nameFilter);
+        spotDir.setFilter(QDir::Files);
+        spotList = spotDir.entryInfoList();
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Spot directory: %1 Found %2 Spots")
+                   .arg(sSpotDir)
+                   .arg(spotList.count()));
+    }
+    if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
+    if(!sSpotDir.endsWith(QString("/")))  sSpotDir+= QString("/");
 }
 
 
@@ -190,8 +196,8 @@ BasketController::SaveStatus() {
 
 QGroupBox*
 BasketController::CreateTeamBox(int iTeam) {
-    QString sString;
     QGroupBox* teamBox      = new QGroupBox();
+    QString sString;
     QGridLayout* teamLayout = new QGridLayout();
     QLabel* labelSpacer = new QLabel(QString(""));
 
@@ -382,8 +388,8 @@ BasketController::CreateTeamBox(int iTeam) {
 
 QGroupBox*
 BasketController::CreateGameBox() {
-    QString sString;
     QGroupBox* gameBox      = new QGroupBox();
+    QString sString;
     QGridLayout* gameLayout = new QGridLayout();
 
     QScreen *screen = QGuiApplication::primaryScreen();

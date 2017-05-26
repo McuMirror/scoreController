@@ -2,6 +2,7 @@
 #include "ui_choosediscilpline.h"
 #include "volleycontroller.h"
 #include "basketcontroller.h"
+#include "handballcontroller.h"
 
 
 ChooseDiscilpline::ChooseDiscilpline(QWidget *parent)
@@ -36,12 +37,23 @@ ChooseDiscilpline::on_VolleyRadioButton_clicked() {
 
 
 void
+ChooseDiscilpline::on_handballRadioButton_clicked() {
+    discipline = HANDBALL_PANEL;
+}
+
+
+void
 ChooseDiscilpline::on_goPushButton_clicked() {
     int iDiscipline = getDiscipline();
-    if(iDiscipline == BASKET_PANEL)
+    if(iDiscipline == VOLLEY_PANEL)
+        pController = new VolleyController();
+    else if(iDiscipline == BASKET_PANEL)
         pController = new BasketController();
+    else if(iDiscipline == HANDBALL_PANEL)
+        pController = new HandballController();
     else
         pController = new VolleyController();
+
     connect(pController, SIGNAL(panelDone()),
             this, SLOT(onPanelDone()));
 #ifdef Q_OS_ANDROID
@@ -72,3 +84,5 @@ ChooseDiscilpline::onPanelDone() {
     pController = Q_NULLPTR;
     setVisible(true);
 }
+
+
