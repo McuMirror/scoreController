@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGuiApplication>
 #include <QScreen>
 #include <QPushButton>
+#include <QMessageBox>
 
 #include "handballcontroller.h"
 #include "fileserver.h"
@@ -94,7 +95,7 @@ HandballController::GetSettings() {
     iScore[1]   = pSettings->value("team2/score", 0).toInt();
     iPeriod     = pSettings->value("game/period", 1).toInt();
 
-    // Safe check
+    // Safety check
     for(int i=0; i<2; i++) {
         if(iTimeout[i] < 0) iTimeout[i] = 0;
         if(iTimeout[i] > MAX_TIMEOUTS) iTimeout[i] = MAX_TIMEOUTS;
@@ -373,17 +374,47 @@ HandballController::CreateGamePanel() {
 
 QString
 HandballController::FormatStatusMsg() {
-    QString sFunctionName = " Volley_Controller::FormatStatusMsg ";
+    QString sFunctionName = " HandballController::FormatStatusMsg ";
     Q_UNUSED(sFunctionName)
     QString sMessage = QString();
-TODO:
+
+    QString sTemp;
+    for(int i=0; i<2; i++) {
+        sTemp.sprintf("<team%1d>%s</team%1d>", i, sTeam[i].toLocal8Bit().data(), i);
+        sMessage += sTemp;
+        sTemp.sprintf("<timeout%1d>%d</timeout%1d>", i, iTimeout[i], i);
+        sMessage += sTemp;
+        sTemp.sprintf("<score%1d>%d</score%1d>", i, iScore[i], i);
+        sMessage += sTemp;
+    }
+    sTemp.sprintf("<period>%d,%d</period>", iPeriod, REGULAR_TIME);
+    sMessage += sTemp;
+    if(!startStopSlideShowButton->text().contains(QString("Avvia")))
+        sMessage += "<slideshow>1</slideshow>";
+    else if(!startStopLiveCameraButton->text().contains(QString("Avvia")))
+        sMessage += QString("<live>1</live>");
+    else if(!startStopLoopSpotButton->text().contains(QString("Avvia")))
+        sMessage += QString("<spotloop>1</spotloop>");
+    else if(!startStopSpotButton->text().contains(QString("Avvia")))
+        sMessage += QString("<spot>1</spot>");
+
     return sMessage;
 }
 
 
 void
 HandballController::SaveStatus() {
-TODO:
+    pSettings->setValue("team1/name", sTeam[0]);
+    pSettings->setValue("team2/name", sTeam[1]);
+    pSettings->setValue("team1/timeouts", iTimeout[0]);
+    pSettings->setValue("team2/timeouts", iTimeout[1]);
+    pSettings->setValue("team1/score", iScore[0]);
+    pSettings->setValue("team2/score", iScore[1]);
+
+    pSettings->setValue("game/period", iPeriod);
+
+    pSettings->setValue("directories/slides", sSlideDir);
+    pSettings->setValue("directories/spots", sSpotDir);
 }
 
 
@@ -525,19 +556,152 @@ HandballController::onPeriodDecrement(int iDummy) {
 
 void
 HandballController::onButtonNewPeriodClicked() {
-TODO:
+    int iRes = QMessageBox::question(this, tr("Handball Controller"),
+                                     tr("Vuoi davvero iniziare un nuovo Periodo ?"),
+                                     QMessageBox::Yes | QMessageBox::No,
+                                     QMessageBox::No);
+    if(iRes != QMessageBox::Yes) return;
+
+    // Increment period number
+    if(iPeriod < MAX_PERIODS) {
+        iPeriod++;
+    }
+    if(iPeriod >= MAX_PERIODS) {
+        periodIncrement->setDisabled(true);
+        iPeriod= MAX_PERIODS;
+    }
+    periodDecrement->setEnabled(true);
+    QString sString;
+    sString.sprintf("%2d", iPeriod);
+    periodEdit->setText(sString);
+
+    // Exchange teams order, score and timeouts
+    QString sText = sTeam[0];
+    sTeam[0] = sTeam[1];
+    sTeam[1] = sText;
+
+    int iVal = iScore[0];
+    iScore[0] = iScore[1];
+    iScore[1] = iVal;
+
+    iVal = iTimeout[0];
+    iTimeout[0] = iTimeout[1];
+    iTimeout[1] = iVal;
+
+    // Update panel
+    for(int iTeam=0; iTeam<2; iTeam++) {
+        teamName[iTeam]->setText(sTeam[iTeam]);
+        sText.sprintf("%1d", iScore[iTeam]);
+        scoreEdit[iTeam]->setText(sText);
+        scoreDecrement[iTeam]->setEnabled(true);
+        scoreIncrement[iTeam]->setEnabled(true);
+        if(iScore[iTeam] == 0) {
+          scoreDecrement[iTeam]->setEnabled(false);
+        }
+        if(iScore[iTeam] >= MAX_SCORE) {
+          scoreIncrement[iTeam]->setEnabled(false);
+        }
+        sText.sprintf("%1d", iTimeout[iTeam]);
+        timeoutEdit[iTeam]->setText(sText);
+        timeoutIncrement[iTeam]->setEnabled(true);
+        timeoutDecrement[iTeam]->setEnabled(true);
+        timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
+        if(iTimeout[iTeam] >= MAX_TIMEOUTS) {
+            timeoutIncrement[iTeam]->setEnabled(false);
+            timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
+        }
+        if(iTimeout[iTeam] == 0) {
+            timeoutDecrement[iTeam]->setEnabled(false);
+        }
+    }
+    SendToAll(FormatStatusMsg());
+    SaveStatus();
 }
 
 
 void
 HandballController::onButtonNewGameClicked() {
-TODO:
+    int iRes = QMessageBox::question(this, tr("Handball Controller"),
+                                     tr("Vuoi davvero azzerare tutto ?"),
+                                     QMessageBox::Yes | QMessageBox::No,
+                                     QMessageBox::No);
+    if(iRes != QMessageBox::Yes) return;
+    sTeam[0]    = tr("Locali");
+    sTeam[1]    = tr("Ospiti");
+    QString sText;
+    iPeriod = 1;
+    sText.sprintf("%2d", iPeriod);
+    periodEdit->setText(sText);
+    periodIncrement->setEnabled(true);
+    periodDecrement->setEnabled(false);
+    for(int iTeam=0; iTeam<2; iTeam++) {
+        teamName[iTeam]->setText(sTeam[iTeam]);
+        iTimeout[iTeam] = 0;
+        sText.sprintf("%1d", iTimeout[iTeam]);
+        timeoutEdit[iTeam]->setText(sText);
+        timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
+        timeoutDecrement[iTeam]->setEnabled(false);
+        timeoutIncrement[iTeam]->setEnabled(true);
+        iScore[iTeam]   = 0;
+        sText.sprintf("%3d", iScore[iTeam]);
+        scoreEdit[iTeam]->setText(sText);
+        scoreDecrement[iTeam]->setEnabled(false);
+        scoreIncrement[iTeam]->setEnabled(true);
+    }
+    SendToAll(FormatStatusMsg());
+    SaveStatus();
 }
 
 
 void
 HandballController::onButtonChangeFieldClicked() {
-TODO:
+    int iRes = QMessageBox::question(this, tr("Handball Controller"),
+                                     tr("Scambiare il campo delle squadre ?"),
+                                     QMessageBox::Yes | QMessageBox::No,
+                                     QMessageBox::No);
+    if(iRes != QMessageBox::Yes) return;
+
+    // Exchange teams order, score and timeouts
+    QString sText = sTeam[0];
+    sTeam[0] = sTeam[1];
+    sTeam[1] = sText;
+
+    int iVal = iScore[0];
+    iScore[0] = iScore[1];
+    iScore[1] = iVal;
+
+    iVal = iTimeout[0];
+    iTimeout[0] = iTimeout[1];
+    iTimeout[1] = iVal;
+
+    // Update panel
+    for(int iTeam=0; iTeam<2; iTeam++) {
+        teamName[iTeam]->setText(sTeam[iTeam]);
+        sText.sprintf("%1d", iScore[iTeam]);
+        scoreEdit[iTeam]->setText(sText);
+        scoreDecrement[iTeam]->setEnabled(true);
+        scoreIncrement[iTeam]->setEnabled(true);
+        if(iScore[iTeam] == 0) {
+          scoreDecrement[iTeam]->setEnabled(false);
+        }
+        if(iScore[iTeam] >= MAX_SCORE) {
+          scoreIncrement[iTeam]->setEnabled(false);
+        }
+        sText.sprintf("%1d", iTimeout[iTeam]);
+        timeoutEdit[iTeam]->setText(sText);
+        timeoutIncrement[iTeam]->setEnabled(true);
+        timeoutDecrement[iTeam]->setEnabled(true);
+        timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
+        if(iTimeout[iTeam] >= MAX_TIMEOUTS) {
+            timeoutIncrement[iTeam]->setEnabled(false);
+            timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
+        }
+        if(iTimeout[iTeam] == 0) {
+            timeoutDecrement[iTeam]->setEnabled(false);
+        }
+    }
+    SendToAll(FormatStatusMsg());
+    SaveStatus();
 }
 
 
