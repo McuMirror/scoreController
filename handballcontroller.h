@@ -2,6 +2,7 @@
 #define HANDBALLCONTROLLER_H
 
 #include <QObject>
+#include <QWidget>
 
 #include "scorecontroller.h"
 

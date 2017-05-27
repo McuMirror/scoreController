@@ -12,7 +12,7 @@ ChooseDiscilpline::ChooseDiscilpline(QWidget *parent)
     , pController(Q_NULLPTR)
 {
     ui->setupUi(this);
-    ui->VolleyRadioButton->setChecked(true);
+    ui->volleyRadioButton->setChecked(true);
 }
 
 
