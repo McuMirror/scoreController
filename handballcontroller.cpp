@@ -124,12 +124,6 @@ HandballController::closeEvent(QCloseEvent *event) {
 }
 
 
-void
-HandballController::SaveStatus() {
-TODO:
-}
-
-
 QGroupBox*
 HandballController::CreateTeamBox(int iTeam) {
     QGroupBox* teamBox      = new QGroupBox();
@@ -384,6 +378,12 @@ HandballController::FormatStatusMsg() {
     QString sMessage = QString();
 TODO:
     return sMessage;
+}
+
+
+void
+HandballController::SaveStatus() {
+TODO:
 }
 
 
