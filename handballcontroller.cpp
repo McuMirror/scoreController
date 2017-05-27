@@ -530,7 +530,7 @@ HandballController::onPeriodIncrement(int iDummy) {
     QString sString, sMessage;
     sString.sprintf("%2d", iPeriod);
     periodEdit->setText(sString);
-    sMessage.sprintf("<period>%d</period>", iPeriod);
+    sMessage.sprintf("<period>%d,%d</period>", iPeriod, periodTime);
     SendToAll(sMessage);
     pSettings->setValue("game/period", iPeriod);
 }
@@ -552,7 +552,7 @@ HandballController::onPeriodDecrement(int iDummy) {
     QString sString, sMessage;
     sString.sprintf("%2d", iPeriod);
     periodEdit->setText(sString);
-    sMessage.sprintf("<period>%d</period>", iPeriod);
+    sMessage.sprintf("<period>%d,%d</period>", iPeriod, periodTime);
     SendToAll(sMessage);
     pSettings->setValue("game/period", iPeriod);
 }
