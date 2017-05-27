@@ -80,45 +80,6 @@ HandballController::HandballController()
 
 
 void
-HandballController::PrepareDirectories() {
-    QString sFunctionName = QString(" HandballController::PrepareDirectories ");
-    QDir slideDir(sSlideDir);
-    QDir spotDir(sSpotDir);
-
-    if(!slideDir.exists() || !spotDir.exists()) {
-        onButtonSetupClicked();
-        slideDir.setPath(sSlideDir);
-        if(!slideDir.exists()) sSlideDir = QDir::homePath();
-        spotDir.setPath(sSpotDir);
-        if(!spotDir.exists()) sSpotDir = QDir::homePath();
-        pSettings->setValue("directories/slides", sSlideDir);
-        pSettings->setValue("directories/spots", sSpotDir);
-    }
-    else {
-        QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
-        slideDir.setNameFilters(filter);
-        slideList = slideDir.entryInfoList();
-        logMessage(logFile,
-                   sFunctionName,
-                   QString("Slides directory: %1 Found %2 Slides")
-                   .arg(sSlideDir)
-                   .arg(slideList.count()));
-        QStringList nameFilter(QStringList() << "*.mp4");
-        spotDir.setNameFilters(nameFilter);
-        spotDir.setFilter(QDir::Files);
-        spotList = spotDir.entryInfoList();
-        logMessage(logFile,
-                   sFunctionName,
-                   QString("Spot directory: %1 Found %2 Spots")
-                   .arg(sSpotDir)
-                   .arg(spotList.count()));
-    }
-    if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
-    if(!sSpotDir.endsWith(QString("/")))  sSpotDir+= QString("/");
-}
-
-
-void
 HandballController::GetSettings() {
 }
 
@@ -276,6 +237,67 @@ HandballController::CreateTeamBox(int iTeam) {
 QGroupBox*
 HandballController::CreateGameBox() {
     QGroupBox* gameBox      = new QGroupBox();
+    QString sString;
+    QGridLayout* gameLayout = new QGridLayout();
+
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->geometry();
+    int width = screenGeometry.width();
+    int rW;
+
+    // Period
+    QLabel *periodLabel;
+    periodLabel = new QLabel(tr("Period"));
+    periodLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
+
+    QFont font = periodLabel->font();
+    int iPeriodLabelFontSize = font.pointSize();
+    for(int i=iPeriodLabelFontSize; i<100; i++) {
+        font.setPointSize(i);
+        QFontMetrics f(font);
+        rW = f.width(periodLabel->text());
+        if(rW > width/10) {
+            iPeriodLabelFontSize = i-1;
+            break;
+        }
+    }
+    font.setPointSize(iPeriodLabelFontSize);
+
+    font = periodLabel->font();
+    font.setPointSize(iPeriodLabelFontSize);
+    periodLabel->setFont(font);
+
+    periodEdit = new Edit();
+    periodEdit->setMaxLength(2);
+    periodEdit->setReadOnly(true);
+    periodEdit->setAlignment(Qt::AlignRight);
+    sString.sprintf("%2d", iPeriod);
+    periodEdit->setText(sString);
+
+    font = periodEdit->font();
+    font.setPointSize(iPeriodLabelFontSize);
+    periodEdit->setFont(font);
+
+    periodIncrement = new Button(tr("+"), 0);
+    periodDecrement = new Button(tr("-"), 0);
+
+    connect(periodIncrement, SIGNAL(buttonClicked(int)),
+            this, SLOT(onPeriodIncrement(int)));
+    connect(periodIncrement, SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+    connect(periodDecrement, SIGNAL(buttonClicked(int)),
+            this, SLOT(onPeriodDecrement(int)));
+    connect(periodDecrement, SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+
+    if(iPeriod < 2)
+        periodDecrement->setEnabled(false);
+
+    gameLayout->addWidget(periodLabel,     0,  2, 2, 2, Qt::AlignRight|Qt::AlignVCenter);
+    gameLayout->addWidget(periodDecrement, 0,  4, 2, 2, Qt::AlignRight);
+    gameLayout->addWidget(periodEdit,      0,  6, 2, 2, Qt::AlignHCenter|Qt::AlignVCenter);
+    gameLayout->addWidget(periodIncrement, 0,  8, 2, 2, Qt::AlignLeft);
+    gameBox->setLayout(gameLayout);
     return gameBox;
 }
 

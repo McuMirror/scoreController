@@ -31,7 +31,6 @@ private slots:
     void onButtonNewGameClicked();
 
 private:
-    void          PrepareDirectories();
     QGridLayout  *CreateGamePanel();
     QGroupBox    *CreateTeamBox(int iTeam);
     QGroupBox    *CreateGameBox();

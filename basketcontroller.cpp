@@ -96,45 +96,6 @@ BasketController::BasketController()
 
 
 void
-BasketController::PrepareDirectories() {
-    QString sFunctionName = QString(" BasketController::PrepareDirectories ");
-    QDir slideDir(sSlideDir);
-    QDir spotDir(sSpotDir);
-
-    if(!slideDir.exists() || !spotDir.exists()) {
-        onButtonSetupClicked();
-        slideDir.setPath(sSlideDir);
-        if(!slideDir.exists()) sSlideDir = QDir::homePath();
-        spotDir.setPath(sSpotDir);
-        if(!spotDir.exists()) sSpotDir = QDir::homePath();
-        pSettings->setValue("directories/slides", sSlideDir);
-        pSettings->setValue("directories/spots", sSpotDir);
-    }
-    else {
-        QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
-        slideDir.setNameFilters(filter);
-        slideList = slideDir.entryInfoList();
-        logMessage(logFile,
-                   sFunctionName,
-                   QString("Slides directory: %1 Found %2 Slides")
-                   .arg(sSlideDir)
-                   .arg(slideList.count()));
-        QStringList nameFilter(QStringList() << "*.mp4");
-        spotDir.setNameFilters(nameFilter);
-        spotDir.setFilter(QDir::Files);
-        spotList = spotDir.entryInfoList();
-        logMessage(logFile,
-                   sFunctionName,
-                   QString("Spot directory: %1 Found %2 Spots")
-                   .arg(sSpotDir)
-                   .arg(spotList.count()));
-    }
-    if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
-    if(!sSpotDir.endsWith(QString("/")))  sSpotDir+= QString("/");
-}
-
-
-void
 BasketController::GetSettings() {
     QString sFunctionName = QString(" BasketController::GetSettings ");
     Q_UNUSED(sFunctionName)

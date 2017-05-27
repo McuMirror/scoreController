@@ -91,6 +91,7 @@ protected slots:
     void onSpotServerDone(bool bError);
 
 protected:
+    void            PrepareDirectories();
     void            prepareSpotUpdateService();
     void            prepareSlideUpdateService();
     QGroupBox      *CreateClientListBox();
