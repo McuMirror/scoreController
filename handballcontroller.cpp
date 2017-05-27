@@ -38,6 +38,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 HandballController::HandballController()
     : ScoreController(HANDBALL_PANEL, Q_NULLPTR)
+    , maxTimeouts(MAX_TIMEOUTS)
+    , maxPeriods(MAX_PERIODS)
+    , periodTime(REGULAR_TIME)
+
 {
     QString sFunctionName = QString(" HandballController::BasketController ");
     Q_UNUSED(sFunctionName)
@@ -98,12 +102,12 @@ HandballController::GetSettings() {
     // Safety check
     for(int i=0; i<2; i++) {
         if(iTimeout[i] < 0) iTimeout[i] = 0;
-        if(iTimeout[i] > MAX_TIMEOUTS) iTimeout[i] = MAX_TIMEOUTS;
+        if(iTimeout[i] > maxTimeouts) iTimeout[i] = maxTimeouts;
         if(iScore[i] < 0) iScore[i] = 0;
         if(iScore[i] > MAX_SCORE) iScore[i] = MAX_SCORE;
     }
     if(iPeriod < 0) iPeriod = 0;
-    if(iPeriod > MAX_PERIODS) iPeriod = MAX_PERIODS;
+    if(iPeriod > maxPeriods) iPeriod = maxPeriods;
 
     pSettings->setValue("team1/timeouts", iTimeout[0]);
     pSettings->setValue("team2/timeouts", iTimeout[1]);
@@ -387,7 +391,7 @@ HandballController::FormatStatusMsg() {
         sTemp.sprintf("<score%1d>%d</score%1d>", i, iScore[i], i);
         sMessage += sTemp;
     }
-    sTemp.sprintf("<period>%d,%d</period>", iPeriod, REGULAR_TIME);
+    sTemp.sprintf("<period>%d,%d</period>", iPeriod, periodTime);
     sMessage += sTemp;
     if(!startStopSlideShowButton->text().contains(QString("Avvia")))
         sMessage += "<slideshow>1</slideshow>";
@@ -427,7 +431,7 @@ void
 HandballController::onTimeOutIncrement(int iTeam) {
     QString sMessage;
     iTimeout[iTeam]++;
-    if(iTimeout[iTeam] == MAX_TIMEOUTS) {
+    if(iTimeout[iTeam] == maxTimeouts) {
         timeoutIncrement[iTeam]->setEnabled(false);
         timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
@@ -515,12 +519,12 @@ HandballController::onTeamTextChanged(QString sText, int iTeam) {
 void
 HandballController::onPeriodIncrement(int iDummy) {
     Q_UNUSED(iDummy)
-    if(iPeriod < MAX_PERIODS) {
+    if(iPeriod < maxPeriods) {
         iPeriod++;
     }
-    if(iPeriod >= MAX_PERIODS) {
+    if(iPeriod >= maxPeriods) {
         periodIncrement->setDisabled(true);
-        iPeriod= MAX_PERIODS;
+        iPeriod= maxPeriods;
     }
     periodDecrement->setEnabled(true);
     QString sString, sMessage;
@@ -540,9 +544,9 @@ HandballController::onPeriodDecrement(int iDummy) {
     }
     if(iPeriod < 2)
         periodDecrement->setDisabled(true);
-    if(iPeriod >= MAX_PERIODS) {
+    if(iPeriod >= maxPeriods) {
         periodIncrement->setDisabled(true);
-        iPeriod= MAX_PERIODS;
+        iPeriod= maxPeriods;
     }
     periodIncrement->setEnabled(true);
     QString sString, sMessage;
@@ -563,12 +567,12 @@ HandballController::onButtonNewPeriodClicked() {
     if(iRes != QMessageBox::Yes) return;
 
     // Increment period number
-    if(iPeriod < MAX_PERIODS) {
+    if(iPeriod < maxPeriods) {
         iPeriod++;
     }
-    if(iPeriod >= MAX_PERIODS) {
+    if(iPeriod >= maxPeriods) {
         periodIncrement->setDisabled(true);
-        iPeriod= MAX_PERIODS;
+        iPeriod= maxPeriods;
     }
     periodDecrement->setEnabled(true);
     QString sString;
@@ -606,7 +610,7 @@ HandballController::onButtonNewPeriodClicked() {
         timeoutIncrement[iTeam]->setEnabled(true);
         timeoutDecrement[iTeam]->setEnabled(true);
         timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
-        if(iTimeout[iTeam] >= MAX_TIMEOUTS) {
+        if(iTimeout[iTeam] >= maxTimeouts) {
             timeoutIncrement[iTeam]->setEnabled(false);
             timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
@@ -692,7 +696,7 @@ HandballController::onButtonChangeFieldClicked() {
         timeoutIncrement[iTeam]->setEnabled(true);
         timeoutDecrement[iTeam]->setEnabled(true);
         timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
-        if(iTimeout[iTeam] >= MAX_TIMEOUTS) {
+        if(iTimeout[iTeam] >= maxTimeouts) {
             timeoutIncrement[iTeam]->setEnabled(false);
             timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }

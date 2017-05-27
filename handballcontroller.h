@@ -57,6 +57,10 @@ private:
     Button       *periodIncrement;
     Button       *periodDecrement;
 
+    int           maxTimeouts;
+    int           maxPeriods;
+    int           periodTime;
+
     QPushButton  *newPeriodButton;
     QPushButton  *newGameButton;
     QPushButton  *changeFieldButton;
