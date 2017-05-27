@@ -29,9 +29,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "edit.h"
 #include "button.h"
 
-#define MAX_TIMEOUTS  2 // Numero massimo di sospensioni
-#define MAX_PERIODS   2 //
-#define REGULAR_TIME 30 // 30 Minuti è la durata di un tempo regolare
+#define MAX_TIMEOUTS   2 // Numero massimo di sospensioni
+#define MAX_PERIODS    2 //
+#define MAX_SCORE    999 //
+#define REGULAR_TIME  30 // 30 Minuti è la durata di un tempo regolare
 
 
 HandballController::HandballController()
@@ -81,6 +82,36 @@ HandballController::HandballController()
 
 void
 HandballController::GetSettings() {
+    QString sFunctionName = QString(" VolleyController::GetSettings ");
+    Q_UNUSED(sFunctionName)
+    pSettings = new QSettings("Gabriele Salvato", "Handball Controller");
+
+    sTeam[0]    = pSettings->value("team1/name", QString("Locali")).toString();
+    sTeam[1]    = pSettings->value("team2/name", QString("Ospiti")).toString();
+    iTimeout[0] = pSettings->value("team1/timeouts", 0).toInt();
+    iTimeout[1] = pSettings->value("team2/timeouts", 0).toInt();
+    iScore[0]   = pSettings->value("team1/score", 0).toInt();
+    iScore[1]   = pSettings->value("team2/score", 0).toInt();
+    iPeriod     = pSettings->value("game/period", 1).toInt();
+
+    // Safe check
+    for(int i=0; i<2; i++) {
+        if(iTimeout[i] < 0) iTimeout[i] = 0;
+        if(iTimeout[i] > MAX_TIMEOUTS) iTimeout[i] = MAX_TIMEOUTS;
+        if(iScore[i] < 0) iScore[i] = 0;
+        if(iScore[i] > MAX_SCORE) iScore[i] = MAX_SCORE;
+    }
+    if(iPeriod < 0) iPeriod = 0;
+    if(iPeriod > MAX_PERIODS) iPeriod = MAX_PERIODS;
+
+    pSettings->setValue("team1/timeouts", iTimeout[0]);
+    pSettings->setValue("team2/timeouts", iTimeout[1]);
+    pSettings->setValue("team1/score", iScore[0]);
+    pSettings->setValue("team2/score", iScore[1]);
+    pSettings->setValue("game/period", iPeriod);
+
+    sSlideDir   = pSettings->value("directories/slides", sSlideDir).toString();
+    sSpotDir    = pSettings->value("directories/spots", sSpotDir).toString();
 }
 
 
@@ -95,6 +126,7 @@ HandballController::closeEvent(QCloseEvent *event) {
 
 void
 HandballController::SaveStatus() {
+TODO:
 }
 
 
@@ -347,8 +379,12 @@ HandballController::CreateGamePanel() {
 
 QString
 HandballController::FormatStatusMsg() {
+    QString sFunctionName = " Volley_Controller::FormatStatusMsg ";
+    Q_UNUSED(sFunctionName)
+    QString sMessage = QString();
+TODO:
+    return sMessage;
 }
-
 
 
 // =========================
@@ -358,46 +394,150 @@ HandballController::FormatStatusMsg() {
 
 void
 HandballController::onTimeOutIncrement(int iTeam) {
+    QString sMessage;
+    iTimeout[iTeam]++;
+    if(iTimeout[iTeam] == MAX_TIMEOUTS) {
+        timeoutIncrement[iTeam]->setEnabled(false);
+        timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
+    }
+    timeoutDecrement[iTeam]->setEnabled(true);
+    sMessage.sprintf("<timeout%1d>%d</timeout%1d>", iTeam, iTimeout[iTeam], iTeam);
+    SendToAll(sMessage);
+    QString sText;
+    sText.sprintf("%1d", iTimeout[iTeam]);
+    timeoutEdit[iTeam]->setText(sText);
+    sText.sprintf("team%1d/timeouts", iTeam+1);
+    pSettings->setValue(sText, iTimeout[iTeam]);
 }
 
 
 void
 HandballController::onTimeOutDecrement(int iTeam) {
+    QString sMessage;
+    iTimeout[iTeam]--;
+    if(iTimeout[iTeam] == 0) {
+        timeoutDecrement[iTeam]->setEnabled(false);
+    }
+    timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
+    timeoutIncrement[iTeam]->setEnabled(true);
+    sMessage.sprintf("<timeout%1d>%d</timeout%1d>", iTeam, iTimeout[iTeam], iTeam);
+    SendToAll(sMessage);
+    QString sText;
+    sText.sprintf("%1d", iTimeout[iTeam]);
+    timeoutEdit[iTeam]->setText(sText);
+    sText.sprintf("team%1d/timeouts", iTeam+1);
+    pSettings->setValue(sText, iTimeout[iTeam]);
 }
 
 
 void
 HandballController::onScoreIncrement(int iTeam) {
+    QString sMessage;
+    iScore[iTeam]++;
+    scoreDecrement[iTeam]->setEnabled(true);
+    if(iScore[iTeam] >= MAX_SCORE) {
+        iScore[iTeam] = MAX_SCORE;
+        scoreIncrement[iTeam]->setEnabled(false);
+    }
+    sMessage.sprintf("<score%1d>%d</score%1d>", iTeam, iScore[iTeam], iTeam);
+    SendToAll(sMessage);
+    QString sText;
+    sText.sprintf("%1d", iScore[iTeam]);
+    scoreEdit[iTeam]->setText(sText);
+    sText.sprintf("team%1d/score", iTeam+1);
+    pSettings->setValue(sText, iScore[iTeam]);
 }
 
 
 void
 HandballController::onScoreDecrement(int iTeam) {
+    QString sMessage;
+    iScore[iTeam]--;
+    scoreIncrement[iTeam]->setEnabled(true);
+    if(iScore[iTeam] == 0) {
+      scoreDecrement[iTeam]->setEnabled(false);
+    }
+    sMessage.sprintf("<score%1d>%d</score%1d>", iTeam, iScore[iTeam], iTeam);
+    SendToAll(sMessage);
+    QString sText;
+    sText.sprintf("%1d", iScore[iTeam]);
+    scoreEdit[iTeam]->setText(sText);
+    sText.sprintf("team%1d/score", iTeam+1);
+    pSettings->setValue(sText, iScore[iTeam]);
 }
 
 
 void
 HandballController::onTeamTextChanged(QString sText, int iTeam) {
-}
-
-
-void
-HandballController::onButtonNewPeriodClicked() {
-}
-
-
-void
-HandballController::onButtonNewGameClicked() {
+    QString sMessage;
+    sTeam[iTeam] = sText;
+    if(sText=="")// C'è un problema con la stringa vuota...
+        sMessage.sprintf("<team%1d>-</team%1d>", iTeam, iTeam);
+    else
+        sMessage.sprintf("<team%1d>%s</team%1d>", iTeam, sTeam[iTeam].toLocal8Bit().data(), iTeam);
+    SendToAll(sMessage);
+    sText.sprintf("team%1d/name", iTeam+1);
+    pSettings->setValue(sText, sTeam[iTeam]);
 }
 
 
 void
 HandballController::onPeriodIncrement(int iDummy) {
+    Q_UNUSED(iDummy)
+    if(iPeriod < MAX_PERIODS) {
+        iPeriod++;
+    }
+    if(iPeriod >= MAX_PERIODS) {
+        periodIncrement->setDisabled(true);
+        iPeriod= MAX_PERIODS;
+    }
+    periodDecrement->setEnabled(true);
+    QString sString, sMessage;
+    sString.sprintf("%2d", iPeriod);
+    periodEdit->setText(sString);
+    sMessage.sprintf("<period>%d</period>", iPeriod);
+    SendToAll(sMessage);
+    pSettings->setValue("game/period", iPeriod);
 }
 
 
 void
 HandballController::onPeriodDecrement(int iDummy) {
+    Q_UNUSED(iDummy)
+    if(iPeriod > 1) {
+        iPeriod--;
+    }
+    if(iPeriod < 2)
+        periodDecrement->setDisabled(true);
+    if(iPeriod >= MAX_PERIODS) {
+        periodIncrement->setDisabled(true);
+        iPeriod= MAX_PERIODS;
+    }
+    periodIncrement->setEnabled(true);
+    QString sString, sMessage;
+    sString.sprintf("%2d", iPeriod);
+    periodEdit->setText(sString);
+    sMessage.sprintf("<period>%d</period>", iPeriod);
+    SendToAll(sMessage);
+    pSettings->setValue("game/period", iPeriod);
+}
+
+
+void
+HandballController::onButtonNewPeriodClicked() {
+TODO:
+}
+
+
+void
+HandballController::onButtonNewGameClicked() {
+TODO:
+}
+
+
+void
+HandballController::onButtonChangeFieldClicked() {
+TODO:
 }
 
 

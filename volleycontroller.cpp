@@ -396,7 +396,9 @@ VolleyController::FormatStatusMsg() {
 }
 
 
+// =========================
 // Event management routines
+// =========================
 
 
 void

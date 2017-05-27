@@ -629,7 +629,7 @@ BasketController::onScoreIncrement(int iTeam) {
     iScore[iTeam]++;
     scoreDecrement[iTeam]->setEnabled(true);
     if(iScore[iTeam] > 998) {
-      scoreIncrement[iTeam]->setEnabled(false);
+        scoreIncrement[iTeam]->setEnabled(false);
     }
     sMessage.sprintf("<score%1d>%d</score%1d>", iTeam, iScore[iTeam], iTeam);
     SendToAll(sMessage);
@@ -647,7 +647,7 @@ BasketController::onScoreDecrement(int iTeam) {
     iScore[iTeam]--;
     scoreIncrement[iTeam]->setEnabled(true);
     if(iScore[iTeam] == 0) {
-      scoreDecrement[iTeam]->setEnabled(false);
+        scoreDecrement[iTeam]->setEnabled(false);
     }
     sMessage.sprintf("<score%1d>%d</score%1d>", iTeam, iScore[iTeam], iTeam);
     SendToAll(sMessage);

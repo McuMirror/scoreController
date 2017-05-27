@@ -10,6 +10,8 @@ QT_FORWARD_DECLARE_CLASS(Button)
 
 class HandballController : public ScoreController
 {
+    Q_OBJECT
+
 public:
     HandballController();
     void closeEvent(QCloseEvent *event);
