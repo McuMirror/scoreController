@@ -4,6 +4,7 @@
 #include <QDialog>
 #include "utility.h"
 
+
 QT_FORWARD_DECLARE_CLASS(ScoreController)
 
 
