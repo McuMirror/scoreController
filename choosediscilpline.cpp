@@ -31,7 +31,7 @@ ChooseDiscilpline::on_basketRadioButton_clicked() {
 
 
 void
-ChooseDiscilpline::on_VolleyRadioButton_clicked() {
+ChooseDiscilpline::on_volleyRadioButton_clicked() {
     discipline = VOLLEY_PANEL;
 }
 

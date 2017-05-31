@@ -26,12 +26,10 @@ public slots:
     void onPanelDone();
 
 private slots:
-    void on_VolleyRadioButton_clicked();
+    void on_volleyRadioButton_clicked();
     void on_basketRadioButton_clicked();
     void on_goPushButton_clicked();
-
     void on_closePushButton_clicked();
-
     void on_handballRadioButton_clicked();
 
 private:
