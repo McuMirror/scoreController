@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     button.cpp \
     edit.cpp \
     radioButton.cpp \
-    panelconfigurator.cpp
+    panelconfigurator.cpp \
+    handballcontroller.cpp
 
 HEADERS  += scorecontroller.h \
     clientlistdialog.h \
@@ -42,7 +43,8 @@ HEADERS  += scorecontroller.h \
     edit.h \
     radioButton.h \
     panelorientation.h \
-    panelconfigurator.h
+    panelconfigurator.h \
+    handballcontroller.h
 
 RESOURCES += scorecontroller.qrc
 

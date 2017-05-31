@@ -1,25 +1,20 @@
-#ifndef BASKETCONTROLLER_H
-#define BASKETCONTROLLER_H
+#ifndef HANDBALLCONTROLLER_H
+#define HANDBALLCONTROLLER_H
 
 #include <QObject>
 #include <QWidget>
 
 #include "scorecontroller.h"
 
-QT_FORWARD_DECLARE_CLASS(QSettings)
-QT_FORWARD_DECLARE_CLASS(QGridLayout)
-QT_FORWARD_DECLARE_CLASS(QGroupBox)
 QT_FORWARD_DECLARE_CLASS(Edit)
 QT_FORWARD_DECLARE_CLASS(Button)
-QT_FORWARD_DECLARE_CLASS(QRadioButton)
-QT_FORWARD_DECLARE_CLASS(QPushButton)
 
-class BasketController : public ScoreController
+class HandballController : public ScoreController
 {
     Q_OBJECT
 
 public:
-    BasketController();
+    HandballController();
     void closeEvent(QCloseEvent *event);
 
 public:
@@ -30,12 +25,9 @@ private slots:
     void onTimeOutDecrement(int iTeam);
     void onScoreIncrement(int iTeam);
     void onScoreDecrement(int iTeam);
-    void onFaulsIncrement(int iTeam);
-    void onFaulsDecrement(int iTeam);
     void onTeamTextChanged(QString sText, int iTeam);
     void onPeriodIncrement(int iDummy);
     void onPeriodDecrement(int iDummy);
-    void onPossessClicked(int iTeam, bool bChecked);
 
     void onButtonChangeFieldClicked();
     void onButtonNewPeriodClicked();
@@ -53,30 +45,26 @@ private:
     QString       sTeam[2];
     int           iTimeout[2];
     int           iScore[2];
-    int           iFauls[2];
-    int           iBonus[2];
     int           iPeriod;
-    int           iPossess;
 
     Edit         *teamName[2];
     Edit         *timeoutEdit[2];
     Edit         *scoreEdit[2];
-    Edit         *faulsEdit[2];
     Edit         *periodEdit;
-    Edit         *bonusEdit[2];
     Button       *timeoutIncrement[2];
     Button       *timeoutDecrement[2];
     Button       *scoreIncrement[2];
     Button       *scoreDecrement[2];
-    Button       *faulsIncrement[2];
-    Button       *faulsDecrement[2];
     Button       *periodIncrement;
     Button       *periodDecrement;
-    QRadioButton *possess[2];
+
+    int           maxTimeouts;
+    int           maxPeriods;
+    int           periodTime;
 
     QPushButton  *newPeriodButton;
     QPushButton  *newGameButton;
     QPushButton  *changeFieldButton;
 };
 
-#endif // BASKETCONTROLLER_H
+#endif // HANDBALLCONTROLLER_H

@@ -16,85 +16,104 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-#include <QDir>
-#include <QVBoxLayout>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QDir>
 #include <QLabel>
-#include <QPushButton>
-#include <QMessageBox>
-#include <QCloseEvent>
 #include <QGuiApplication>
 #include <QScreen>
+#include <QPushButton>
+#include <QMessageBox>
 
-#include "volleycontroller.h"
+#include "handballcontroller.h"
+#include "fileserver.h"
 #include "edit.h"
 #include "button.h"
-#include "radioButton.h"
-#include "fileserver.h"
 
-#define MAX_TIMEOUTS 2
-#define MAX_SETS     3
+#define MAX_TIMEOUTS   2 // Numero massimo di sospensioni
+#define MAX_PERIODS    2 //
+#define MAX_SCORE    999 //
+#define REGULAR_TIME  30 // 30 Minuti è la durata di un tempo regolare
 
-VolleyController::VolleyController()
-    : ScoreController(VOLLEY_PANEL, Q_NULLPTR)
+
+HandballController::HandballController()
+    : ScoreController(HANDBALL_PANEL, Q_NULLPTR)
+    , maxTimeouts(MAX_TIMEOUTS)
+    , maxPeriods(MAX_PERIODS)
+    , periodTime(REGULAR_TIME)
+
 {
-    QString sFunctionName = QString(" VolleyController::VolleyController ");
-    pSettings = Q_NULLPTR;
+    QString sFunctionName = QString(" HandballController::BasketController ");
+    Q_UNUSED(sFunctionName)
+
     GetSettings();
     PrepareDirectories();
-
-    pSlideUpdaterServer->setDir(sSlideDir, "*.jpg *.jpeg *.png");
+    pSlideUpdaterServer->setDir(sSlideDir,"*.jpg *.jpeg *.png");
     pSpotUpdaterServer->setDir(sSpotDir, "*.mp4");
-
     emit startSpotServer();
     emit startSlideServer();
 
     QGridLayout *mainLayout = new QGridLayout();
-
-    int gamePanelWidth  = 15;
-    int gamePanelHeigth =  8;
+    int gamePanelWidth   = 15;
+    int gamePanelHeight  = 13;
+    int gameBoxHeight    = 3;
+    int gameButtonHeight = 3;
     mainLayout->addLayout(CreateGamePanel(),
                           0,
                           0,
-                          gamePanelHeigth,
+                          gamePanelHeight,
+                          gamePanelWidth);
+
+    mainLayout->addWidget(CreateGameBox(),
+                          gamePanelHeight,
+                          0,
+                          gameBoxHeight,
                           gamePanelWidth);
 
     mainLayout->addWidget(CreateGameButtonBox(),
-                          gamePanelHeigth,
+                          gamePanelHeight+gameBoxHeight,
                           0,
-                          1,
+                          gameButtonHeight,
                           gamePanelWidth);
 
     mainLayout->addWidget(CreateSpotButtonBox(),
                           0,
                           gamePanelWidth,
-                          gamePanelHeigth+1,
-                          1);
-
+                          gamePanelHeight+gameBoxHeight+gameButtonHeight,
+                          2);
     setLayout(mainLayout);
-
-    service[iServizio ? 1 : 0]->setChecked(true);
-    service[iServizio ? 0 : 1]->setChecked(false);
 }
 
 
 void
-VolleyController::GetSettings() {
+HandballController::GetSettings() {
     QString sFunctionName = QString(" VolleyController::GetSettings ");
     Q_UNUSED(sFunctionName)
-    pSettings = new QSettings("Gabriele Salvato", "Volley Controller");
+    pSettings = new QSettings("Gabriele Salvato", "Handball Controller");
 
     sTeam[0]    = pSettings->value("team1/name", QString("Locali")).toString();
     sTeam[1]    = pSettings->value("team2/name", QString("Ospiti")).toString();
     iTimeout[0] = pSettings->value("team1/timeouts", 0).toInt();
     iTimeout[1] = pSettings->value("team2/timeouts", 0).toInt();
-    iSet[0]     = pSettings->value("team1/sets", 0).toInt();
-    iSet[1]     = pSettings->value("team2/sets", 0).toInt();
     iScore[0]   = pSettings->value("team1/score", 0).toInt();
     iScore[1]   = pSettings->value("team2/score", 0).toInt();
-    iServizio   = pSettings->value("set/service", 0).toInt();
-    lastService = pSettings->value("set/lastservice", 0).toInt();
+    iPeriod     = pSettings->value("game/period", 1).toInt();
+
+    // Safety check
+    for(int i=0; i<2; i++) {
+        if(iTimeout[i] < 0) iTimeout[i] = 0;
+        if(iTimeout[i] > maxTimeouts) iTimeout[i] = maxTimeouts;
+        if(iScore[i] < 0) iScore[i] = 0;
+        if(iScore[i] > MAX_SCORE) iScore[i] = MAX_SCORE;
+    }
+    if(iPeriod < 0) iPeriod = 0;
+    if(iPeriod > maxPeriods) iPeriod = maxPeriods;
+
+    pSettings->setValue("team1/timeouts", iTimeout[0]);
+    pSettings->setValue("team2/timeouts", iTimeout[1]);
+    pSettings->setValue("team1/score", iScore[0]);
+    pSettings->setValue("team2/score", iScore[1]);
+    pSettings->setValue("game/period", iPeriod);
 
     sSlideDir   = pSettings->value("directories/slides", sSlideDir).toString();
     sSpotDir    = pSettings->value("directories/spots", sSpotDir).toString();
@@ -102,37 +121,20 @@ VolleyController::GetSettings() {
 
 
 void
-VolleyController::closeEvent(QCloseEvent *event) {
-    QString sFunctionName = " Volley_Controller::closeEvent ";
+HandballController::closeEvent(QCloseEvent *event) {
+    QString sFunctionName = " HandballController::closeEvent ";
     Q_UNUSED(sFunctionName)
     SaveStatus();
     ScoreController::closeEvent(event);// Propagate the event
 }
 
 
-void
-VolleyController::SaveStatus() {
-    pSettings->setValue("team1/name", sTeam[0]);
-    pSettings->setValue("team2/name", sTeam[1]);
-    pSettings->setValue("team1/timeouts", iTimeout[0]);
-    pSettings->setValue("team2/timeouts", iTimeout[1]);
-    pSettings->setValue("team1/sets", iSet[0]);
-    pSettings->setValue("team2/sets", iSet[1]);
-    pSettings->setValue("team1/score", iScore[0]);
-    pSettings->setValue("team2/score", iScore[1]);
-    pSettings->setValue("set/service", iServizio);
-    pSettings->setValue("set/lastservice", lastService);
-    pSettings->setValue("directories/slides", sSlideDir);
-    pSettings->setValue("directories/spots", sSpotDir);
-}
-
-
 QGroupBox*
-VolleyController::CreateTeamBox(int iTeam) {
+HandballController::CreateTeamBox(int iTeam) {
     QGroupBox* teamBox      = new QGroupBox();
     QString sString;
     QGridLayout* teamLayout = new QGridLayout();
-    QLabel* labelSpacer     = new QLabel(QString(""));
+    QLabel* labelSpacer = new QLabel(QString(""));
 
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen->geometry();
@@ -140,10 +142,12 @@ VolleyController::CreateTeamBox(int iTeam) {
     int rW;
 
     // Team
-    int iRow = 0;
+    int nextRow = 0;
     teamName[iTeam] = new Edit(sTeam[iTeam], iTeam);
     teamName[iTeam]->setAlignment(Qt::AlignHCenter);
     teamName[iTeam]->setMaxLength(15);
+    connect(teamName[iTeam], SIGNAL(textChanged(QString, int)),
+            this, SLOT(onTeamTextChanged(QString, int)));
 
     QFont font(teamName[iTeam]->font());
     int iTeamFontSize = font.pointSize();
@@ -158,11 +162,11 @@ VolleyController::CreateTeamBox(int iTeam) {
     }
     font.setPointSize(iTeamFontSize);
     teamName[iTeam]->setFont(font);
+    teamLayout->addWidget(teamName[iTeam], nextRow, 0, 2, 10);
+    nextRow += 2;
 
-    connect(teamName[iTeam], SIGNAL(textChanged(QString, int)),
-            this, SLOT(onTeamTextChanged(QString, int)));
-    teamLayout->addWidget(teamName[iTeam], iRow, 0, 2, 10);
-    teamLayout->addWidget(labelSpacer, iRow+2, 0, 1, 10);
+    teamLayout->addWidget(labelSpacer, nextRow, 0, 1, 10);
+    nextRow += 1;
 
     // Timeout
     QLabel *timeoutLabel;
@@ -207,99 +211,36 @@ VolleyController::CreateTeamBox(int iTeam) {
 
     if(iTimeout[iTeam] == 0)
         timeoutDecrement[iTeam]->setEnabled(false);
-    if(iTimeout[iTeam] == MAX_TIMEOUTS) {
-        timeoutIncrement[iTeam]->setEnabled(false);
-        timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
-    }
 
-    iRow += 3;
-    teamLayout->addWidget(timeoutLabel,            iRow, 0, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
-    teamLayout->addWidget(timeoutDecrement[iTeam], iRow, 3, 2, 2, Qt::AlignRight);
-    teamLayout->addWidget(timeoutEdit[iTeam],      iRow, 5, 2, 3, Qt::AlignHCenter|Qt::AlignVCenter);
-    teamLayout->addWidget(timeoutIncrement[iTeam], iRow, 8, 2, 2, Qt::AlignLeft);
-    teamLayout->addWidget(labelSpacer, iRow+2, 0, 1, 10);
-
-    // Set
-    QLabel *setsLabel;
-    setsLabel = new QLabel(tr("Set Vinti"));
-    setsLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
-    sString.sprintf("%1d", iSet[iTeam]);
-
-    font = setsLabel->font();
-    font.setPointSize(iTimeoutLabelFontSize);
-    setsLabel->setFont(font);
-
-    setsEdit[iTeam] = new Edit(sString);
-    setsEdit[iTeam]->setMaxLength(1);
-    setsEdit[iTeam]->setAlignment(Qt::AlignHCenter);
-    setsEdit[iTeam]->setReadOnly(true);
-
-    font = setsEdit[iTeam]->font();
-    font.setPointSize(iTimeoutLabelFontSize);
-    setsEdit[iTeam]->setFont(font);
-
-    setsIncrement[iTeam] = new Button(tr("+"), iTeam);
-    setsDecrement[iTeam] = new Button(tr("-"), iTeam);
-
-    connect(setsIncrement[iTeam], SIGNAL(buttonClicked(int)),
-            this, SLOT(onSetIncrement(int)));
-    connect(setsIncrement[iTeam], SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
-    connect(setsDecrement[iTeam], SIGNAL(buttonClicked(int)),
-            this, SLOT(onSetDecrement(int)));
-    connect(setsDecrement[iTeam], SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
-
-    if(iSet[iTeam] == 0)
-        setsDecrement[iTeam]->setEnabled(false);
-    if(iSet[iTeam] == MAX_SETS)
-        setsIncrement[iTeam]->setEnabled(false);
-
-    iRow += 3;
-    teamLayout->addWidget(setsLabel,            iRow, 0, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
-    teamLayout->addWidget(setsDecrement[iTeam], iRow, 3, 2, 2, Qt::AlignRight);
-    teamLayout->addWidget(setsEdit[iTeam],      iRow, 5, 2, 3, Qt::AlignHCenter|Qt::AlignVCenter);
-    teamLayout->addWidget(setsIncrement[iTeam], iRow, 8, 2, 2, Qt::AlignLeft);
-    teamLayout->addWidget(labelSpacer, iRow+2, 0, 1, 10);
-
-    // Service
-    iRow += 3;
-    service[iTeam] = new RadioButton(tr("Servizio"), iTeam);
-
-    font = service[iTeam]->font();
-    font.setPointSize(iTimeoutLabelFontSize);
-    service[iTeam]->setFont(font);
-
-    if(iTeam == 0) {
-        teamLayout->addWidget(service[iTeam],   iRow, 4, 1, 4, Qt::AlignLeft|Qt::AlignVCenter);
-    } else {
-        teamLayout->addWidget(service[iTeam],   iRow, 4, 1, 4, Qt::AlignLeft|Qt::AlignVCenter);
-    }
-    teamLayout->addWidget(labelSpacer, iRow+1, 0, 1, 10);
-    connect(service[iTeam], SIGNAL(buttonClicked(int, bool)), this, SLOT(onServiceClicked(int, bool)));
+    teamLayout->addWidget(timeoutLabel,            nextRow, 0, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
+    teamLayout->addWidget(timeoutDecrement[iTeam], nextRow, 3, 2, 2, Qt::AlignRight);
+    teamLayout->addWidget(timeoutEdit[iTeam],      nextRow, 5, 2, 3, Qt::AlignHCenter|Qt::AlignVCenter);
+    teamLayout->addWidget(timeoutIncrement[iTeam], nextRow, 8, 2, 2, Qt::AlignLeft);
+    nextRow+= 2;
+    teamLayout->addWidget(labelSpacer, nextRow, 0, 1, 10);
+    nextRow += 1;
 
     // Score
-    iRow += 2;
     QLabel *scoreLabel;
-    scoreLabel = new QLabel(tr("Punti"));
+    scoreLabel = new QLabel(tr("Score"));
     scoreLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
 
     font = scoreLabel->font();
     font.setPointSize(iTimeoutLabelFontSize);
     scoreLabel->setFont(font);
 
-    sString.sprintf("%2d", iScore[iTeam]);
-    scoreEdit[iTeam] = new Edit(sString);
-    scoreEdit[iTeam]->setMaxLength(2);
+    scoreEdit[iTeam] = new Edit();
+    scoreEdit[iTeam]->setMaxLength(3);
     scoreEdit[iTeam]->setReadOnly(true);
     scoreEdit[iTeam]->setAlignment(Qt::AlignRight);
+    sString.sprintf("%3d", iScore[iTeam]);
+    scoreEdit[iTeam]->setText(sString);
 
     font = scoreEdit[iTeam]->font();
     font.setPointSize(iTimeoutLabelFontSize);
     scoreEdit[iTeam]->setFont(font);
 
     scoreIncrement[iTeam] = new Button(tr("+"), iTeam);
-
     scoreDecrement[iTeam] = new Button(tr("-"), iTeam);
 
     connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
@@ -314,10 +255,10 @@ VolleyController::CreateTeamBox(int iTeam) {
     if(iScore[iTeam] == 0)
         scoreDecrement[iTeam]->setEnabled(false);
 
-    teamLayout->addWidget(scoreLabel,            iRow, 0, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
-    teamLayout->addWidget(scoreDecrement[iTeam], iRow, 3, 2, 2, Qt::AlignRight);
-    teamLayout->addWidget(scoreEdit[iTeam],      iRow, 5, 2, 3, Qt::AlignHCenter|Qt::AlignVCenter);
-    teamLayout->addWidget(scoreIncrement[iTeam], iRow, 8, 2, 2, Qt::AlignLeft);
+    teamLayout->addWidget(scoreLabel,            nextRow, 0, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
+    teamLayout->addWidget(scoreDecrement[iTeam], nextRow, 3, 2, 2, Qt::AlignRight);
+    teamLayout->addWidget(scoreEdit[iTeam],      nextRow, 5, 2, 3, Qt::AlignHCenter|Qt::AlignVCenter);
+    teamLayout->addWidget(scoreIncrement[iTeam], nextRow, 8, 2, 2, Qt::AlignLeft);
 
     teamBox->setLayout(teamLayout);
     return teamBox;
@@ -325,16 +266,85 @@ VolleyController::CreateTeamBox(int iTeam) {
 
 
 QGroupBox*
-VolleyController::CreateGameButtonBox() {
+HandballController::CreateGameBox() {
+    QGroupBox* gameBox      = new QGroupBox();
+    QString sString;
+    QGridLayout* gameLayout = new QGridLayout();
+
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->geometry();
+    int width = screenGeometry.width();
+    int rW;
+
+    // Period
+    QLabel *periodLabel;
+    periodLabel = new QLabel(tr("Period"));
+    periodLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
+
+    QFont font = periodLabel->font();
+    int iPeriodLabelFontSize = font.pointSize();
+    for(int i=iPeriodLabelFontSize; i<100; i++) {
+        font.setPointSize(i);
+        QFontMetrics f(font);
+        rW = f.width(periodLabel->text());
+        if(rW > width/10) {
+            iPeriodLabelFontSize = i-1;
+            break;
+        }
+    }
+    font.setPointSize(iPeriodLabelFontSize);
+
+    font = periodLabel->font();
+    font.setPointSize(iPeriodLabelFontSize);
+    periodLabel->setFont(font);
+
+    periodEdit = new Edit();
+    periodEdit->setMaxLength(2);
+    periodEdit->setReadOnly(true);
+    periodEdit->setAlignment(Qt::AlignRight);
+    sString.sprintf("%2d", iPeriod);
+    periodEdit->setText(sString);
+
+    font = periodEdit->font();
+    font.setPointSize(iPeriodLabelFontSize);
+    periodEdit->setFont(font);
+
+    periodIncrement = new Button(tr("+"), 0);
+    periodDecrement = new Button(tr("-"), 0);
+
+    connect(periodIncrement, SIGNAL(buttonClicked(int)),
+            this, SLOT(onPeriodIncrement(int)));
+    connect(periodIncrement, SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+    connect(periodDecrement, SIGNAL(buttonClicked(int)),
+            this, SLOT(onPeriodDecrement(int)));
+    connect(periodDecrement, SIGNAL(clicked()),
+            &buttonClick, SLOT(play()));
+
+    if(iPeriod < 2)
+        periodDecrement->setEnabled(false);
+
+    gameLayout->addWidget(periodLabel,     0,  2, 2, 2, Qt::AlignRight|Qt::AlignVCenter);
+    gameLayout->addWidget(periodDecrement, 0,  4, 2, 2, Qt::AlignRight);
+    gameLayout->addWidget(periodEdit,      0,  6, 2, 2, Qt::AlignHCenter|Qt::AlignVCenter);
+    gameLayout->addWidget(periodIncrement, 0,  8, 2, 2, Qt::AlignLeft);
+    gameBox->setLayout(gameLayout);
+    return gameBox;
+}
+
+
+QGroupBox*
+HandballController::CreateGameButtonBox() {
     QGroupBox* gameButtonBox = new QGroupBox();
     QHBoxLayout* gameButtonLayout = new QHBoxLayout();
-    newSetButton  = new QPushButton(tr("Nuovo\nSet"));
-    newGameButton = new QPushButton(tr("Nuova\nPartita"));
+
+    newPeriodButton   = new QPushButton(tr("Nuovo\nPeriodo"));
+    newGameButton     = new QPushButton(tr("Nuova\nPartita"));
     changeFieldButton = new QPushButton(tr("Cambio\nCampo"));
 
-    connect(newSetButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonNewSetClicked()));
-    connect(newSetButton, SIGNAL(clicked()),
+    connect(newPeriodButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonNewPeriodClicked()));
+    connect(newPeriodButton, SIGNAL(clicked()),
             &buttonClick, SLOT(play()));
     connect(newGameButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonNewGameClicked()));
@@ -346,7 +356,7 @@ VolleyController::CreateGameButtonBox() {
             &buttonClick, SLOT(play()));
 
     gameButtonLayout->addStretch();
-    gameButtonLayout->addWidget(newSetButton);
+    gameButtonLayout->addWidget(newPeriodButton);
     gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(newGameButton);
     gameButtonLayout->addStretch();
@@ -358,31 +368,30 @@ VolleyController::CreateGameButtonBox() {
 
 
 QGridLayout*
-VolleyController::CreateGamePanel() {
+HandballController::CreateGamePanel() {
     QGridLayout* gamePanel = new QGridLayout();
-    gamePanel->addWidget(CreateTeamBox(0),  0,  0,  1,  1);
-    gamePanel->addWidget(CreateTeamBox(1),  0,  1,  1,  1);
+    gamePanel->addWidget(CreateTeamBox(0),      0, 0, 1, 1);
+    gamePanel->addWidget(CreateTeamBox(1),      0, 1, 1, 1);
     return gamePanel;
 }
 
 
 QString
-VolleyController::FormatStatusMsg() {
-    QString sFunctionName = " Volley_Controller::FormatStatusMsg ";
+HandballController::FormatStatusMsg() {
+    QString sFunctionName = " HandballController::FormatStatusMsg ";
     Q_UNUSED(sFunctionName)
-    QString sMessage = tr("");
+    QString sMessage = QString();
+
     QString sTemp;
     for(int i=0; i<2; i++) {
         sTemp.sprintf("<team%1d>%s</team%1d>", i, sTeam[i].toLocal8Bit().data(), i);
         sMessage += sTemp;
         sTemp.sprintf("<timeout%1d>%d</timeout%1d>", i, iTimeout[i], i);
         sMessage += sTemp;
-        sTemp.sprintf("<set%1d>%d</set%1d>", i, iSet[i], i);
-        sMessage += sTemp;
         sTemp.sprintf("<score%1d>%d</score%1d>", i, iScore[i], i);
         sMessage += sTemp;
     }
-    sTemp.sprintf("<servizio>%d</servizio>", iServizio);
+    sTemp.sprintf("<period>%d,%d</period>", iPeriod, periodTime);
     sMessage += sTemp;
     if(!startStopSlideShowButton->text().contains(QString("Avvia")))
         sMessage += "<slideshow>1</slideshow>";
@@ -392,7 +401,24 @@ VolleyController::FormatStatusMsg() {
         sMessage += QString("<spotloop>1</spotloop>");
     else if(!startStopSpotButton->text().contains(QString("Avvia")))
         sMessage += QString("<spot>1</spot>");
+
     return sMessage;
+}
+
+
+void
+HandballController::SaveStatus() {
+    pSettings->setValue("team1/name", sTeam[0]);
+    pSettings->setValue("team2/name", sTeam[1]);
+    pSettings->setValue("team1/timeouts", iTimeout[0]);
+    pSettings->setValue("team2/timeouts", iTimeout[1]);
+    pSettings->setValue("team1/score", iScore[0]);
+    pSettings->setValue("team2/score", iScore[1]);
+
+    pSettings->setValue("game/period", iPeriod);
+
+    pSettings->setValue("directories/slides", sSlideDir);
+    pSettings->setValue("directories/spots", sSpotDir);
 }
 
 
@@ -402,10 +428,10 @@ VolleyController::FormatStatusMsg() {
 
 
 void
-VolleyController::onTimeOutIncrement(int iTeam) {
+HandballController::onTimeOutIncrement(int iTeam) {
     QString sMessage;
     iTimeout[iTeam]++;
-    if(iTimeout[iTeam] == MAX_TIMEOUTS) {
+    if(iTimeout[iTeam] == maxTimeouts) {
         timeoutIncrement[iTeam]->setEnabled(false);
         timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
@@ -421,7 +447,7 @@ VolleyController::onTimeOutIncrement(int iTeam) {
 
 
 void
-VolleyController::onTimeOutDecrement(int iTeam) {
+HandballController::onTimeOutDecrement(int iTeam) {
     QString sMessage;
     iTimeout[iTeam]--;
     if(iTimeout[iTeam] == 0) {
@@ -440,69 +466,15 @@ VolleyController::onTimeOutDecrement(int iTeam) {
 
 
 void
-VolleyController::onSetIncrement(int iTeam) {
-    QString sMessage;
-    iSet[iTeam]++;
-    setsDecrement[iTeam]->setEnabled(true);
-    if(iSet[iTeam] == MAX_SETS) {
-        setsIncrement[iTeam]->setEnabled(false);
-    }
-    sMessage.sprintf("<set%1d>%d</set%1d>", iTeam, iSet[iTeam], iTeam);
-    SendToAll(sMessage);
-    QString sText;
-    sText.sprintf("%1d", iSet[iTeam]);
-    setsEdit[iTeam]->setText(sText);
-    sText.sprintf("team%1d/sets", iTeam+1);
-    pSettings->setValue(sText, iSet[iTeam]);
-}
-
-
-void
-VolleyController::onSetDecrement(int iTeam) {
-    QString sMessage;
-    iSet[iTeam]--;
-    setsIncrement[iTeam]->setEnabled(true);
-    if(iSet[iTeam] == 0) {
-       setsDecrement[iTeam]->setEnabled(false);
-    }
-    sMessage.sprintf("<set%1d>%d</set%1d>", iTeam, iSet[iTeam], iTeam);
-    SendToAll(sMessage);
-    QString sText;
-    sText.sprintf("%1d", iSet[iTeam]);
-    setsEdit[iTeam]->setText(sText);
-    sText.sprintf("team%1d/sets", iTeam+1);
-    pSettings->setValue(sText, iSet[iTeam]);
-}
-
-
-void
-VolleyController::onServiceClicked(int iTeam, bool bChecked) {
-    Q_UNUSED(bChecked)
-    QString sMessage;
-    iServizio = iTeam;
-    lastService = iServizio;
-    service[iServizio ? 1 : 0]->setChecked(true);
-    service[iServizio ? 0 : 1]->setChecked(false);
-    sMessage.sprintf("<servizio>%d</servizio>", iServizio);
-    SendToAll(sMessage);
-    pSettings->setValue("set/service", iServizio);
-    pSettings->setValue("set/lastservice", lastService);
-}
-
-
-void
-VolleyController::onScoreIncrement(int iTeam) {
+HandballController::onScoreIncrement(int iTeam) {
     QString sMessage;
     iScore[iTeam]++;
     scoreDecrement[iTeam]->setEnabled(true);
-    if(iScore[iTeam] > 98) {
-      scoreIncrement[iTeam]->setEnabled(false);
+    if(iScore[iTeam] >= MAX_SCORE) {
+        iScore[iTeam] = MAX_SCORE;
+        scoreIncrement[iTeam]->setEnabled(false);
     }
-    lastService = iServizio;
-    iServizio = iTeam;
-    service[iServizio ? 1 : 0]->setChecked(true);
-    service[iServizio ? 0 : 1]->setChecked(false);
-    sMessage.sprintf("<score%1d>%d</score%1d><servizio>%d</servizio>", iTeam, iScore[iTeam], iTeam, iServizio);
+    sMessage.sprintf("<score%1d>%d</score%1d>", iTeam, iScore[iTeam], iTeam);
     SendToAll(sMessage);
     QString sText;
     sText.sprintf("%1d", iScore[iTeam]);
@@ -513,17 +485,14 @@ VolleyController::onScoreIncrement(int iTeam) {
 
 
 void
-VolleyController::onScoreDecrement(int iTeam) {
+HandballController::onScoreDecrement(int iTeam) {
     QString sMessage;
     iScore[iTeam]--;
     scoreIncrement[iTeam]->setEnabled(true);
     if(iScore[iTeam] == 0) {
       scoreDecrement[iTeam]->setEnabled(false);
     }
-    iServizio = lastService;
-    service[iServizio ? 1 : 0]->setChecked(true);
-    service[iServizio ? 0 : 1]->setChecked(false);
-    sMessage.sprintf("<score%1d>%d</score%1d><servizio>%d</servizio>", iTeam, iScore[iTeam], iTeam, iServizio);
+    sMessage.sprintf("<score%1d>%d</score%1d>", iTeam, iScore[iTeam], iTeam);
     SendToAll(sMessage);
     QString sText;
     sText.sprintf("%1d", iScore[iTeam]);
@@ -534,7 +503,7 @@ VolleyController::onScoreDecrement(int iTeam) {
 
 
 void
-VolleyController::onTeamTextChanged(QString sText, int iTeam) {
+HandballController::onTeamTextChanged(QString sText, int iTeam) {
     QString sMessage;
     sTeam[iTeam] = sText;
     if(sText=="")// C'è un problema con la stringa vuota...
@@ -548,72 +517,100 @@ VolleyController::onTeamTextChanged(QString sText, int iTeam) {
 
 
 void
-VolleyController::onButtonChangeFieldClicked() {
-    int iRes = QMessageBox::question(this, tr("Volley_Controller"),
-                                     tr("Scambiare il campo delle squadre ?"),
+HandballController::onPeriodIncrement(int iDummy) {
+    Q_UNUSED(iDummy)
+    if(iPeriod < maxPeriods) {
+        iPeriod++;
+    }
+    if(iPeriod >= maxPeriods) {
+        periodIncrement->setDisabled(true);
+        iPeriod= maxPeriods;
+    }
+    periodDecrement->setEnabled(true);
+    QString sString, sMessage;
+    sString.sprintf("%2d", iPeriod);
+    periodEdit->setText(sString);
+    sMessage.sprintf("<period>%d,%d</period>", iPeriod, periodTime);
+    SendToAll(sMessage);
+    pSettings->setValue("game/period", iPeriod);
+}
+
+
+void
+HandballController::onPeriodDecrement(int iDummy) {
+    Q_UNUSED(iDummy)
+    if(iPeriod > 1) {
+        iPeriod--;
+    }
+    if(iPeriod < 2)
+        periodDecrement->setDisabled(true);
+    if(iPeriod >= maxPeriods) {
+        periodIncrement->setDisabled(true);
+        iPeriod= maxPeriods;
+    }
+    periodIncrement->setEnabled(true);
+    QString sString, sMessage;
+    sString.sprintf("%2d", iPeriod);
+    periodEdit->setText(sString);
+    sMessage.sprintf("<period>%d,%d</period>", iPeriod, periodTime);
+    SendToAll(sMessage);
+    pSettings->setValue("game/period", iPeriod);
+}
+
+
+void
+HandballController::onButtonNewPeriodClicked() {
+    int iRes = QMessageBox::question(this, tr("Handball Controller"),
+                                     tr("Vuoi davvero iniziare un nuovo Periodo ?"),
                                      QMessageBox::Yes | QMessageBox::No,
                                      QMessageBox::No);
     if(iRes != QMessageBox::Yes) return;
 
+    // Increment period number
+    if(iPeriod < maxPeriods) {
+        iPeriod++;
+    }
+    if(iPeriod >= maxPeriods) {
+        periodIncrement->setDisabled(true);
+        iPeriod= maxPeriods;
+    }
+    periodDecrement->setEnabled(true);
+    QString sString;
+    sString.sprintf("%2d", iPeriod);
+    periodEdit->setText(sString);
+
+    // Exchange teams order, score and timeouts
     QString sText = sTeam[0];
     sTeam[0] = sTeam[1];
     sTeam[1] = sText;
-    teamName[0]->setText(sTeam[0]);
-    teamName[1]->setText(sTeam[1]);
 
-    int iVal = iSet[0];
-    iSet[0] = iSet[1];
-    iSet[1] = iVal;
-    sText.sprintf("%1d", iSet[0]);
-    setsEdit[0]->setText(sText);
-    sText.sprintf("%1d", iSet[1]);
-    setsEdit[1]->setText(sText);
-
-    iVal = iScore[0];
+    int iVal = iScore[0];
     iScore[0] = iScore[1];
     iScore[1] = iVal;
-    sText.sprintf("%1d", iScore[0]);
-    scoreEdit[0]->setText(sText);
-    sText.sprintf("%1d", iScore[1]);
-    scoreEdit[1]->setText(sText);
 
     iVal = iTimeout[0];
     iTimeout[0] = iTimeout[1];
     iTimeout[1] = iVal;
-    sText.sprintf("%1d", iTimeout[0]);
-    timeoutEdit[0]->setText(sText);
-    sText.sprintf("%1d", iTimeout[1]);
-    timeoutEdit[1]->setText(sText);
 
-    iServizio = 1 - iServizio;
-    lastService = 1 -lastService;
-
-    service[iServizio ? 1 : 0]->setChecked(true);
-    service[iServizio ? 0 : 1]->setChecked(false);
-
+    // Update panel
     for(int iTeam=0; iTeam<2; iTeam++) {
+        teamName[iTeam]->setText(sTeam[iTeam]);
+        sText.sprintf("%1d", iScore[iTeam]);
+        scoreEdit[iTeam]->setText(sText);
         scoreDecrement[iTeam]->setEnabled(true);
         scoreIncrement[iTeam]->setEnabled(true);
         if(iScore[iTeam] == 0) {
           scoreDecrement[iTeam]->setEnabled(false);
         }
-        if(iScore[iTeam] > 98) {
+        if(iScore[iTeam] >= MAX_SCORE) {
           scoreIncrement[iTeam]->setEnabled(false);
         }
-
-        setsDecrement[iTeam]->setEnabled(true);
-        setsIncrement[iTeam]->setEnabled(true);
-        if(iSet[iTeam] == 0) {
-            setsDecrement[iTeam]->setEnabled(false);
-        }
-        if(iSet[iTeam] == MAX_SETS) {
-            setsIncrement[iTeam]->setEnabled(false);
-        }
-
+        sText.sprintf("%1d", iTimeout[iTeam]);
+        timeoutEdit[iTeam]->setText(sText);
         timeoutIncrement[iTeam]->setEnabled(true);
         timeoutDecrement[iTeam]->setEnabled(true);
         timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
-        if(iTimeout[iTeam] == MAX_TIMEOUTS) {
+        if(iTimeout[iTeam] >= maxTimeouts) {
             timeoutIncrement[iTeam]->setEnabled(false);
             timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
@@ -627,53 +624,8 @@ VolleyController::onButtonChangeFieldClicked() {
 
 
 void
-VolleyController::onButtonNewSetClicked() {
-    int iRes = QMessageBox::question(this, tr("Volley_Controller"),
-                                     tr("Vuoi davvero iniziare un nuovo Set ?"),
-                                     QMessageBox::Yes | QMessageBox::No,
-                                     QMessageBox::No);
-    if(iRes != QMessageBox::Yes) return;
-
-    // Exchange teams order in the field
-    QString sText = sTeam[0];
-    sTeam[0] = sTeam[1];
-    sTeam[1] = sText;
-    teamName[0]->setText(sTeam[0]);
-    teamName[1]->setText(sTeam[1]);
-    int iVal = iSet[0];
-    iSet[0] = iSet[1];
-    iSet[1] = iVal;
-    sText.sprintf("%1d", iSet[0]);
-    setsEdit[0]->setText(sText);
-    sText.sprintf("%1d", iSet[1]);
-    setsEdit[1]->setText(sText);
-    for(int iTeam=0; iTeam<2; iTeam++) {
-        iTimeout[iTeam] = 0;
-        sText.sprintf("%1d", iTimeout[iTeam]);
-        timeoutEdit[iTeam]->setText(sText);
-        timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
-        iScore[iTeam]   = 0;
-        sText.sprintf("%1d", iScore[iTeam]);
-        scoreEdit[iTeam]->setText(sText);
-        timeoutDecrement[iTeam]->setEnabled(false);
-        timeoutIncrement[iTeam]->setEnabled(true);
-        setsDecrement[iTeam]->setEnabled(iSet[iTeam] != 0);
-        setsIncrement[iTeam]->setEnabled(true);
-        scoreDecrement[iTeam]->setEnabled(false);
-        scoreIncrement[iTeam]->setEnabled(true);
-    }
-    iServizio   = 0;
-    lastService = 0;
-    service[iServizio ? 1 : 0]->setChecked(true);
-    service[iServizio ? 0 : 1]->setChecked(false);
-    SendToAll(FormatStatusMsg());
-    SaveStatus();
-}
-
-
-void
-VolleyController::onButtonNewGameClicked() {
-    int iRes = QMessageBox::question(this, tr("Volley_Controller"),
+HandballController::onButtonNewGameClicked() {
+    int iRes = QMessageBox::question(this, tr("Handball Controller"),
                                      tr("Vuoi davvero azzerare tutto ?"),
                                      QMessageBox::Yes | QMessageBox::No,
                                      QMessageBox::No);
@@ -681,30 +633,79 @@ VolleyController::onButtonNewGameClicked() {
     sTeam[0]    = tr("Locali");
     sTeam[1]    = tr("Ospiti");
     QString sText;
+    iPeriod = 1;
+    sText.sprintf("%2d", iPeriod);
+    periodEdit->setText(sText);
+    periodIncrement->setEnabled(true);
+    periodDecrement->setEnabled(false);
     for(int iTeam=0; iTeam<2; iTeam++) {
         teamName[iTeam]->setText(sTeam[iTeam]);
         iTimeout[iTeam] = 0;
         sText.sprintf("%1d", iTimeout[iTeam]);
         timeoutEdit[iTeam]->setText(sText);
         timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
-        iSet[iTeam]   = 0;
-        sText.sprintf("%1d", iSet[iTeam]);
-        setsEdit[iTeam]->setText(sText);
-        iScore[iTeam]   = 0;
-        sText.sprintf("%1d", iScore[iTeam]);
-        scoreEdit[iTeam]->setText(sText);
         timeoutDecrement[iTeam]->setEnabled(false);
         timeoutIncrement[iTeam]->setEnabled(true);
-        setsDecrement[iTeam]->setEnabled(false);
-        setsIncrement[iTeam]->setEnabled(true);
+        iScore[iTeam]   = 0;
+        sText.sprintf("%3d", iScore[iTeam]);
+        scoreEdit[iTeam]->setText(sText);
         scoreDecrement[iTeam]->setEnabled(false);
         scoreIncrement[iTeam]->setEnabled(true);
     }
-    iServizio   = 0;
-    lastService = 0;
-    service[iServizio ? 1 : 0]->setChecked(true);
-    service[iServizio ? 0 : 1]->setChecked(false);
     SendToAll(FormatStatusMsg());
     SaveStatus();
 }
+
+
+void
+HandballController::onButtonChangeFieldClicked() {
+    int iRes = QMessageBox::question(this, tr("Handball Controller"),
+                                     tr("Scambiare il campo delle squadre ?"),
+                                     QMessageBox::Yes | QMessageBox::No,
+                                     QMessageBox::No);
+    if(iRes != QMessageBox::Yes) return;
+
+    // Exchange teams order, score and timeouts
+    QString sText = sTeam[0];
+    sTeam[0] = sTeam[1];
+    sTeam[1] = sText;
+
+    int iVal = iScore[0];
+    iScore[0] = iScore[1];
+    iScore[1] = iVal;
+
+    iVal = iTimeout[0];
+    iTimeout[0] = iTimeout[1];
+    iTimeout[1] = iVal;
+
+    // Update panel
+    for(int iTeam=0; iTeam<2; iTeam++) {
+        teamName[iTeam]->setText(sTeam[iTeam]);
+        sText.sprintf("%1d", iScore[iTeam]);
+        scoreEdit[iTeam]->setText(sText);
+        scoreDecrement[iTeam]->setEnabled(true);
+        scoreIncrement[iTeam]->setEnabled(true);
+        if(iScore[iTeam] == 0) {
+          scoreDecrement[iTeam]->setEnabled(false);
+        }
+        if(iScore[iTeam] >= MAX_SCORE) {
+          scoreIncrement[iTeam]->setEnabled(false);
+        }
+        sText.sprintf("%1d", iTimeout[iTeam]);
+        timeoutEdit[iTeam]->setText(sText);
+        timeoutIncrement[iTeam]->setEnabled(true);
+        timeoutDecrement[iTeam]->setEnabled(true);
+        timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
+        if(iTimeout[iTeam] >= maxTimeouts) {
+            timeoutIncrement[iTeam]->setEnabled(false);
+            timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
+        }
+        if(iTimeout[iTeam] == 0) {
+            timeoutDecrement[iTeam]->setEnabled(false);
+        }
+    }
+    SendToAll(FormatStatusMsg());
+    SaveStatus();
+}
+
 

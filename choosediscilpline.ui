@@ -29,26 +29,13 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>60</y>
-      <width>100</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Basket</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="VolleyRadioButton">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
       <y>30</y>
       <width>100</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>Volley</string>
+     <string>Basket</string>
     </property>
    </widget>
    <widget class="QPushButton" name="goPushButton">
@@ -81,6 +68,32 @@
     </property>
     <property name="text">
      <string>Esci</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="handballRadioButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>100</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Handball</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="volleyRadioButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>90</y>
+      <width>100</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Volley</string>
     </property>
    </widget>
   </widget>

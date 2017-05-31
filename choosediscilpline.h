@@ -2,14 +2,10 @@
 #define CHOOSEDISCILPLINE_H
 
 #include <QDialog>
+#include "utility.h"
 
 QT_FORWARD_DECLARE_CLASS(ScoreController)
 
-
-#define VOLLEY_PANEL 0
-#define FIRST_PANEL  VOLLEY_PANEL
-#define BASKET_PANEL 1
-#define LAST_PANEL   BASKET_PANEL
 
 
 namespace Ui {
@@ -30,11 +26,13 @@ public slots:
     void onPanelDone();
 
 private slots:
-    void on_basketRadioButton_clicked();
     void on_VolleyRadioButton_clicked();
+    void on_basketRadioButton_clicked();
     void on_goPushButton_clicked();
 
     void on_closePushButton_clicked();
+
+    void on_handballRadioButton_clicked();
 
 private:
     Ui::ChooseDiscilpline *ui;

@@ -169,7 +169,7 @@ PanelConfigurator::on_tabWidget_tabBarClicked(int index) {
 
 void
 PanelConfigurator::on_closeButton_clicked() {
-    emit stopCamera();
+    emit closingDialog();
     close();
 }
 

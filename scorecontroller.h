@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSettings>
 
 #include "panelorientation.h"
+#include "utility.h"
 
 
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
@@ -41,11 +42,6 @@ QT_FORWARD_DECLARE_CLASS(FileServer)
 QT_FORWARD_DECLARE_CLASS(QGroupBox)
 QT_FORWARD_DECLARE_CLASS(QGridLayout)
 
-
-#define VOLLEY_PANEL 0
-#define FIRST_PANEL  VOLLEY_PANEL
-#define BASKET_PANEL 1
-#define LAST_PANEL   BASKET_PANEL
 
 
 class ScoreController : public QWidget
@@ -95,6 +91,7 @@ protected slots:
     void onSpotServerDone(bool bError);
 
 protected:
+    void            PrepareDirectories();
     void            prepareSpotUpdateService();
     void            prepareSlideUpdateService();
     QGroupBox      *CreateClientListBox();
