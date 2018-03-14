@@ -412,6 +412,8 @@ VolleyController::onTimeOutIncrement(int iTeam) {
     timeoutDecrement[iTeam]->setEnabled(true);
     sMessage.sprintf("<timeout%1d>%d</timeout%1d>", iTeam, iTimeout[iTeam], iTeam);
     SendToAll(sMessage);
+    sMessage.sprintf("<startTimeout>%d</startTimeout>", 30);
+    SendToAll(sMessage);
     QString sText;
     sText.sprintf("%1d", iTimeout[iTeam]);
     timeoutEdit[iTeam]->setText(sText);
@@ -430,6 +432,8 @@ VolleyController::onTimeOutDecrement(int iTeam) {
     timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
     timeoutIncrement[iTeam]->setEnabled(true);
     sMessage.sprintf("<timeout%1d>%d</timeout%1d>", iTeam, iTimeout[iTeam], iTeam);
+    SendToAll(sMessage);
+    sMessage.sprintf("<stopTimeout>1</stopTimeout>");
     SendToAll(sMessage);
     QString sText;
     sText.sprintf("%1d", iTimeout[iTeam]);
