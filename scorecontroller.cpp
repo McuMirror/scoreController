@@ -1044,6 +1044,7 @@ ScoreController::onButtonSetupClicked() {
 #endif
 
     QDir slideDir(sSlideDir);
+    hide();
     if(slideDir.exists()) {
         sSlideDir = QFileDialog::getExistingDirectory(
                         this,
@@ -1093,6 +1094,7 @@ ScoreController::onButtonSetupClicked() {
                        QFileDialog::ShowDirsOnly |
                        QFileDialog::DontResolveSymlinks);
     }
+    show();
     if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
     spotDir = QDir(sSpotDir);
     if(sSpotDir != QString() && spotDir.exists()) {
