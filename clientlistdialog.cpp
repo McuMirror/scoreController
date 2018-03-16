@@ -112,11 +112,11 @@ ClientListDialog::onConfiguratorClosing() {
 void
 ClientListDialog::onClientSelected(QListWidgetItem* selectedClient) {
     emit disableVideo();
+    hide();
     pConfigurator->show();
     sSelectedClient = selectedClient->text();
     emit getOrientation(sSelectedClient);
     emit getScoreOnly(sSelectedClient);
-    hide();
 }
 
 
