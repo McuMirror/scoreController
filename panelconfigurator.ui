@@ -65,7 +65,7 @@
       </rect>
      </property>
      <property name="layoutDirection">
-      <enum>Qt::RightToLeft</enum>
+      <enum>Qt::LeftToRight</enum>
      </property>
      <property name="text">
       <string>Mostra solo il punteggio</string>

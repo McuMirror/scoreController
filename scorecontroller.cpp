@@ -192,6 +192,7 @@ ScoreController::prepareSpotUpdateService() {
     pSpotServerThread->start(QThread::LowestPriority);
 }
 
+
 void
 ScoreController::prepareSlideUpdateService() {
     // Creating a Slide Update Service
@@ -1020,7 +1021,9 @@ ScoreController::onButtonShutdownClicked() {
 
 void
 ScoreController::onButtonPanelControlClicked() {
+    hide();
     pClientListDialog->exec();
+    show();
 }
 
 
