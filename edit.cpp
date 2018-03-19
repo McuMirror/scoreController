@@ -27,8 +27,10 @@ Edit::sizeHint() const
     QFont myFont = this->font();
     QSize size = QLineEdit::sizeHint();
     QMargins margins = this->contentsMargins();
-    size.rheight() = myFont.pointSize() + margins.bottom() + margins.top();
-    size.rwidth() = length*myFont.pointSize() + margins.left() + margins.right();
+    int fontSize = myFont.pointSize();
+    if(fontSize < 11) fontSize = 11;
+    size.rheight() = fontSize + margins.bottom() + margins.top();
+    size.rwidth() = length*fontSize + margins.left() + margins.right();
     return size;
 }
 

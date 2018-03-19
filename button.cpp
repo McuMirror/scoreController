@@ -76,7 +76,9 @@ QSize
 Button::minimumSizeHint() const
 {
     QFont font = this->font();
-    QSize size = QSize(font.pointSize()*3, font.pointSize()*3);
+    int fontSize = font.pointSize();
+    if(fontSize < 11) fontSize = 11;
+    QSize size = QSize(fontSize*3, fontSize*3);
     return size;
 }
 

@@ -147,6 +147,7 @@ VolleyController::CreateTeamBox(int iTeam) {
 
     QFont font(teamName[iTeam]->font());
     int iTeamFontSize = font.pointSize();
+    if(iTeamFontSize) iTeamFontSize = 11;
     for(int i=iTeamFontSize; i<100; i++) {
         font.setPointSize(i);
         QFontMetrics f(font);
@@ -171,6 +172,7 @@ VolleyController::CreateTeamBox(int iTeam) {
 
     font = timeoutLabel->font();
     int iTimeoutLabelFontSize = font.pointSize();
+    if(iTimeoutLabelFontSize) iTimeoutLabelFontSize = 11;
     for(int i=iTimeoutLabelFontSize; i<100; i++) {
         font.setPointSize(i);
         QFontMetrics f(font);
