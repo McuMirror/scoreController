@@ -98,7 +98,8 @@ ChooseDiscilpline::on_closePushButton_clicked() {
 
 void
 ChooseDiscilpline::onPanelDone() {
-    pController->deleteLater();
+    if(pController != Q_NULLPTR)
+        pController->deleteLater();
     pController = Q_NULLPTR;
     setVisible(true);
 }
