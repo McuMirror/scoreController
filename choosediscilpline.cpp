@@ -36,8 +36,10 @@ ChooseDiscilpline::ChooseDiscilpline(QWidget *parent)
 
 
 ChooseDiscilpline::~ChooseDiscilpline() {
-    if(pController != Q_NULLPTR)
+    if(pController != Q_NULLPTR) {
+        disconnect(pController, 0, 0, 0);
         pController->deleteLater();
+    }
     pController = Q_NULLPTR;
     delete ui;
 }
@@ -100,8 +102,10 @@ ChooseDiscilpline::on_closePushButton_clicked() {
 
 void
 ChooseDiscilpline::onPanelDone() {
-    if(pController != Q_NULLPTR)
+    if(pController != Q_NULLPTR) {
+        disconnect(pController, 0, 0, 0);
         pController->deleteLater();
+    }
     pController = Q_NULLPTR;
     show();
 }

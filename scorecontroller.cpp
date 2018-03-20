@@ -710,6 +710,7 @@ ScoreController::RemoveClient(QHostAddress hAddress) {
             pClientToClose = connectionList.at(i).pClientSocket;
             disconnect(pClientToClose, 0, 0, 0); // No more events from this socket
             pClientToClose->close(QWebSocketProtocol::CloseCodeAbnormalDisconnection, tr("Timeout in connection"));
+            pClientToClose->deleteLater();
             connectionList.removeAt(i);
 #ifdef LOG_VERBOSE
             sFound = " Removed !";
@@ -722,10 +723,6 @@ ScoreController::RemoveClient(QHostAddress hAddress) {
         } else {
             pClientListDialog->addItem(connectionList.at(i).clientAddress.toString());
         }
-    }
-    if(pClientToClose != NULL) {
-        pClientToClose->abort();
-        pClientToClose->deleteLater();
     }
 }
 
