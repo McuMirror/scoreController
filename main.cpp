@@ -20,18 +20,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "choosediscilpline.h"
 #include <QApplication>
 
+QApplication* pApp;
 
 int
 main(int argc, char *argv[]) {
 
-    QApplication* pApp;
     int iresult = 0;
 
     pApp = new QApplication(argc, argv);
-
+    // Create a Dialog to choose the right panel
     ChooseDiscilpline *pChooser = new ChooseDiscilpline();
+    // Show the dialog. It is responsible to start the control Panel
+    // or close the App
     pChooser->show();
     iresult = pApp->exec();
+    delete pChooser;
     delete pApp;
     return iresult;
 }

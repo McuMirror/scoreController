@@ -70,6 +70,9 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     QString sBaseDir;
 #ifdef Q_OS_ANDROID
     QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
+//    QStringList listEnv = environment.toStringList();
+//    for(int i=0; i< listEnv.size(); i++)
+//        qDebug() << listEnv.at(i);
     sBaseDir = environment.value(QString("SECONDARY_STORAGE"), QString(""));
     if(sBaseDir == QString("")) {
         sBaseDir = environment.value(QString("EXTERNAL_STORAGE"), QString("/storage/extSdCard/"));

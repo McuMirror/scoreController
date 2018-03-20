@@ -26,10 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ChooseDiscilpline::ChooseDiscilpline(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::ChooseDiscilpline)
-    , discipline(VOLLEY_PANEL)
     , pController(Q_NULLPTR)
 {
     ui->setupUi(this);
+    discipline = VOLLEY_PANEL;
     ui->volleyRadioButton->setChecked(true);
 }
 
@@ -37,7 +37,8 @@ ChooseDiscilpline::ChooseDiscilpline(QWidget *parent)
 
 ChooseDiscilpline::~ChooseDiscilpline() {
     if(pController != Q_NULLPTR)
-        delete pController;
+        pController->deleteLater();
+    pController = Q_NULLPTR;
     delete ui;
 }
 
@@ -76,11 +77,12 @@ ChooseDiscilpline::on_goPushButton_clicked() {
             this, SLOT(onPanelDone()));
 #ifdef Q_OS_ANDROID
     pController->showFullScreen();
+    done(QDialog::Accepted);
 #else
-//    pController->showMaximized();
-        pController->show();
+    hide();
+//  pController->showMaximized();
+    pController->show();
 #endif
-        hide();
 }
 
 
@@ -101,7 +103,7 @@ ChooseDiscilpline::onPanelDone() {
     if(pController != Q_NULLPTR)
         pController->deleteLater();
     pController = Q_NULLPTR;
-    setVisible(true);
+    show();
 }
 
 
