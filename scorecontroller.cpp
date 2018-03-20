@@ -111,7 +111,10 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     prepareDiscovery();
 
     if(prepareServer() < 0) {
-        return;
+        exitTimer.start(1000);
+        QCursor waitCursor;
+        waitCursor.setShape(Qt::WaitCursor);
+        setCursor(waitCursor);
     }
 
     prepareSpotUpdateService();
@@ -542,6 +545,7 @@ ScoreController::closeEvent(QCloseEvent *event) {
         logFile = Q_NULLPTR;
     }
     if(pSettings != Q_NULLPTR) delete pSettings;
+    disconnect(pClientListDialog, 0, 0, 0);
     emit panelDone();
 }
 
