@@ -24,15 +24,14 @@ QApplication* pApp;
 
 int
 main(int argc, char *argv[]) {
-
     int iresult = 0;
-
     pApp = new QApplication(argc, argv);
     // Create a Dialog to choose the right panel
     ChooseDiscilpline *pChooser = new ChooseDiscilpline();
     // Show the dialog. It is responsible to start the control Panel
     // or close the App
     pChooser->show();
+    // Start the event loop and waits until exit()
     iresult = pApp->exec();
     delete pChooser;
     delete pApp;

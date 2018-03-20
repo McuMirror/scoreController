@@ -34,7 +34,6 @@ ChooseDiscilpline::ChooseDiscilpline(QWidget *parent)
 }
 
 
-
 ChooseDiscilpline::~ChooseDiscilpline() {
     if(pController != Q_NULLPTR) {
         disconnect(pController, 0, 0, 0);

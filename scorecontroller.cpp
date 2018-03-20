@@ -59,7 +59,7 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     , slideUpdaterPort(SLIDE_UPDATER_PORT)
     , spotUpdaterPort(SPOT_UPDATER_PORT)
 {
-    QString sFunctionName = QString(" ScoreController::Volley_Controller ");
+    QString sFunctionName = QString(" ScoreController::ScoreController ");
     Q_UNUSED(sFunctionName)
 
     pSettings = Q_NULLPTR;
@@ -101,7 +101,7 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
                    sFunctionName,
                    QString("Panel Type set to FIRST_PANEL"));
         panelType = FIRST_PANEL;
-     }
+    }
 
     connect(&exitTimer, SIGNAL(timeout()),
             this, SLOT(close()));
