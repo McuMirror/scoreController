@@ -106,11 +106,19 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     connect(&exitTimer, SIGNAL(timeout()),
             this, SLOT(close()));
 
+    // Blocks until a network connection is available
     WaitForNetworkReady();
 
-    prepareDiscovery();
+    // Start listening to the discpovery port
+    if(!prepareDiscovery()) {
+        exitTimer.start(1000);
+        QCursor waitCursor;
+        waitCursor.setShape(Qt::WaitCursor);
+        setCursor(waitCursor);
+    }
 
-    if(prepareServer() < 0) {
+    // Prepare the server port for the panels to connect
+    if(!prepareServer()) {
         exitTimer.start(1000);
         QCursor waitCursor;
         waitCursor.setShape(Qt::WaitCursor);
@@ -280,9 +288,10 @@ ScoreController::onSpotServerDone(bool bError) {
 }
 
 
-void
+bool
 ScoreController::prepareDiscovery() {
     QString sFunctionName = QString(" ScoreController::prepareDiscovery ");
+    bool bSuccess = false;
     sIpAddresses = QStringList();
     QList<QNetworkInterface> interfaceList = QNetworkInterface::allInterfaces();
     for(int i=0; i<interfaceList.count(); i++)
@@ -304,6 +313,7 @@ ScoreController::prepareDiscovery() {
                         discoverySocketArray.append(pDiscoverySocket);
                         connect(pDiscoverySocket, SIGNAL(readyRead()),
                                 this, SLOT(onProcessConnectionRequest()));
+                        bSuccess = true;
 #ifdef LOG_VERBOSE
                         logMessage(logFile,
                                    sFunctionName,
@@ -322,6 +332,7 @@ ScoreController::prepareDiscovery() {
             }// for(int j=0; j<list.count(); j++)
         }
     }// for(int i=0; i<interfaceList.count(); i++)
+    return bSuccess;
 }
 
 
@@ -550,17 +561,17 @@ ScoreController::closeEvent(QCloseEvent *event) {
 }
 
 
-int
+bool
 ScoreController::prepareServer() {
     QString sFunctionName = " ScoreController::prepareServer ";
     Q_UNUSED(sFunctionName)
 
     pPanelServer = new NetServer(QString("PanelServer"), logFile, this);
-    pPanelServer->prepareServer(serverPort);
-
+    if(!pPanelServer->prepareServer(serverPort))
+        return false;
     connect(pPanelServer, SIGNAL(newConnection(QWebSocket *)),
             this, SLOT(onNewConnection(QWebSocket *)));
-    return 0;
+    return true;
 }
 
 

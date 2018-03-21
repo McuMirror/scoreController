@@ -31,7 +31,7 @@ class NetServer : public QObject
 public:
     explicit NetServer(QString _serverName, QFile* _logFile= NULL, QObject *parent = 0);
 
-    int prepareServer(quint16 serverPort);
+    bool prepareServer(quint16 serverPort);
     void closeServer();
 
 signals:

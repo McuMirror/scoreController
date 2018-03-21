@@ -99,12 +99,12 @@ protected:
     void            WaitForNetworkReady();
     int             SendToAll(QString sMessage);
     int             SendToOne(QWebSocket* pSocket, QString sMessage);
-    int             prepareServer();
+    bool            prepareServer();
     int             sendAcceptConnection(QUdpSocket *pDiscoverySocket, QHostAddress hostAddress, quint16 port);
     void            RemoveClient(QHostAddress hAddress);
     bool            isConnectedToNetwork();
     bool            PrepareLogFile();
-    void            prepareDiscovery();
+    bool            prepareDiscovery();
     virtual QString FormatStatusMsg();
     void            UpdateUI();
 

@@ -34,7 +34,7 @@ NetServer::NetServer(QString _serverName, QFile* _logFile, QObject *parent)
 }
 
 
-int
+bool
 NetServer::prepareServer(quint16 serverPort) {
     QString sFunctionName = " NetServer::prepareServer ";
     pServerSocket = new QWebSocketServer(QStringLiteral("Server"),
@@ -50,7 +50,7 @@ NetServer::prepareServer(quint16 serverPort) {
                    QString("%1 - Impossibile ascoltare la porta %2 !")
                    .arg(sServerName)
                    .arg(serverPort));
-        return -7;
+        return false;
     }
     logMessage(logFile,
                sFunctionName,
@@ -58,7 +58,7 @@ NetServer::prepareServer(quint16 serverPort) {
                .arg(sServerName)
                .arg(serverPort));
 
-    return 0;
+    return true;
 }
 
 
