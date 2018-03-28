@@ -9,6 +9,7 @@ QT += gui
 QT += network
 QT += websockets
 QT += multimedia
+QT += testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

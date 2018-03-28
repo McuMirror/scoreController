@@ -93,5 +93,7 @@ NetServer::onNewServerConnection() {
 
 void
 NetServer::closeServer() {
-    pServerSocket->close();
+    pServerSocket->disconnect();
+    if(pServerSocket->isListening())
+        pServerSocket->close();
 }

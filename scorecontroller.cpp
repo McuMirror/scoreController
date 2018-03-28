@@ -412,7 +412,7 @@ ScoreController::PrepareLogFile() {
                                  tr("Impossibile aprire il file %1: %2.")
                                  .arg(logFileName).arg(logFile->errorString()));
         delete logFile;
-        logFile = NULL;
+        logFile = Q_NULLPTR;
     }
 #endif
     return true;
@@ -519,8 +519,12 @@ ScoreController::closeEvent(QCloseEvent *event) {
     // Close all the discovery sockets
     for(int i=0; i<discoverySocketArray.count(); i++) {
         disconnect(discoverySocketArray.at(i), 0, 0, 0);
-        discoverySocketArray.at(i)->close();
+        if(discoverySocketArray.at(i)->isValid())
+            discoverySocketArray.at(i)->close();
+        if(discoverySocketArray.at(i))
+            delete discoverySocketArray.at(i);
     }
+    discoverySocketArray.clear();
 
     emit closeSpotServer();
     emit closeSlideServer();
@@ -539,7 +543,8 @@ ScoreController::closeEvent(QCloseEvent *event) {
         if(answer == QMessageBox::No) {
             for(int i=0; i<connectionList.count(); i++) {
                 disconnect(connectionList.at(i).pClientSocket, 0, 0, 0);
-                connectionList.at(i).pClientSocket->close(QWebSocketProtocol::CloseCodeNormal, "Server Closed");
+                if(connectionList.at(i).pClientSocket->isValid())
+                    connectionList.at(i).pClientSocket->close(QWebSocketProtocol::CloseCodeNormal, "Server Closed");
             }
             connectionList.clear();
         } else
@@ -725,7 +730,7 @@ ScoreController::RemoveClient(QHostAddress hAddress) {
             pClientToClose = connectionList.at(i).pClientSocket;
             disconnect(pClientToClose, 0, 0, 0); // No more events from this socket
             pClientToClose->close(QWebSocketProtocol::CloseCodeAbnormalDisconnection, tr("Timeout in connection"));
-            pClientToClose->deleteLater();
+            delete pClientToClose;
             connectionList.removeAt(i);
 #ifdef LOG_VERBOSE
             sFound = " Removed !";

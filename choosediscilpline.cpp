@@ -37,7 +37,7 @@ ChooseDiscilpline::ChooseDiscilpline(QWidget *parent)
 ChooseDiscilpline::~ChooseDiscilpline() {
     if(pController != Q_NULLPTR) {
         disconnect(pController, 0, 0, 0);
-        pController->deleteLater();
+        delete pController;
     }
     pController = Q_NULLPTR;
     delete ui;
@@ -81,7 +81,6 @@ ChooseDiscilpline::on_goPushButton_clicked() {
     done(QDialog::Accepted);
 #else
     hide();
-//  pController->showMaximized();
     pController->show();
 #endif
 }
@@ -95,6 +94,11 @@ ChooseDiscilpline::getDiscipline() {
 
 void
 ChooseDiscilpline::on_closePushButton_clicked() {
+    if(pController != Q_NULLPTR) {
+        disconnect(pController, 0, 0, 0);
+        delete pController;
+    }
+    pController = Q_NULLPTR;
     done(QDialog::Accepted);
 }
 
@@ -103,7 +107,7 @@ void
 ChooseDiscilpline::onPanelDone() {
     if(pController != Q_NULLPTR) {
         disconnect(pController, 0, 0, 0);
-        pController->deleteLater();
+        delete pController;
     }
     pController = Q_NULLPTR;
     show();

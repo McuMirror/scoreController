@@ -26,6 +26,9 @@ public:
 public slots:
     void onPanelDone();
 
+signals:
+    void finished();
+
 private slots:
     void on_volleyRadioButton_clicked();
     void on_basketRadioButton_clicked();

@@ -20,20 +20,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "choosediscilpline.h"
 #include <QApplication>
 
-QApplication* pApp;
+
+class MyApplication : public QApplication
+{
+public:
+    MyApplication(int& argc, char ** argv);
+    virtual ~MyApplication() { }
+    int exec();
+;
+
+private:
+    ChooseDiscilpline *pChooser;
+};
+
+
+MyApplication::MyApplication(int& argc, char ** argv)
+    : QApplication(argc, argv)
+{
+    pChooser = new ChooseDiscilpline();
+}
+
+
+int
+MyApplication::exec() {
+    // pChooser is responsible to start the Control Panel or close the App
+    pChooser->show();
+    int iResult = QApplication::exec();
+    return iResult;
+}
+
 
 int
 main(int argc, char *argv[]) {
     int iresult = 0;
-    pApp = new QApplication(argc, argv);
-    // Create a Dialog to choose the right panel
-    ChooseDiscilpline *pChooser = new ChooseDiscilpline();
-    // Show the dialog. It is responsible to start the control Panel
-    // or close the App
-    pChooser->show();
-    // Start the event loop and waits until exit()
+    MyApplication* pApp = new MyApplication(argc, argv);
+    // Start the event loop and waits until exit() is called
     iresult = pApp->exec();
-    delete pChooser;
-    delete pApp;
     return iresult;
 }

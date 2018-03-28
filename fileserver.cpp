@@ -97,9 +97,11 @@ FileServer::onStartServer() {
 
 void
 FileServer::onFileServerError(QWebSocketProtocol::CloseCode) {
-    for(int i=0; i<connections.count(); i++) {
-        delete connections.at(i);
+    for(int i=connections.count()-1; i>=0; i--) {
+        if(connections.at(i))
+            delete connections.at(i);
     }
+    connections.clear();
     emit fileServerDone(true);// Close File Server with errors !
 }
 
@@ -108,7 +110,7 @@ void
 FileServer::onNewConnection(QWebSocket *pClient) {
     QString sFunctionName = " FileServer::onNewConnection ";
     int nConnections = connections.count();
-    for(int i=0; i<nConnections; i++) {
+    for(int i=nConnections-1; i>=0; i--) {
         if(connections.at(i)->peerAddress() == pClient->peerAddress()) {
             logMessage(logFile,
                        sFunctionName,
@@ -122,7 +124,7 @@ FileServer::onNewConnection(QWebSocket *pClient) {
                            serverName +
                            QString(" Both sockets are valid! Removing the old connection"));
                 connections.at(i)->close(QWebSocketProtocol::CloseCodeNormal, QString("Duplicated request"));
-                connections.at(i)->deleteLater();
+                delete connections.at(i);
             }
             else {
                 if(pClient->isValid()) {
@@ -131,7 +133,7 @@ FileServer::onNewConnection(QWebSocket *pClient) {
                                serverName +
                                QString(" Only present socket is valid. Removing the old one"));
                     connections.at(i)->close(QWebSocketProtocol::CloseCodeNormal, QString("Duplicated request"));
-                    connections.at(i)->deleteLater();
+                    delete connections.at(i);
                 }
                 else {
                     logMessage(logFile,
@@ -139,7 +141,7 @@ FileServer::onNewConnection(QWebSocket *pClient) {
                                serverName +
                                QString(" Present socket is not valid."));
                     pClient->close(QWebSocketProtocol::CloseCodeNormal, QString("Duplicated request"));
-                    pClient->deleteLater();
+                    delete pClient;
                     return;
                 }
             }
@@ -189,7 +191,7 @@ FileServer::onClientSocketError(QAbstractSocket::SocketError error) {
                    QString(" Unable to remove %1 from list !")
                    .arg(pClient->peerAddress().toString()));
     }
-    pClient->deleteLater();
+    delete pClient;
 }
 
 
@@ -340,7 +342,7 @@ FileServer::senderThreadFinished() {
                serverName +
                QString(" Sender Thread terminated"));
     senderThreads.removeOne(pThread);
-    pThread->deleteLater();
+    delete pThread;
 }
 
 
