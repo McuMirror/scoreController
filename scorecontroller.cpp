@@ -70,9 +70,6 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     QString sBaseDir;
 #ifdef Q_OS_ANDROID
     QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
-//    QStringList listEnv = environment.toStringList();
-//    for(int i=0; i< listEnv.size(); i++)
-//        qDebug() << listEnv.at(i);
     sBaseDir = environment.value(QString("SECONDARY_STORAGE"), QString(""));
     if(sBaseDir == QString("")) {
         sBaseDir = environment.value(QString("EXTERNAL_STORAGE"), QString("/storage/extSdCard/"));
@@ -96,6 +93,16 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
 
     PrepareLogFile();
 
+#ifdef Q_OS_ANDROID
+#ifdef LOG_VERBOSE
+    QStringList listEnv = environment.toStringList();
+    for(int i=0; i< listEnv.size(); i++)
+        logMessage(logFile,
+                   sFunctionName,
+                   listEnv.at(i));
+#endif
+#endif
+
     if((panelType < FIRST_PANEL) || (panelType > LAST_PANEL)) {
         logMessage(logFile,
                    sFunctionName,
@@ -109,7 +116,7 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     // Blocks until a network connection is available
     WaitForNetworkReady();
 
-    // Start listening to the discpovery port
+    // Start listening to the discovery port
     if(!prepareDiscovery()) {
         exitTimer.start(1000);
         QCursor waitCursor;
@@ -720,17 +727,20 @@ ScoreController::SendToOne(QWebSocket* pClient, QString sMessage) {
 void
 ScoreController::RemoveClient(QHostAddress hAddress) {
     QString sFunctionName = " ScoreController::RemoveClient ";
+    Q_UNUSED(sFunctionName)
     QString sFound = tr(" Not present");
-    QWebSocket *pClientToClose = NULL;
+    QWebSocket *pClientToClose = Q_NULLPTR;
     pClientListDialog->clear();
 
-    for(int i=connectionList.count()-1; i>=0; i--) {
+    for(int i=0; i<connectionList.count(); i++) {
         if((connectionList.at(i).clientAddress.toIPv4Address() == hAddress.toIPv4Address()))
         {
             pClientToClose = connectionList.at(i).pClientSocket;
-            disconnect(pClientToClose, 0, 0, 0); // No more events from this socket
-            pClientToClose->close(QWebSocketProtocol::CloseCodeAbnormalDisconnection, tr("Timeout in connection"));
-            delete pClientToClose;
+            pClientToClose->disconnect(); // No more events from this socket
+            if(pClientToClose->isValid())
+                pClientToClose->close(QWebSocketProtocol::CloseCodeAbnormalDisconnection, tr("Timeout in connection"));
+            pClientToClose->deleteLater();
+            pClientToClose = Q_NULLPTR;
             connectionList.removeAt(i);
 #ifdef LOG_VERBOSE
             sFound = " Removed !";
@@ -749,6 +759,8 @@ ScoreController::RemoveClient(QHostAddress hAddress) {
 
 void
 ScoreController::UpdateUI() {
+    QString sFunctionName = " ScoreController::RemoveClient ";
+    Q_UNUSED(sFunctionName)
     if(connectionList.count() == 1) {
         startStopLoopSpotButton->setDisabled(false);
         startStopSpotButton->setDisabled(false);

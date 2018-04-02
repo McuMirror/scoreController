@@ -48,12 +48,13 @@ XML_Parse(QString input_string, QString token) {
 }
 
 void
-logMessage(QFile *logFile, QString sFunctionName, QString sMessage) {
+ logMessage(QFile *logFile, QString sFunctionName, QString sMessage) {
     Q_UNUSED(sFunctionName)
     Q_UNUSED(sMessage)
+    Q_UNUSED(logFile)
 
-    QDateTime dateTime;
 #ifdef LOG_MESG
+    QDateTime dateTime;
     QString sDebugMessage = dateTime.currentDateTime().toString() +
                             sFunctionName +
                             sMessage;

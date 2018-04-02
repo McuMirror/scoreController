@@ -97,9 +97,13 @@ FileServer::onStartServer() {
 
 void
 FileServer::onFileServerError(QWebSocketProtocol::CloseCode) {
-    for(int i=connections.count()-1; i>=0; i--) {
-        if(connections.at(i))
-            delete connections.at(i);
+    for(int i=0; i<connections.count(); i++) {
+        if(connections.at(i)) {
+            if(connections.at(i)->isValid())
+                connections.at(i)->close();
+            connections.at(i)->disconnect();
+            connections.at(i)->deleteLater();
+        }
     }
     connections.clear();
     emit fileServerDone(true);// Close File Server with errors !
@@ -110,7 +114,7 @@ void
 FileServer::onNewConnection(QWebSocket *pClient) {
     QString sFunctionName = " FileServer::onNewConnection ";
     int nConnections = connections.count();
-    for(int i=nConnections-1; i>=0; i--) {
+    for(int i=0; i<nConnections; i++) {
         if(connections.at(i)->peerAddress() == pClient->peerAddress()) {
             logMessage(logFile,
                        sFunctionName,
@@ -125,6 +129,7 @@ FileServer::onNewConnection(QWebSocket *pClient) {
                            QString(" Both sockets are valid! Removing the old connection"));
                 connections.at(i)->close(QWebSocketProtocol::CloseCodeNormal, QString("Duplicated request"));
                 delete connections.at(i);
+                break;
             }
             else {
                 if(pClient->isValid()) {
@@ -145,6 +150,7 @@ FileServer::onNewConnection(QWebSocket *pClient) {
                     return;
                 }
             }
+            break;
         }
     }
     logMessage(logFile,
@@ -427,8 +433,11 @@ FileServer::onCloseServer() {
     Q_UNUSED(sFunctionName)
     for(int i=0; i<connections.count(); i++) {
         disconnect(connections.at(i), 0, 0, 0);
-        connections.at(i)->close();
+        if(connections.at(i)->isValid())
+            connections.at(i)->close();
+        connections.at(i)->deleteLater();
     }
+    connections.clear();
     for(int i=0; i<senderThreads.count(); i++) {
         senderThreads.at(i)->requestInterruption();
         if(senderThreads.at(i)->wait(3000)) {

@@ -40,15 +40,17 @@ VolleyController::VolleyController()
     : ScoreController(VOLLEY_PANEL, Q_NULLPTR)
 {
     QString sFunctionName = QString(" VolleyController::VolleyController ");
+    Q_UNUSED(sFunctionName)
+
     pSettings = Q_NULLPTR;
     GetSettings();
     PrepareDirectories();
 
     pSlideUpdaterServer->setDir(sSlideDir, "*.jpg *.jpeg *.png");
-    pSpotUpdaterServer->setDir(sSpotDir, "*.mp4");
-
-    emit startSpotServer();
     emit startSlideServer();
+
+    pSpotUpdaterServer->setDir(sSpotDir, "*.mp4");
+    emit startSpotServer();
 
     QGridLayout *mainLayout = new QGridLayout();
 
