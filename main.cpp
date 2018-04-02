@@ -27,7 +27,6 @@ public:
     MyApplication(int& argc, char ** argv);
     virtual ~MyApplication() { }
     int exec();
-;
 
 private:
     ChooseDiscilpline *pChooser;

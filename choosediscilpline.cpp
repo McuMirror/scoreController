@@ -76,11 +76,10 @@ ChooseDiscilpline::on_goPushButton_clicked() {
 
     connect(pController, SIGNAL(panelDone()),
             this, SLOT(onPanelDone()));
+    hide();
 #ifdef Q_OS_ANDROID
     pController->showFullScreen();
-    done(QDialog::Accepted);
 #else
-    hide();
     pController->show();
 #endif
 }
