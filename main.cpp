@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
 
-#include "choosediscilpline.h"
+#include "choosediscipline.h"
 #include <QApplication>
 
 
@@ -29,14 +29,14 @@ public:
     int exec();
 
 private:
-    ChooseDiscilpline *pChooser;
+    ChooseDiscipline *pChooser;
 };
 
 
 MyApplication::MyApplication(int& argc, char ** argv)
     : QApplication(argc, argv)
 {
-    pChooser = new ChooseDiscilpline();
+    pChooser = new ChooseDiscipline();
 }
 
 

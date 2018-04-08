@@ -1,5 +1,5 @@
-#ifndef CHOOSEDISCILPLINE_H
-#define CHOOSEDISCILPLINE_H
+#ifndef CHOOSEDISCIPLINE_H
+#define CHOOSEDISCLPLINE_H
 
 #include <QDialog>
 #include "utility.h"
@@ -10,17 +10,17 @@ QT_FORWARD_DECLARE_CLASS(ScoreController)
 
 
 namespace Ui {
-class ChooseDiscilpline;
+class ChooseDiscipline;
 }
 
 
-class ChooseDiscilpline : public QDialog
+class ChooseDiscipline : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit ChooseDiscilpline(QWidget *parent = 0);
-    ~ChooseDiscilpline();
+    explicit ChooseDiscipline(QWidget *parent = 0);
+    ~ChooseDiscipline();
     int getDiscipline();
 
 public slots:
@@ -37,9 +37,9 @@ private slots:
     void on_handballRadioButton_clicked();
 
 private:
-    Ui::ChooseDiscilpline *ui;
+    Ui::ChooseDiscipline *ui;
     int discipline;
     ScoreController* pController;
 };
 
-#endif // CHOOSEDISCILPLINE_H
+#endif // CHOOSEDISCIPLINE_H

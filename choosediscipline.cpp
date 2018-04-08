@@ -16,16 +16,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
-#include "choosediscilpline.h"
-#include "ui_choosediscilpline.h"
+#include "choosediscipline.h"
+#include "ui_choosediscipline.h"
 #include "volleycontroller.h"
 #include "basketcontroller.h"
 #include "handballcontroller.h"
 
 
-ChooseDiscilpline::ChooseDiscilpline(QWidget *parent)
+ChooseDiscipline::ChooseDiscipline(QWidget *parent)
     : QDialog(parent)
-    , ui(new Ui::ChooseDiscilpline)
+    , ui(new Ui::ChooseDiscipline)
     , pController(Q_NULLPTR)
 {
     ui->setupUi(this);
@@ -34,7 +34,7 @@ ChooseDiscilpline::ChooseDiscilpline(QWidget *parent)
 }
 
 
-ChooseDiscilpline::~ChooseDiscilpline() {
+ChooseDiscipline::~ChooseDiscipline() {
     if(pController != Q_NULLPTR) {
         disconnect(pController, 0, 0, 0);
         delete pController;
@@ -45,25 +45,25 @@ ChooseDiscilpline::~ChooseDiscilpline() {
 
 
 void
-ChooseDiscilpline::on_basketRadioButton_clicked() {
+ChooseDiscipline::on_basketRadioButton_clicked() {
     discipline = BASKET_PANEL;
 }
 
 
 void
-ChooseDiscilpline::on_volleyRadioButton_clicked() {
+ChooseDiscipline::on_volleyRadioButton_clicked() {
     discipline = VOLLEY_PANEL;
 }
 
 
 void
-ChooseDiscilpline::on_handballRadioButton_clicked() {
+ChooseDiscipline::on_handballRadioButton_clicked() {
     discipline = HANDBALL_PANEL;
 }
 
 
 void
-ChooseDiscilpline::on_goPushButton_clicked() {
+ChooseDiscipline::on_goPushButton_clicked() {
     int iDiscipline = getDiscipline();
     if(iDiscipline == VOLLEY_PANEL)
         pController = new VolleyController();
@@ -86,13 +86,13 @@ ChooseDiscilpline::on_goPushButton_clicked() {
 
 
 int
-ChooseDiscilpline::getDiscipline() {
+ChooseDiscipline::getDiscipline() {
     return discipline;
 }
 
 
 void
-ChooseDiscilpline::on_closePushButton_clicked() {
+ChooseDiscipline::on_closePushButton_clicked() {
     if(pController != Q_NULLPTR) {
         disconnect(pController, 0, 0, 0);
         delete pController;
@@ -103,7 +103,7 @@ ChooseDiscilpline::on_closePushButton_clicked() {
 
 
 void
-ChooseDiscilpline::onPanelDone() {
+ChooseDiscipline::onPanelDone() {
     if(pController != Q_NULLPTR) {
         disconnect(pController, 0, 0, 0);
         delete pController;

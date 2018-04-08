@@ -23,21 +23,20 @@ SOURCES += main.cpp\
     utility.cpp \
     fileserver.cpp \
     netServer.cpp \
-    choosediscilpline.cpp \
     basketcontroller.cpp \
     volleycontroller.cpp \
     button.cpp \
     edit.cpp \
     radioButton.cpp \
     panelconfigurator.cpp \
-    handballcontroller.cpp
+    handballcontroller.cpp \
+    choosediscipline.cpp
 
 HEADERS  += scorecontroller.h \
     clientlistdialog.h \
     utility.h \
     fileserver.h \
     netServer.h \
-    choosediscilpline.h \
     basketcontroller.h \
     volleycontroller.h \
     button.h \
@@ -45,15 +44,17 @@ HEADERS  += scorecontroller.h \
     radioButton.h \
     panelorientation.h \
     panelconfigurator.h \
-    handballcontroller.h
+    handballcontroller.h \
+    choosediscipline.h
 
 RESOURCES += scorecontroller.qrc
 
 CONFIG += mobility
 MOBILITY = 
 
-FORMS    += choosediscilpline.ui \
-    panelconfigurator.ui
+FORMS    += \
+    panelconfigurator.ui \
+    choosediscipline.ui
 
 DISTFILES += \
     android/AndroidManifest.xml \
