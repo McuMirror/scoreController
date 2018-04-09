@@ -4,9 +4,7 @@
 
 enum class PanelOrientation {
                               Normal    = 0,
-                              Reflected = 1,
-                              RotatedDx = 2,
-                              RotatedSx = 3
+                              Reflected = 1
                             };
 
 #endif // PANELORIENTATION_H

@@ -64,7 +64,7 @@ QGroupBox*
 ClientListDialog::createClientListBox() {
     QGroupBox* clientListBox = new QGroupBox();
     QGridLayout* clientListLayout = new QGridLayout();
-    closeButton = new QPushButton("Chiudi");
+    closeButton = new QPushButton(tr("Chiudi"));
     connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(accept()));
 
     clientListBox->setTitle(tr("Client Connessi"));

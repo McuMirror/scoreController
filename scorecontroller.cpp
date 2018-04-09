@@ -106,7 +106,7 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     if((panelType < FIRST_PANEL) || (panelType > LAST_PANEL)) {
         logMessage(logFile,
                    sFunctionName,
-                   QString("Panel Type set to FIRST_PANEL"));
+                   QString(tr("Panel Type set to FIRST_PANEL")));
         panelType = FIRST_PANEL;
     }
 
@@ -174,21 +174,21 @@ ScoreController::PrepareDirectories() {
         pSettings->setValue("directories/spots", sSpotDir);
     }
     else {
-        QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
+        QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png" << "*.JPG" << "*.JPEG" << "*.PNG");
         slideDir.setNameFilters(filter);
         slideList = slideDir.entryInfoList();
         logMessage(logFile,
                    sFunctionName,
-                   QString("Slides directory: %1 Found %2 Slides")
+                   QString(tr("Slides directory: %1 Found %2 Slides"))
                    .arg(sSlideDir)
                    .arg(slideList.count()));
-        QStringList nameFilter(QStringList() << "*.mp4");
+        QStringList nameFilter(QStringList() << "*.mp4"<< "*.MP4");
         spotDir.setNameFilters(nameFilter);
         spotDir.setFilter(QDir::Files);
         spotList = spotDir.entryInfoList();
         logMessage(logFile,
                    sFunctionName,
-                   QString("Spot directory: %1 Found %2 Spots")
+                   QString(tr("Spot directory: %1 Found %2 Spots"))
                    .arg(sSpotDir)
                    .arg(spotList.count()));
     }
@@ -236,8 +236,8 @@ ScoreController::WaitForNetworkReady() {
     int iResponse;
     while(!isConnectedToNetwork()) {
         iResponse = QMessageBox::critical(this,
-                                          "Connessione Assente",
-                                          "Connettiti alla rete e ritenta",
+                                          tr("Connessione Assente"),
+                                          tr("Connettiti alla rete e ritenta"),
                                           QMessageBox::Retry,
                                           QMessageBox::Ignore,
                                           QMessageBox::Abort);
@@ -324,7 +324,7 @@ ScoreController::prepareDiscovery() {
 #ifdef LOG_VERBOSE
                         logMessage(logFile,
                                    sFunctionName,
-                                   QString("Listening for connections at address: %1 port:%2")
+                                   QString(tr("Listening for connections at address: %1 port:%2"))
                                    .arg(discoveryAddress.toString())
                                    .arg(discoveryPort));
 #endif
@@ -332,7 +332,7 @@ ScoreController::prepareDiscovery() {
                     else {
                         logMessage(logFile,
                                    sFunctionName,
-                                   QString("Unable to bound %1")
+                                   QString(tr("Unable to bound %1"))
                                    .arg(discoveryAddress.toString()));
                     }
                 }
@@ -474,7 +474,7 @@ ScoreController::onProcessConnectionRequest() {
         sendAcceptConnection(pDiscoverySocket, hostAddress, port);
         logMessage(logFile,
                    sFunctionName,
-                   QString("Connection request from: %1 at Address %2:%3")
+                   QString(tr("Connection request from: %1 at Address %2:%3"))
                    .arg(sToken)
                    .arg(hostAddress.toString())
                    .arg(port));
@@ -511,7 +511,7 @@ ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, QHostAddress
     if(bytesWritten != datagram.size()) {
       logMessage(logFile,
                  sFunctionName,
-                 QString("Unable to send data !"));
+                 QString(tr("Unable to send data !")));
     }
     return 0;
 }
@@ -549,9 +549,10 @@ ScoreController::closeEvent(QCloseEvent *event) {
         } else
         if(answer == QMessageBox::No) {
             for(int i=0; i<connectionList.count(); i++) {
-                disconnect(connectionList.at(i).pClientSocket, 0, 0, 0);
+                connectionList.at(i).pClientSocket->disconnect();
                 if(connectionList.at(i).pClientSocket->isValid())
                     connectionList.at(i).pClientSocket->close(QWebSocketProtocol::CloseCodeNormal, "Server Closed");
+                connectionList.at(i).pClientSocket->deleteLater();
             }
             connectionList.clear();
         } else
@@ -568,7 +569,12 @@ ScoreController::closeEvent(QCloseEvent *event) {
         logFile = Q_NULLPTR;
     }
     if(pSettings != Q_NULLPTR) delete pSettings;
-    disconnect(pClientListDialog, 0, 0, 0);
+    pSettings = Q_NULLPTR;
+    if(pClientListDialog != Q_NULLPTR) {
+        pClientListDialog->disconnect();
+        pClientListDialog->deleteLater();
+        pClientListDialog = Q_NULLPTR;
+    }
     emit panelDone();
 }
 
@@ -647,7 +653,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         if(!ok) {
             logMessage(logFile,
                        sFunctionName,
-                       QString("Illegal orientation received: %1")
+                       QString(tr("Illegal orientation received: %1"))
                        .arg(sToken));
             return;
         }
@@ -662,7 +668,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         if(!ok) {
             logMessage(logFile,
                        sFunctionName,
-                       QString("Illegal orientation received: %1")
+                       QString(tr("Illegal orientation received: %1"))
                        .arg(sToken));
             return;
         }
@@ -768,7 +774,7 @@ ScoreController::UpdateUI() {
         startStopLiveCameraButton->setDisabled(false);
         panelControlButton->setDisabled(false);
         generalSetupButton->setDisabled(true);
-        shutdownButton->setText(QString("Spegni %1\nTabellone").arg(connectionList.count()));
+        shutdownButton->setText(QString(tr("Spegni %1\nTabellone")).arg(connectionList.count()));
         shutdownButton->setDisabled(false);
         shutdownButton->show();
     }
@@ -786,7 +792,7 @@ ScoreController::UpdateUI() {
         shutdownButton->hide();
     }
     else {
-        shutdownButton->setText(QString("Spegni %1\nTabelloni").arg(connectionList.count()));
+        shutdownButton->setText(QString(tr("Spegni %1\nTabelloni")).arg(connectionList.count()));
     }
 }
 
@@ -859,7 +865,7 @@ ScoreController::CreateSpotButtonBox() {
     panelControlButton = new QPushButton(tr("Controlo\nTabelloni"));
 
     generalSetupButton = new QPushButton(tr("Setup\nGenerale"));
-    shutdownButton = new QPushButton(QString("Spegni %1\nTabelloni").arg(connectionList.count()));
+    shutdownButton = new QPushButton(QString(tr("Spegni %1\nTabelloni")).arg(connectionList.count()));
 
     startStopLoopSpotButton->setDisabled(true);
     startStopSpotButton->setDisabled(true);
@@ -935,7 +941,7 @@ ScoreController::onButtonStartStopSpotClicked() {
         startStopSpotButton->setDisabled(true);
         return;
     }
-    if(startStopSpotButton->text().contains(QString("Avvia"))) {
+    if(startStopSpotButton->text().contains(QString(tr("Avvia")))) {
         for(int i=0; i<connectionList.count(); i++) {
             sMessage = QString("<spot>%1</spot>").arg(iCurrentSpot++);
             SendToOne(connectionList.at(i).pClientSocket, sMessage);
@@ -964,7 +970,7 @@ ScoreController::onButtonStartStopSpotLoopClicked() {
         startStopLoopSpotButton->setDisabled(true);
         return;
     }
-    if(startStopLoopSpotButton->text().contains(QString("Avvia"))) {
+    if(startStopLoopSpotButton->text().contains(QString(tr("Avvia")))) {
         sMessage = QString("<spotloop>1</spotloop>");
         SendToAll(sMessage);
         startStopLoopSpotButton->setText(tr("Chiudi\nSpot Loop"));
@@ -991,7 +997,7 @@ ScoreController::onButtonStartStopLiveCameraClicked() {
         startStopLiveCameraButton->setDisabled(true);
         return;
     }
-    if(startStopLiveCameraButton->text().contains(QString("Avvia"))) {
+    if(startStopLiveCameraButton->text().contains(QString(tr("Avvia")))) {
         sMessage = QString("<live>1</live>");
         SendToAll(sMessage);
         startStopLiveCameraButton->setText(tr("Chiudi\nLive Camera"));
@@ -1018,7 +1024,7 @@ ScoreController::onButtonStartStopSlideShowClicked() {
         startStopSlideShowButton->setDisabled(true);
         return;
     }
-    if(startStopSlideShowButton->text().contains(QString("Avvia"))) {
+    if(startStopSlideShowButton->text().contains(QString(tr("Avvia")))) {
         sMessage = "<slideshow>1</slideshow>";
         SendToAll(sMessage);
         startStopLoopSpotButton->setDisabled(true);
@@ -1083,23 +1089,21 @@ ScoreController::onButtonSetupClicked() {
     if(slideDir.exists()) {
         sSlideDir = QFileDialog::getExistingDirectory(
                         this,
-                        "Slide Dir",
+                        tr("Slide Dir"),
                         sSlideDir,
-                        QFileDialog::ShowDirsOnly |
-                        QFileDialog::DontResolveSymlinks);
+                        QFileDialog::ShowDirsOnly);
     }
     else {
         sSlideDir = QFileDialog::getExistingDirectory(
                         this,
-                        "Slide Dir",
+                        tr("Slide Dir"),
                         sBaseDir,
-                        QFileDialog::ShowDirsOnly |
-                        QFileDialog::DontResolveSymlinks);
+                        QFileDialog::ShowDirsOnly);
     }
     if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
     slideDir = QDir(sSlideDir);
     if(sSlideDir != QString() && slideDir.exists()) {
-        QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png");
+        QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png" << "*.JPG" << "*.JPEG" << "*.PNG");
         slideDir.setNameFilters(filter);
         slideList = slideDir.entryInfoList();
     }
@@ -1118,22 +1122,20 @@ ScoreController::onButtonSetupClicked() {
                        this,
                        tr("Spot Dir"),
                        sSpotDir,
-                       QFileDialog::ShowDirsOnly |
-                       QFileDialog::DontResolveSymlinks);
+                       QFileDialog::ShowDirsOnly);
     }
     else {
         sSpotDir = QFileDialog::getExistingDirectory(
                        this,
                        tr("Spot Dir"),
                        sBaseDir,
-                       QFileDialog::ShowDirsOnly |
-                       QFileDialog::DontResolveSymlinks);
+                       QFileDialog::ShowDirsOnly);
     }
     show();
     if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
     spotDir = QDir(sSpotDir);
     if(sSpotDir != QString() && spotDir.exists()) {
-        QStringList nameFilter(QStringList() << "*.mp4");
+        QStringList nameFilter(QStringList() << "*.mp4" << "*.MP4");
         spotDir.setNameFilters(nameFilter);
         spotDir.setFilter(QDir::Files);
         spotList = spotDir.entryInfoList();

@@ -46,10 +46,10 @@ VolleyController::VolleyController()
     GetSettings();
     PrepareDirectories();
 
-    pSlideUpdaterServer->setDir(sSlideDir, "*.jpg *.jpeg *.png");
+    pSlideUpdaterServer->setDir(sSlideDir, "*.jpg *.jpeg *.png *.JPG *.JPEG *.PNG");
     emit startSlideServer();
 
-    pSpotUpdaterServer->setDir(sSpotDir, "*.mp4");
+    pSpotUpdaterServer->setDir(sSpotDir, "*.mp4 *.MP4");
     emit startSpotServer();
 
     QGridLayout *mainLayout = new QGridLayout();
@@ -87,8 +87,8 @@ VolleyController::GetSettings() {
     Q_UNUSED(sFunctionName)
     pSettings = new QSettings("Gabriele Salvato", "Volley Controller");
 
-    sTeam[0]    = pSettings->value("team1/name", QString("Locali")).toString();
-    sTeam[1]    = pSettings->value("team2/name", QString("Ospiti")).toString();
+    sTeam[0]    = pSettings->value("team1/name", QString(tr("Locali"))).toString();
+    sTeam[1]    = pSettings->value("team2/name", QString(tr("Ospiti"))).toString();
     iTimeout[0] = pSettings->value("team1/timeouts", 0).toInt();
     iTimeout[1] = pSettings->value("team2/timeouts", 0).toInt();
     iSet[0]     = pSettings->value("team1/sets", 0).toInt();
@@ -197,8 +197,8 @@ VolleyController::CreateTeamBox(int iTeam) {
     font.setPointSize(iTimeoutLabelFontSize);
     timeoutEdit[iTeam]->setFont(font);
 
-    timeoutIncrement[iTeam] = new Button(tr("+"), iTeam);
-    timeoutDecrement[iTeam] = new Button(tr("-"), iTeam);
+    timeoutIncrement[iTeam] = new Button("+", iTeam);
+    timeoutDecrement[iTeam] = new Button("-", iTeam);
 
     connect(timeoutIncrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onTimeOutIncrement(int)));
@@ -242,8 +242,8 @@ VolleyController::CreateTeamBox(int iTeam) {
     font.setPointSize(iTimeoutLabelFontSize);
     setsEdit[iTeam]->setFont(font);
 
-    setsIncrement[iTeam] = new Button(tr("+"), iTeam);
-    setsDecrement[iTeam] = new Button(tr("-"), iTeam);
+    setsIncrement[iTeam] = new Button("+", iTeam);
+    setsDecrement[iTeam] = new Button("-", iTeam);
 
     connect(setsIncrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onSetIncrement(int)));
@@ -302,9 +302,8 @@ VolleyController::CreateTeamBox(int iTeam) {
     font.setPointSize(iTimeoutLabelFontSize);
     scoreEdit[iTeam]->setFont(font);
 
-    scoreIncrement[iTeam] = new Button(tr("+"), iTeam);
-
-    scoreDecrement[iTeam] = new Button(tr("-"), iTeam);
+    scoreIncrement[iTeam] = new Button("+", iTeam);
+    scoreDecrement[iTeam] = new Button("-", iTeam);
 
     connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onScoreIncrement(int)));

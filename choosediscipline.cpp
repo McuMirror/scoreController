@@ -94,8 +94,8 @@ ChooseDiscipline::getDiscipline() {
 void
 ChooseDiscipline::on_closePushButton_clicked() {
     if(pController != Q_NULLPTR) {
-        disconnect(pController, 0, 0, 0);
-        delete pController;
+        pController->disconnect();
+        pController->deleteLater();
     }
     pController = Q_NULLPTR;
     done(QDialog::Accepted);
@@ -105,8 +105,8 @@ ChooseDiscipline::on_closePushButton_clicked() {
 void
 ChooseDiscipline::onPanelDone() {
     if(pController != Q_NULLPTR) {
-        disconnect(pController, 0, 0, 0);
-        delete pController;
+        pController->disconnect();
+        pController->deleteLater();
     }
     pController = Q_NULLPTR;
     show();

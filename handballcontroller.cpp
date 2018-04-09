@@ -134,7 +134,7 @@ HandballController::CreateTeamBox(int iTeam) {
     QGroupBox* teamBox      = new QGroupBox();
     QString sString;
     QGridLayout* teamLayout = new QGridLayout();
-    QLabel* labelSpacer = new QLabel(QString(""));
+    QLabel* labelSpacer = new QLabel(QString());
 
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen->geometry();
@@ -199,8 +199,8 @@ HandballController::CreateTeamBox(int iTeam) {
     font.setPointSize(iTimeoutLabelFontSize);
     timeoutEdit[iTeam]->setFont(font);
 
-    timeoutIncrement[iTeam] = new Button(tr("+"), iTeam);
-    timeoutDecrement[iTeam] = new Button(tr("-"), iTeam);
+    timeoutIncrement[iTeam] = new Button("+", iTeam);
+    timeoutDecrement[iTeam] = new Button("-", iTeam);
 
     connect(timeoutIncrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onTimeOutIncrement(int)));
@@ -242,8 +242,8 @@ HandballController::CreateTeamBox(int iTeam) {
     font.setPointSize(iTimeoutLabelFontSize);
     scoreEdit[iTeam]->setFont(font);
 
-    scoreIncrement[iTeam] = new Button(tr("+"), iTeam);
-    scoreDecrement[iTeam] = new Button(tr("-"), iTeam);
+    scoreIncrement[iTeam] = new Button("+", iTeam);
+    scoreDecrement[iTeam] = new Button("-", iTeam);
 
     connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onScoreIncrement(int)));
@@ -311,8 +311,8 @@ HandballController::CreateGameBox() {
     font.setPointSize(iPeriodLabelFontSize);
     periodEdit->setFont(font);
 
-    periodIncrement = new Button(tr("+"), 0);
-    periodDecrement = new Button(tr("-"), 0);
+    periodIncrement = new Button("+", 0);
+    periodDecrement = new Button("-", 0);
 
     connect(periodIncrement, SIGNAL(buttonClicked(int)),
             this, SLOT(onPeriodIncrement(int)));
@@ -395,13 +395,13 @@ HandballController::FormatStatusMsg() {
     }
     sTemp.sprintf("<period>%d,%d</period>", iPeriod, periodTime);
     sMessage += sTemp;
-    if(!startStopSlideShowButton->text().contains(QString("Avvia")))
+    if(!startStopSlideShowButton->text().contains(QString(tr("Avvia"))))
         sMessage += "<slideshow>1</slideshow>";
-    else if(!startStopLiveCameraButton->text().contains(QString("Avvia")))
+    else if(!startStopLiveCameraButton->text().contains(QString(tr("Avvia"))))
         sMessage += QString("<live>1</live>");
-    else if(!startStopLoopSpotButton->text().contains(QString("Avvia")))
+    else if(!startStopLoopSpotButton->text().contains(QString(tr("Avvia"))))
         sMessage += QString("<spotloop>1</spotloop>");
-    else if(!startStopSpotButton->text().contains(QString("Avvia")))
+    else if(!startStopSpotButton->text().contains(QString(tr("Avvia"))))
         sMessage += QString("<spot>1</spot>");
 
     return sMessage;

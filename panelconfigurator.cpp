@@ -11,10 +11,8 @@ PanelConfigurator::PanelConfigurator(QWidget *parent)
 {
     ui->setupUi(this);
     SetupButtons();
-    ui->orientationCombo->addItem(QString("Normale"));
-    ui->orientationCombo->addItem(QString("Riflesso"));
-    ui->orientationCombo->addItem(QString("Rot. Dx"));
-    ui->orientationCombo->addItem(QString("Rot. Sx"));
+    ui->orientationCombo->addItem(QString(tr("Normale")));
+    ui->orientationCombo->addItem(QString(tr("Riflesso")));
     ui->orientationCombo->setDisabled(true);
 }
 
