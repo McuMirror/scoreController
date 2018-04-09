@@ -49,12 +49,13 @@ BasketController::BasketController()
     : ScoreController(BASKET_PANEL, Q_NULLPTR)
 {
     QString sFunctionName = QString(" BasketController::BasketController ");
+    Q_UNUSED(sFunctionName)
     GetSettings();
 
     PrepareDirectories();
 
-    pSlideUpdaterServer->setDir(sSlideDir,"*.jpg *.jpeg *.png");
-    pSpotUpdaterServer->setDir(sSpotDir, "*.mp4");
+    pSlideUpdaterServer->setDir(sSlideDir,"*.jpg *.jpeg *.png *.JPG *.JPEG *.PNG");
+    pSpotUpdaterServer->setDir(sSpotDir, "*.mp4 *.MP4");
 
     emit startSpotServer();
     emit startSlideServer();
@@ -101,8 +102,8 @@ BasketController::GetSettings() {
     Q_UNUSED(sFunctionName)
     pSettings = new QSettings("Gabriele Salvato", "Basket Controller");
 
-    sTeam[0]    = pSettings->value("team1/name", QString("Locali")).toString();
-    sTeam[1]    = pSettings->value("team2/name", QString("Ospiti")).toString();
+    sTeam[0]    = pSettings->value("team1/name", QString(tr("Locali"))).toString();
+    sTeam[1]    = pSettings->value("team2/name", QString(tr("Ospiti"))).toString();
     iTimeout[0] = pSettings->value("team1/timeouts", 0).toInt();
     iTimeout[1] = pSettings->value("team2/timeouts", 0).toInt();
     iScore[0]   = pSettings->value("team1/score", 0).toInt();
@@ -222,8 +223,8 @@ BasketController::CreateTeamBox(int iTeam) {
     font.setPointSize(iTimeoutLabelFontSize);
     timeoutEdit[iTeam]->setFont(font);
 
-    timeoutIncrement[iTeam] = new Button(tr("+"), iTeam);
-    timeoutDecrement[iTeam] = new Button(tr("-"), iTeam);
+    timeoutIncrement[iTeam] = new Button("+", iTeam);
+    timeoutDecrement[iTeam] = new Button("-", iTeam);
 
     connect(timeoutIncrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onTimeOutIncrement(int)));
@@ -263,8 +264,8 @@ BasketController::CreateTeamBox(int iTeam) {
     font.setPointSize(iTimeoutLabelFontSize);
     faulsEdit[iTeam]->setFont(font);
 
-    faulsIncrement[iTeam] = new Button(tr("+"), iTeam);
-    faulsDecrement[iTeam] = new Button(tr("-"), iTeam);
+    faulsIncrement[iTeam] = new Button("+", iTeam);
+    faulsDecrement[iTeam] = new Button("-", iTeam);
 
     connect(faulsIncrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onFaulsIncrement(int)));
@@ -324,8 +325,8 @@ BasketController::CreateTeamBox(int iTeam) {
     font.setPointSize(iTimeoutLabelFontSize);
     scoreEdit[iTeam]->setFont(font);
 
-    scoreIncrement[iTeam] = new Button(tr("+"), iTeam);
-    scoreDecrement[iTeam] = new Button(tr("-"), iTeam);
+    scoreIncrement[iTeam] = new Button("+", iTeam);
+    scoreDecrement[iTeam] = new Button("-", iTeam);
 
     connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onScoreIncrement(int)));
@@ -362,7 +363,7 @@ BasketController::CreateGameBox() {
 
     // Bonus
     for(int iTeam=0; iTeam<2; iTeam++) {
-        bonusEdit[iTeam] = new Edit(QString("Bonus"));
+        bonusEdit[iTeam] = new Edit(QString(tr("Bonus")));
         bonusEdit[iTeam]->setFrame(false);
         bonusEdit[iTeam]->setAlignment(Qt::AlignHCenter);
         bonusEdit[iTeam]->setReadOnly(true);
@@ -410,8 +411,8 @@ BasketController::CreateGameBox() {
     font.setPointSize(iBonusEditFontSize);
     periodEdit->setFont(font);
 
-    periodIncrement = new Button(tr("+"), 0);
-    periodDecrement = new Button(tr("-"), 0);
+    periodIncrement = new Button("+", 0);
+    periodDecrement = new Button("-", 0);
 
     connect(periodIncrement, SIGNAL(buttonClicked(int)),
             this, SLOT(onPeriodIncrement(int)));
@@ -483,7 +484,7 @@ QString
 BasketController::FormatStatusMsg() {
     QString sFunctionName = " BasketController::FormatStatusMsg ";
     Q_UNUSED(sFunctionName)
-    QString sMessage = tr("");
+    QString sMessage = QString();
     QString sTemp;
     for(int i=0; i<2; i++) {
         sTemp.sprintf("<team%1d>%s</team%1d>", i, sTeam[i].toLocal8Bit().data(), i);
