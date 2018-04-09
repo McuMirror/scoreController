@@ -16,6 +16,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = scoreController
 TEMPLATE = app
 
+TRANSLATIONS = scoreController_en.ts
+
 
 SOURCES += main.cpp\
     scorecontroller.cpp \
@@ -30,7 +32,9 @@ SOURCES += main.cpp\
     radioButton.cpp \
     panelconfigurator.cpp \
     handballcontroller.cpp \
-    choosediscipline.cpp
+    choosediscipline.cpp \
+    scoreController_en.ts
+
 
 HEADERS  += scorecontroller.h \
     clientlistdialog.h \
@@ -71,5 +75,4 @@ DISTFILES += \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat
-
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

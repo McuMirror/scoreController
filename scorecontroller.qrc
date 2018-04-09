@@ -4,5 +4,6 @@
         <file>android/ic_ScorePanel_H.png</file>
         <file>android/ic_ScorePanel_L.png</file>
         <file>android/ic_ScorePanel_M.png</file>
+        <file>scoreController_en.qm</file>
     </qresource>
 </RCC>

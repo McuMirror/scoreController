@@ -106,7 +106,7 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     if((panelType < FIRST_PANEL) || (panelType > LAST_PANEL)) {
         logMessage(logFile,
                    sFunctionName,
-                   QString(tr("Panel Type set to FIRST_PANEL")));
+                   QString("Panel Type set to FIRST_PANEL"));
         panelType = FIRST_PANEL;
     }
 
@@ -179,7 +179,7 @@ ScoreController::PrepareDirectories() {
         slideList = slideDir.entryInfoList();
         logMessage(logFile,
                    sFunctionName,
-                   QString(tr("Slides directory: %1 Found %2 Slides"))
+                   QString("Slides directory: %1 Found %2 Slides")
                    .arg(sSlideDir)
                    .arg(slideList.count()));
         QStringList nameFilter(QStringList() << "*.mp4"<< "*.MP4");
@@ -188,7 +188,7 @@ ScoreController::PrepareDirectories() {
         spotList = spotDir.entryInfoList();
         logMessage(logFile,
                    sFunctionName,
-                   QString(tr("Spot directory: %1 Found %2 Spots"))
+                   QString("Spot directory: %1 Found %2 Spots")
                    .arg(sSpotDir)
                    .arg(spotList.count()));
     }
@@ -324,7 +324,7 @@ ScoreController::prepareDiscovery() {
 #ifdef LOG_VERBOSE
                         logMessage(logFile,
                                    sFunctionName,
-                                   QString(tr("Listening for connections at address: %1 port:%2"))
+                                   QString("Listening for connections at address: %1 port:%2")
                                    .arg(discoveryAddress.toString())
                                    .arg(discoveryPort));
 #endif
@@ -332,7 +332,7 @@ ScoreController::prepareDiscovery() {
                     else {
                         logMessage(logFile,
                                    sFunctionName,
-                                   QString(tr("Unable to bound %1"))
+                                   QString("Unable to bound %1")
                                    .arg(discoveryAddress.toString()));
                     }
                 }
@@ -370,7 +370,7 @@ ScoreController::onSetNewPanValue(QString sClientIp, int newPan) {
   QHostAddress hostAddress(sClientIp);
   for(int i=0; i<connectionList.count(); i++) {
       if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
-          QString sMessage = tr("<pan>%1</pan>").arg(newPan);
+          QString sMessage = QString("<pan>%1</pan>").arg(newPan);
           SendToOne(connectionList.at(i).pClientSocket, sMessage);
           return;
       }
@@ -383,7 +383,7 @@ ScoreController::onSetNewTiltValue(QString sClientIp, int newTilt) {
   QHostAddress hostAddress(sClientIp);
   for(int i=0; i<connectionList.count(); i++) {
       if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
-          QString sMessage = tr("<tilt>%1</tilt>").arg(newTilt);
+          QString sMessage = QString("<tilt>%1</tilt>").arg(newTilt);
           SendToOne(connectionList.at(i).pClientSocket, sMessage);
           return;
       }
@@ -396,7 +396,7 @@ ScoreController::onSetScoreOnly(QString sClientIp, bool bScoreOnly) {
     QHostAddress hostAddress(sClientIp);
     for(int i=0; i<connectionList.count(); i++) {
         if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
-            QString sMessage = tr("<setScoreOnly>%1</setScoreOnly>").arg(bScoreOnly);
+            QString sMessage = QString("<setScoreOnly>%1</setScoreOnly>").arg(bScoreOnly);
             SendToOne(connectionList.at(i).pClientSocket, sMessage);
             return;
         }
@@ -474,7 +474,7 @@ ScoreController::onProcessConnectionRequest() {
         sendAcceptConnection(pDiscoverySocket, hostAddress, port);
         logMessage(logFile,
                    sFunctionName,
-                   QString(tr("Connection request from: %1 at Address %2:%3"))
+                   QString("Connection request from: %1 at Address %2:%3")
                    .arg(sToken)
                    .arg(hostAddress.toString())
                    .arg(port));
@@ -511,7 +511,7 @@ ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, QHostAddress
     if(bytesWritten != datagram.size()) {
       logMessage(logFile,
                  sFunctionName,
-                 QString(tr("Unable to send data !")));
+                 QString("Unable to send data !"));
     }
     return 0;
 }
@@ -623,7 +623,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
 
     sToken = XML_Parse(sMessage, "pan_tilt");
     if(sToken != sNoData) {
-        QStringList values = QStringList(sToken.split(tr(","),QString::SkipEmptyParts));
+        QStringList values = QStringList(sToken.split(",",QString::SkipEmptyParts));
         pClientListDialog->remotePanTiltReceived(values.at(0).toInt(), values.at(1).toInt());
     }// pan_tilt
 
@@ -653,7 +653,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         if(!ok) {
             logMessage(logFile,
                        sFunctionName,
-                       QString(tr("Illegal orientation received: %1"))
+                       QString("Illegal orientation received: %1")
                        .arg(sToken));
             return;
         }
@@ -668,7 +668,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         if(!ok) {
             logMessage(logFile,
                        sFunctionName,
-                       QString(tr("Illegal orientation received: %1"))
+                       QString("Illegal orientation received: %1")
                        .arg(sToken));
             return;
         }
@@ -734,7 +734,8 @@ void
 ScoreController::RemoveClient(QHostAddress hAddress) {
     QString sFunctionName = " ScoreController::RemoveClient ";
     Q_UNUSED(sFunctionName)
-    QString sFound = tr(" Not present");
+    QString sFound = QString(" Not present");
+    Q_UNUSED(sFound)
     QWebSocket *pClientToClose = Q_NULLPTR;
     pClientListDialog->clear();
 
@@ -1085,7 +1086,7 @@ ScoreController::onButtonSetupClicked() {
 #endif
 
     QDir slideDir(sSlideDir);
-    hide();
+
     if(slideDir.exists()) {
         sSlideDir = QFileDialog::getExistingDirectory(
                         this,
@@ -1131,7 +1132,7 @@ ScoreController::onButtonSetupClicked() {
                        sBaseDir,
                        QFileDialog::ShowDirsOnly);
     }
-    show();
+
     if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
     spotDir = QDir(sSpotDir);
     if(sSpotDir != QString() && spotDir.exists()) {

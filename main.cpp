@@ -19,7 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "choosediscipline.h"
 #include <QApplication>
-
+#include <QTranslator>
+#include <QMessageBox>
 
 class MyApplication : public QApplication
 {
@@ -36,13 +37,13 @@ private:
 MyApplication::MyApplication(int& argc, char ** argv)
     : QApplication(argc, argv)
 {
-    pChooser = new ChooseDiscipline();
 }
 
 
 int
 MyApplication::exec() {
     // pChooser is responsible to start the Control Panel or close the App
+    pChooser = new ChooseDiscipline();
     pChooser->show();
     int iResult = QApplication::exec();
     return iResult;
@@ -53,6 +54,17 @@ int
 main(int argc, char *argv[]) {
     int iresult = 0;
     MyApplication* pApp = new MyApplication(argc, argv);
+
+    // Prepare the application for translating the messages
+    QTranslator translator;
+    if(!translator.load(":/scoreController_en")) {
+        QMessageBox::information(Q_NULLPTR, "English Translation", "Unable to load", QMessageBox::Ok);
+    }
+    else {
+        if(!pApp->installTranslator(&translator))
+            QMessageBox::information(Q_NULLPTR, "English Translation", "Unable to install", QMessageBox::Ok);
+    }
+
     // Start the event loop and waits until exit() is called
     iresult = pApp->exec();
     return iresult;
