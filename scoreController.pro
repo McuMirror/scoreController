@@ -32,8 +32,7 @@ SOURCES += main.cpp\
     radioButton.cpp \
     panelconfigurator.cpp \
     handballcontroller.cpp \
-    choosediscipline.cpp \
-    scoreController_en.ts
+    choosediscipline.cpp
 
 
 HEADERS  += scorecontroller.h \
@@ -74,5 +73,7 @@ DISTFILES += \
     android/res/values/libs.xml \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
-    android/gradlew.bat
+    android/gradlew.bat \
+    scoreController_en.ts
+
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
