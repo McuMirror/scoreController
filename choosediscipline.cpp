@@ -22,8 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "basketcontroller.h"
 #include "handballcontroller.h"
 
-#include <QMessageBox>
-
 
 ChooseDiscipline::ChooseDiscipline(QWidget *parent)
     : QDialog(parent)
