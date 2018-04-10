@@ -29,13 +29,16 @@ ChooseDiscipline::ChooseDiscipline(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::ChooseDiscipline)
     , pController(Q_NULLPTR)
+    , pSettings(Q_NULLPTR)
 {
+    pSettings = new QSettings("Gabriele Salvato", "Choose Discipline");
+    QString sCurrentLanguage = pSettings->value("language", QString(tr("Italiano"))).toString();
     ui->setupUi(this);
     discipline = VOLLEY_PANEL;
     ui->volleyRadioButton->setChecked(true);
     ui->LanguageComboBox->addItem("Italiano");
     ui->LanguageComboBox->addItem("English");
-    ui->LanguageComboBox->setCurrentText("Italiano");
+    ui->LanguageComboBox->setCurrentText(sCurrentLanguage);
 }
 
 
@@ -45,6 +48,9 @@ ChooseDiscipline::~ChooseDiscipline() {
         delete pController;
     }
     pController = Q_NULLPTR;
+    if(pSettings != Q_NULLPTR)
+        delete pSettings;
+    pSettings = Q_NULLPTR;
     delete ui;
 }
 
@@ -120,6 +126,7 @@ ChooseDiscipline::onPanelDone() {
 
 void
 ChooseDiscipline::on_LanguageComboBox_currentIndexChanged(const QString &arg1) {
+    pSettings->setValue("language", arg1);
     if(arg1 == QString("Italiano")) {
         QCoreApplication::removeTranslator(&Translator);
     }

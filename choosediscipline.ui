@@ -26,6 +26,9 @@
     <string>Disciplina</string>
    </property>
    <widget class="QRadioButton" name="basketRadioButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>20</x>

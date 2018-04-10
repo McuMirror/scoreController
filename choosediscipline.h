@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QTranslator>
 #include "utility.h"
+#include <QSettings>
 
 
 QT_FORWARD_DECLARE_CLASS(ScoreController)
@@ -44,6 +45,7 @@ private:
     int discipline;
     ScoreController* pController;
     QTranslator Translator;
+    QSettings    *pSettings;
 };
 
 #endif // CHOOSEDISCIPLINE_H
