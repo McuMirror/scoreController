@@ -203,11 +203,11 @@ VolleyController::CreateTeamBox(int iTeam) {
     connect(timeoutIncrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onTimeOutIncrement(int)));
     connect(timeoutIncrement[iTeam], SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
     connect(timeoutDecrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onTimeOutDecrement(int)));
     connect(timeoutDecrement[iTeam], SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
 
     if(iTimeout[iTeam] == 0)
         timeoutDecrement[iTeam]->setEnabled(false);
@@ -248,11 +248,11 @@ VolleyController::CreateTeamBox(int iTeam) {
     connect(setsIncrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onSetIncrement(int)));
     connect(setsIncrement[iTeam], SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
     connect(setsDecrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onSetDecrement(int)));
     connect(setsDecrement[iTeam], SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
 
     if(iSet[iTeam] == 0)
         setsDecrement[iTeam]->setEnabled(false);
@@ -308,11 +308,11 @@ VolleyController::CreateTeamBox(int iTeam) {
     connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onScoreIncrement(int)));
     connect(scoreIncrement[iTeam], SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
     connect(scoreDecrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onScoreDecrement(int)));
     connect(scoreDecrement[iTeam], SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
 
     if(iScore[iTeam] == 0)
         scoreDecrement[iTeam]->setEnabled(false);
@@ -338,15 +338,15 @@ VolleyController::CreateGameButtonBox() {
     connect(newSetButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonNewSetClicked()));
     connect(newSetButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
     connect(newGameButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonNewGameClicked()));
     connect(newGameButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
     connect(changeFieldButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonChangeFieldClicked()));
     connect(changeFieldButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
 
     gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(newSetButton);

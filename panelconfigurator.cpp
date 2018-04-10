@@ -182,3 +182,4 @@ PanelConfigurator::SetIsScoreOnly(bool bScoreOnly) {
     ui->scoreOnlyCheckBox->setChecked(bScoreOnly);
     ui->scoreOnlyCheckBox->setEnabled(true);
 }
+

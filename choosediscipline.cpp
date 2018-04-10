@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "basketcontroller.h"
 #include "handballcontroller.h"
 
+#include <QMessageBox>
+
 
 ChooseDiscipline::ChooseDiscipline(QWidget *parent)
     : QDialog(parent)
@@ -31,6 +33,9 @@ ChooseDiscipline::ChooseDiscipline(QWidget *parent)
     ui->setupUi(this);
     discipline = VOLLEY_PANEL;
     ui->volleyRadioButton->setChecked(true);
+    ui->LanguageComboBox->addItem("Italiano");
+    ui->LanguageComboBox->addItem("English");
+    ui->LanguageComboBox->setCurrentText("Italiano");
 }
 
 
@@ -113,3 +118,14 @@ ChooseDiscipline::onPanelDone() {
 }
 
 
+void
+ChooseDiscipline::on_LanguageComboBox_currentIndexChanged(const QString &arg1) {
+    if(arg1 == QString("Italiano")) {
+        QCoreApplication::removeTranslator(&Translator);
+    }
+    else if(arg1 == QString("English")) {
+        Translator.load(":/scoreController_en");
+        QCoreApplication::installTranslator(&Translator);
+    }
+    ui->retranslateUi(this);
+}

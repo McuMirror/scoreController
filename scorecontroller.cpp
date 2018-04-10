@@ -58,13 +58,16 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     , discoveryAddress(QHostAddress("224.0.0.1"))
     , slideUpdaterPort(SLIDE_UPDATER_PORT)
     , spotUpdaterPort(SPOT_UPDATER_PORT)
+    , pButtonClick(Q_NULLPTR)
 {
     QString sFunctionName = QString(" ScoreController::ScoreController ");
     Q_UNUSED(sFunctionName)
 
     pSettings = Q_NULLPTR;
 
-    buttonClick.setSource(QUrl::fromLocalFile(":/key.wav"));
+    pButtonClick = new QSoundEffect(this);
+    pButtonClick->setSource(QUrl::fromLocalFile(":/key.wav"));
+
     sIpAddresses = QStringList();
 
     QString sBaseDir;
@@ -523,6 +526,10 @@ ScoreController::closeEvent(QCloseEvent *event) {
     Q_UNUSED(sFunctionName)
     QString sMessage;
 
+    if(pButtonClick != Q_NULLPTR)
+        delete pButtonClick;
+    pButtonClick = Q_NULLPTR;
+
     // Close all the discovery sockets
     for(int i=0; i<discoverySocketArray.count(); i++) {
         disconnect(discoverySocketArray.at(i), 0, 0, 0);
@@ -879,38 +886,38 @@ ScoreController::CreateSpotButtonBox() {
     shutdownButton->hide();
 
     connect(panelControlButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
     connect(panelControlButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonPanelControlClicked()));
 
     connect(startStopLoopSpotButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonStartStopSpotLoopClicked()));
     connect(startStopLoopSpotButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
     connect(startStopSpotButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonStartStopSpotClicked()));
     connect(startStopSpotButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
 
     connect(startStopSlideShowButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonStartStopSlideShowClicked()));
     connect(startStopSlideShowButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
 
     connect(startStopLiveCameraButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonStartStopLiveCameraClicked()));
     connect(startStopLiveCameraButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
 
     connect(generalSetupButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonSetupClicked()));
     connect(generalSetupButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
 
     connect(shutdownButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonShutdownClicked()));
     connect(shutdownButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
 
     spotButtonLayout->addWidget(startStopLoopSpotButton,   0, 0, 1, 1);
     spotButtonLayout->addWidget(startStopSpotButton,       1, 0, 1, 1);

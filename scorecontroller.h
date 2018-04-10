@@ -145,7 +145,7 @@ protected:
     QFileInfoList         spotList;
     int                   iCurrentSpot;
 
-    QSoundEffect          buttonClick;
+    QSoundEffect*         pButtonClick;
     QTimer                exitTimer;
 
     QPushButton*          startStopLoopSpotButton;

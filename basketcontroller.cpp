@@ -229,11 +229,11 @@ BasketController::CreateTeamBox(int iTeam) {
     connect(timeoutIncrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onTimeOutIncrement(int)));
     connect(timeoutIncrement[iTeam], SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
     connect(timeoutDecrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onTimeOutDecrement(int)));
     connect(timeoutDecrement[iTeam], SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
 
     if(iTimeout[iTeam] == 0)
         timeoutDecrement[iTeam]->setEnabled(false);
@@ -270,11 +270,11 @@ BasketController::CreateTeamBox(int iTeam) {
     connect(faulsIncrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onFaulsIncrement(int)));
     connect(faulsIncrement[iTeam], SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
     connect(faulsDecrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onFaulsDecrement(int)));
     connect(faulsDecrement[iTeam], SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
 
     if(iFauls[iTeam] == 0)
         faulsDecrement[iTeam]->setEnabled(false);
@@ -331,11 +331,11 @@ BasketController::CreateTeamBox(int iTeam) {
     connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onScoreIncrement(int)));
     connect(scoreIncrement[iTeam], SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
     connect(scoreDecrement[iTeam], SIGNAL(buttonClicked(int)),
             this, SLOT(onScoreDecrement(int)));
     connect(scoreDecrement[iTeam], SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
 
     if(iScore[iTeam] == 0)
         scoreDecrement[iTeam]->setEnabled(false);
@@ -417,11 +417,11 @@ BasketController::CreateGameBox() {
     connect(periodIncrement, SIGNAL(buttonClicked(int)),
             this, SLOT(onPeriodIncrement(int)));
     connect(periodIncrement, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
     connect(periodDecrement, SIGNAL(buttonClicked(int)),
             this, SLOT(onPeriodDecrement(int)));
     connect(periodDecrement, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
 
     if(iPeriod < 2)
         periodDecrement->setEnabled(false);
@@ -449,15 +449,15 @@ BasketController::CreateGameButtonBox() {
     connect(newPeriodButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonNewPeriodClicked()));
     connect(newPeriodButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
     connect(newGameButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonNewGameClicked()));
     connect(newGameButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
     connect(changeFieldButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonChangeFieldClicked()));
     connect(changeFieldButton, SIGNAL(clicked()),
-            &buttonClick, SLOT(play()));
+            pButtonClick, SLOT(play()));
 
     gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(newPeriodButton);

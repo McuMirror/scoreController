@@ -2,6 +2,7 @@
 #define CHOOSEDISCLPLINE_H
 
 #include <QDialog>
+#include <QTranslator>
 #include "utility.h"
 
 
@@ -36,10 +37,13 @@ private slots:
     void on_closePushButton_clicked();
     void on_handballRadioButton_clicked();
 
+    void on_LanguageComboBox_currentIndexChanged(const QString &arg1);
+
 private:
     Ui::ChooseDiscipline *ui;
     int discipline;
     ScoreController* pController;
+    QTranslator Translator;
 };
 
 #endif // CHOOSEDISCIPLINE_H
