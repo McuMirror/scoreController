@@ -17,15 +17,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
 
-#include "gamedirector.h"
+#ifndef GAMEDIRECTOR_H
+#define GAMEDIRECTOR_H
+
+#include <QApplication>
+
+QT_FORWARD_DECLARE_CLASS(ChooseDiscipline)
 
 
-int
-main(int argc, char *argv[]) {
-    int iresult = 0;
-    GameDirector* pApp = new GameDirector(argc, argv);
+class GameDirector : public QApplication
+{
+public:
+    GameDirector(int& argc, char ** argv);
+    virtual ~GameDirector();
+    int exec();
 
-    // Start the event loop and waits until exit() is called
-    iresult = pApp->exec();
-    return iresult;
-}
+private:
+    ChooseDiscipline *pChooser;
+};
+
+#endif // GAMEDIRECTOR_H

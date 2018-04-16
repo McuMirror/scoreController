@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     radioButton.cpp \
     panelconfigurator.cpp \
     handballcontroller.cpp \
-    choosediscipline.cpp
+    choosediscipline.cpp \
+    gamedirector.cpp
 
 
 HEADERS  += scorecontroller.h \
@@ -48,7 +49,8 @@ HEADERS  += scorecontroller.h \
     panelorientation.h \
     panelconfigurator.h \
     handballcontroller.h \
-    choosediscipline.h
+    choosediscipline.h \
+    gamedirector.h
 
 RESOURCES += scorecontroller.qrc
 

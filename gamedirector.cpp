@@ -18,14 +18,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gamedirector.h"
+#include "choosediscipline.h"
+
+
+GameDirector::GameDirector(int &argc, char **argv)
+    : QApplication(argc, argv)
+    , pChooser(Q_NULLPTR)
+{
+}
+
+
+
+GameDirector::~GameDirector() {
+}
 
 
 int
-main(int argc, char *argv[]) {
-    int iresult = 0;
-    GameDirector* pApp = new GameDirector(argc, argv);
-
-    // Start the event loop and waits until exit() is called
-    iresult = pApp->exec();
-    return iresult;
+GameDirector::exec() {
+    // pChooser is responsible to start the Control Panel or close the App
+    pChooser = new ChooseDiscipline();
+    pChooser->show();
+    int iResult = QApplication::exec();
+    return iResult;
 }
+
