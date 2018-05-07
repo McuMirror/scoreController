@@ -48,10 +48,11 @@ HandballController::HandballController()
 
     GetSettings();
     PrepareDirectories();
-    pSlideUpdaterServer->setDir(sSlideDir,"*.jpg *.jpeg *.png");
-    pSpotUpdaterServer->setDir(sSpotDir, "*.mp4");
-    emit startSpotServer();
+    pSlideUpdaterServer->setDir(sSlideDir, "*.jpg *.jpeg *.png *.JPG *.JPEG *.PNG");
     emit startSlideServer();
+
+    pSpotUpdaterServer->setDir(sSpotDir, "*.mp4 *.MP4");
+    emit startSpotServer();
 
     QGridLayout *mainLayout = new QGridLayout();
     int gamePanelWidth   = 15;
@@ -91,8 +92,8 @@ HandballController::GetSettings() {
     Q_UNUSED(sFunctionName)
     pSettings = new QSettings("Gabriele Salvato", "Handball Controller");
 
-    sTeam[0]    = pSettings->value("team1/name", QString("Locali")).toString();
-    sTeam[1]    = pSettings->value("team2/name", QString("Ospiti")).toString();
+    sTeam[0]    = pSettings->value("team1/name", QString(tr("Locali"))).toString();
+    sTeam[1]    = pSettings->value("team2/name", QString(tr("Ospiti"))).toString();
     iTimeout[0] = pSettings->value("team1/timeouts", 0).toInt();
     iTimeout[1] = pSettings->value("team2/timeouts", 0).toInt();
     iScore[0]   = pSettings->value("team1/score", 0).toInt();
