@@ -107,6 +107,7 @@ protected:
     bool            prepareDiscovery();
     virtual QString FormatStatusMsg();
     void            UpdateUI();
+    virtual void    SaveStatus();
 
 protected:
     QSettings    *pSettings;

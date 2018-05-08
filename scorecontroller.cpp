@@ -525,7 +525,9 @@ ScoreController::closeEvent(QCloseEvent *event) {
     QString sFunctionName = " ScoreController::closeEvent ";
     Q_UNUSED(sFunctionName)
     QString sMessage;
-
+    logMessage(logFile,
+               sFunctionName,
+               QString("Closing"));
     if(pButtonClick != Q_NULLPTR)
         delete pButtonClick;
     pButtonClick = Q_NULLPTR;
@@ -1157,6 +1159,12 @@ ScoreController::onButtonSetupClicked() {
                sFunctionName,
                QString("Found %1 spots")
                .arg(spotList.count()));
+    SaveStatus();
+}
+
+
+void
+ScoreController::SaveStatus() {
 }
 
 

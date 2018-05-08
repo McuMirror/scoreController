@@ -88,7 +88,7 @@ HandballController::HandballController()
 
 void
 HandballController::GetSettings() {
-    QString sFunctionName = QString(" VolleyController::GetSettings ");
+    QString sFunctionName = QString(" HandballController::GetSettings ");
     Q_UNUSED(sFunctionName)
     pSettings = new QSettings("Gabriele Salvato", "Handball Controller");
 
@@ -118,6 +118,12 @@ HandballController::GetSettings() {
 
     sSlideDir   = pSettings->value("directories/slides", sSlideDir).toString();
     sSpotDir    = pSettings->value("directories/spots", sSpotDir).toString();
+    logMessage(logFile,
+               sFunctionName,
+               QString("Slide Dir: %1").arg(sSlideDir));
+    logMessage(logFile,
+               sFunctionName,
+               QString("Spot Dir: %1").arg(sSpotDir));
 }
 
 
@@ -125,6 +131,9 @@ void
 HandballController::closeEvent(QCloseEvent *event) {
     QString sFunctionName = " HandballController::closeEvent ";
     Q_UNUSED(sFunctionName)
+    logMessage(logFile,
+               sFunctionName,
+               QString("Closing"));
     SaveStatus();
     ScoreController::closeEvent(event);// Propagate the event
 }
@@ -411,6 +420,8 @@ HandballController::FormatStatusMsg() {
 
 void
 HandballController::SaveStatus() {
+    QString sFunctionName = QString(" HandballController::SaveStatus ");
+    Q_UNUSED(sFunctionName)
     pSettings->setValue("team1/name", sTeam[0]);
     pSettings->setValue("team2/name", sTeam[1]);
     pSettings->setValue("team1/timeouts", iTimeout[0]);
@@ -422,6 +433,12 @@ HandballController::SaveStatus() {
 
     pSettings->setValue("directories/slides", sSlideDir);
     pSettings->setValue("directories/spots", sSpotDir);
+    logMessage(logFile,
+               sFunctionName,
+               QString("Slide Dir: %1").arg(sSlideDir));
+    logMessage(logFile,
+               sFunctionName,
+               QString("Spot Dir: %1").arg(sSpotDir));
 }
 
 
