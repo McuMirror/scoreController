@@ -325,10 +325,11 @@ FileServer::onProcessTextMessage(QString sMessage) {
 
     sToken = XML_Parse(sMessage, "send_file_list");
     if(sToken != sNoData) {
-        if(fileList.isEmpty())
+        if(fileList.isEmpty()) {
             sMessage = QString("<file_list>0/file_list>");
             SendToOne(pClient, sMessage);
             return;
+        }
         if(pClient->isValid()) {
             sMessage = QString("<file_list>");
             for(int i=0; i<fileList.count()-1; i++) {
