@@ -85,6 +85,7 @@ void
 VolleyController::GetSettings() {
     QString sFunctionName = QString(" VolleyController::GetSettings ");
     Q_UNUSED(sFunctionName)
+
     pSettings = new QSettings("Gabriele Salvato", "Volley Controller");
 
     sTeam[0]    = pSettings->value("team1/name", QString(tr("Locali"))).toString();

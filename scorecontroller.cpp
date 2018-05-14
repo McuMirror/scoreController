@@ -71,28 +71,34 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     sIpAddresses = QStringList();
 
     QString sBaseDir;
+    bool bFound = false;
 #ifdef Q_OS_ANDROID
     QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
-    QStringList secondaryList = environment.value(QString("SECONDARY_STORAGE"), QString("/")).split(":", QString::SkipEmptyParts);
-    secondaryList.append(environment.value(QString("EXTERNAL_STORAGE"), QString("/")));
+    QStringList secondaryList = environment.value(QString("SECONDARY_STORAGE")).split(":", QString::SkipEmptyParts);
+    secondaryList.append(environment.value(QString("EXTERNAL_STORAGE")).split(":", QString::SkipEmptyParts));
+    secondaryList.append(environment.value(QString("ANDROID_STORAGE")).split(":", QString::SkipEmptyParts));
     QDir sdPath;
-    bool bFound = false;
     for(int i=0; i<secondaryList.count(); i++) {
         sBaseDir = secondaryList.at(i);
         if(!sBaseDir.endsWith(QString("/"))) sBaseDir+= QString("/");
-        sdPath = QDir(sBaseDir+QString("slides"));
+        sdPath = QDir(sBaseDir+QString("slides/"));
         if(sdPath.exists() && sdPath.isReadable()) {
             bFound = true;
             break;
         }
     }
-    if(!bFound) sBaseDir == QString("/");
+    if(!bFound) sBaseDir = QString("/");
 #else
     sBaseDir = QDir::homePath();
 #endif
+
     sSlideDir   = QString("%1slides/").arg(sBaseDir);
     sSpotDir    = QString("%1spots/").arg(sBaseDir);
     logFileName = QString("%1score_controller.txt").arg(sBaseDir);
+
+    QMessageBox::information(this, sFunctionName,
+                             QString("Dirs: %1: %2.")
+                             .arg(bFound).arg(sBaseDir));
 
     logFile       = Q_NULLPTR;
     slideList     = QFileInfoList();
@@ -100,7 +106,22 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     iCurrentSpot  = 0;
 
     PrepareLogFile();
+    QStringList list = environment.toStringList();
+    for(int i=0; i<list.count(); i++)
+        logMessage(logFile,
+                   sFunctionName,
+                   list.at(i));
 
+
+    if(bFound)
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("sBaseDir found"));
+
+    else
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("sBaseDir NOT found"));
     if((panelType < FIRST_PANEL) || (panelType > LAST_PANEL)) {
         logMessage(logFile,
                    sFunctionName,
@@ -116,6 +137,9 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
 
     // Start listening to the discovery port
     if(!prepareDiscovery()) {
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("!prepareDiscovery()"));
         exitTimer.start(1000);
         QCursor waitCursor;
         waitCursor.setShape(Qt::WaitCursor);
@@ -237,12 +261,9 @@ ScoreController::WaitForNetworkReady() {
                                           tr("Connessione Assente"),
                                           tr("Connettiti alla rete e ritenta"),
                                           QMessageBox::Retry,
-                                          QMessageBox::Ignore,
                                           QMessageBox::Abort);
 
-        if(iResponse == QMessageBox::Ignore) {
-            break;
-        } else if(iResponse == QMessageBox::Abort) {
+        if(iResponse == QMessageBox::Abort) {
             exitTimer.start(1000);
             QCursor waitCursor;
             waitCursor.setShape(Qt::WaitCursor);
@@ -529,11 +550,13 @@ ScoreController::closeEvent(QCloseEvent *event) {
 
     // Close all the discovery sockets
     for(int i=0; i<discoverySocketArray.count(); i++) {
-        disconnect(discoverySocketArray.at(i), 0, 0, 0);
-        if(discoverySocketArray.at(i)->isValid())
-            discoverySocketArray.at(i)->close();
-        if(discoverySocketArray.at(i))
-            delete discoverySocketArray.at(i);
+        QUdpSocket* pSocket = discoverySocketArray.at(i);
+        if(pSocket) {
+            pSocket->disconnect();
+            if(pSocket->isValid())
+                pSocket->close();
+            delete pSocket;
+        }
     }
     discoverySocketArray.clear();
 
