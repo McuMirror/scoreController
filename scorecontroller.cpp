@@ -70,7 +70,6 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
 
     sIpAddresses = QStringList();
 
-    QString sBaseDir;
     bool bFound = false;
 #ifdef Q_OS_ANDROID
     QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
@@ -94,34 +93,12 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
 
     sSlideDir   = QString("%1slides/").arg(sBaseDir);
     sSpotDir    = QString("%1spots/").arg(sBaseDir);
-    logFileName = QString("%1score_controller.txt").arg(sBaseDir);
-
-    QMessageBox::information(this, sFunctionName,
-                             QString("Dirs: %1: %2.")
-                             .arg(bFound).arg(sBaseDir));
 
     logFile       = Q_NULLPTR;
     slideList     = QFileInfoList();
     iCurrentSlide = 0;
     iCurrentSpot  = 0;
 
-    PrepareLogFile();
-    QStringList list = environment.toStringList();
-    for(int i=0; i<list.count(); i++)
-        logMessage(logFile,
-                   sFunctionName,
-                   list.at(i));
-
-
-    if(bFound)
-        logMessage(logFile,
-                   sFunctionName,
-                   QString("sBaseDir found"));
-
-    else
-        logMessage(logFile,
-                   sFunctionName,
-                   QString("sBaseDir NOT found"));
     if((panelType < FIRST_PANEL) || (panelType > LAST_PANEL)) {
         logMessage(logFile,
                    sFunctionName,
@@ -134,28 +111,6 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
 
     // Blocks until a network connection is available
     WaitForNetworkReady();
-
-    // Start listening to the discovery port
-    if(!prepareDiscovery()) {
-        logMessage(logFile,
-                   sFunctionName,
-                   QString("!prepareDiscovery()"));
-        exitTimer.start(1000);
-        QCursor waitCursor;
-        waitCursor.setShape(Qt::WaitCursor);
-        setCursor(waitCursor);
-    }
-
-    // Prepare the server port for the panels to connect
-    if(!prepareServer()) {
-        exitTimer.start(1000);
-        QCursor waitCursor;
-        waitCursor.setShape(Qt::WaitCursor);
-        setCursor(waitCursor);
-    }
-
-    prepareSpotUpdateService();
-    prepareSlideUpdateService();
 
     // Pan-Tilt Camera management
     connect(pClientListDialog, SIGNAL(disableVideo()),
@@ -181,6 +136,33 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
 
 
 void
+ScoreController::prepareServices() {
+    QString sFunctionName = QString(" ScoreController::PrepareDirectories ");
+    Q_UNUSED(sFunctionName)
+    // Start listening to the discovery port
+    if(!prepareDiscovery()) {
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("!prepareDiscovery()"));
+        exitTimer.start(1000);
+        QCursor waitCursor;
+        waitCursor.setShape(Qt::WaitCursor);
+        setCursor(waitCursor);
+    }
+
+    // Prepare the server port for the panels to connect
+    if(!prepareServer()) {
+        exitTimer.start(1000);
+        QCursor waitCursor;
+        waitCursor.setShape(Qt::WaitCursor);
+        setCursor(waitCursor);
+    }
+
+    prepareSpotUpdateService();
+    prepareSlideUpdateService();
+}
+
+void
 ScoreController::PrepareDirectories() {
     QString sFunctionName = QString(" ScoreController::PrepareDirectories ");
     QDir slideDir(sSlideDir);
@@ -192,6 +174,8 @@ ScoreController::PrepareDirectories() {
         if(!slideDir.exists()) sSlideDir = QDir::homePath();
         spotDir.setPath(sSpotDir);
         if(!spotDir.exists()) sSpotDir = QDir::homePath();
+        sBaseDir = sSlideDir.left(sSlideDir.length()-7);
+        pSettings->setValue("directories/base", sBaseDir);
         pSettings->setValue("directories/slides", sSlideDir);
         pSettings->setValue("directories/spots", sSpotDir);
     }
@@ -1095,6 +1079,7 @@ ScoreController::onButtonPanelControlClicked() {
 
 void
 ScoreController::onButtonSetupClicked() {
+da modificare
     QString sFunctionName = QString(" ScoreController::onButtonSetupClicked ");
 
     QString sBaseDir;

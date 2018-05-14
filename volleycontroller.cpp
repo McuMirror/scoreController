@@ -46,6 +46,10 @@ VolleyController::VolleyController()
     GetSettings();
     PrepareDirectories();
 
+    logFileName = QString("%1score_controller.txt").arg(sBaseDir);
+    PrepareLogFile();
+    prepareServices();
+
     pSlideUpdaterServer->setDir(sSlideDir, "*.jpg *.jpeg *.png *.JPG *.JPEG *.PNG");
     emit startSlideServer();
 
@@ -99,6 +103,7 @@ VolleyController::GetSettings() {
     iServizio   = pSettings->value("set/service", 0).toInt();
     lastService = pSettings->value("set/lastservice", 0).toInt();
 
+    sBaseDir    = pSettings->value("directories/base", sBaseDir).toString();
     sSlideDir   = pSettings->value("directories/slides", sSlideDir).toString();
     sSpotDir    = pSettings->value("directories/spots", sSpotDir).toString();
 }
@@ -125,6 +130,7 @@ VolleyController::SaveStatus() {
     pSettings->setValue("team2/score", iScore[1]);
     pSettings->setValue("set/service", iServizio);
     pSettings->setValue("set/lastservice", lastService);
+    pSettings->setValue("directories/base", sBaseDir);
     pSettings->setValue("directories/slides", sSlideDir);
     pSettings->setValue("directories/spots", sSpotDir);
 }

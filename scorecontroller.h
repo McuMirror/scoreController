@@ -92,6 +92,7 @@ protected slots:
 
 protected:
     void            PrepareDirectories();
+    void            prepareServices();
     void            prepareSpotUpdateService();
     void            prepareSlideUpdateService();
     QGroupBox      *CreateClientListBox();
@@ -118,6 +119,8 @@ protected:
 
     int                   panelType;
     NetServer            *pPanelServer;
+
+    QString               sBaseDir;
 
     QString               logFileName;
     QFile*                logFile;
