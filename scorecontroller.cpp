@@ -73,18 +73,23 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     QString sBaseDir;
 #ifdef Q_OS_ANDROID
     QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
-    sBaseDir = environment.value(QString("SECONDARY_STORAGE"), QString(""));
-    if(sBaseDir == QString("")) {
-        sBaseDir = environment.value(QString("EXTERNAL_STORAGE"), QString("/storage/extSdCard/"));
+    QStringList secondaryList = environment.value(QString("SECONDARY_STORAGE"), QString("/")).split(":", QString::SkipEmptyParts);
+    secondaryList.append(environment.value(QString("EXTERNAL_STORAGE"), QString("/")));
+    QDir sdPath;
+    bool bFound = false;
+    for(int i=0; i<secondaryList.count(); i++) {
+        sBaseDir = secondaryList.at(i);
+        if(!sBaseDir.endsWith(QString("/"))) sBaseDir+= QString("/");
+        sdPath = QDir(sBaseDir+QString("slides"));
+        if(sdPath.exists() && sdPath.isReadable()) {
+            bFound = true;
+            break;
+        }
     }
-    else {
-        QStringList secondaryList = sBaseDir.split(":", QString::SkipEmptyParts);
-        sBaseDir = secondaryList.at(0);
-    }
+    if(!bFound) sBaseDir == QString("/");
 #else
     sBaseDir = QDir::homePath();
 #endif
-    if(!sBaseDir.endsWith(QString("/"))) sBaseDir+= QString("/");
     sSlideDir   = QString("%1slides/").arg(sBaseDir);
     sSpotDir    = QString("%1spots/").arg(sBaseDir);
     logFileName = QString("%1score_controller.txt").arg(sBaseDir);
@@ -95,16 +100,6 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     iCurrentSpot  = 0;
 
     PrepareLogFile();
-
-#ifdef Q_OS_ANDROID
-#ifdef LOG_VERBOSE
-    QStringList listEnv = environment.toStringList();
-    for(int i=0; i< listEnv.size(); i++)
-        logMessage(logFile,
-                   sFunctionName,
-                   listEnv.at(i));
-#endif
-#endif
 
     if((panelType < FIRST_PANEL) || (panelType > LAST_PANEL)) {
         logMessage(logFile,
