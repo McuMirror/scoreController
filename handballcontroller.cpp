@@ -48,6 +48,11 @@ HandballController::HandballController()
 
     GetSettings();
     PrepareDirectories();
+
+    logFileName = QString("%1score_controller.txt").arg(sLogDir);
+    PrepareLogFile();
+    prepareServices();
+
     pSlideUpdaterServer->setDir(sSlideDir, "*.jpg *.jpeg *.png *.JPG *.JPEG *.PNG");
     emit startSlideServer();
 

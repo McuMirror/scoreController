@@ -50,9 +50,13 @@ BasketController::BasketController()
 {
     QString sFunctionName = QString(" BasketController::BasketController ");
     Q_UNUSED(sFunctionName)
-    GetSettings();
 
+    GetSettings();
     PrepareDirectories();
+
+    logFileName = QString("%1score_controller.txt").arg(sLogDir);
+    PrepareLogFile();
+    prepareServices();
 
     pSlideUpdaterServer->setDir(sSlideDir,"*.jpg *.jpeg *.png *.JPG *.JPEG *.PNG");
     pSpotUpdaterServer->setDir(sSpotDir, "*.mp4 *.MP4");

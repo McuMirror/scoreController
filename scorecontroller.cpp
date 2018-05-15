@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QLabel>
 #include <QCloseEvent>
 #include <QProcessEnvironment>
+#include <QStandardPaths>
 
 #include "scorecontroller.h"
 #include "clientlistdialog.h"
@@ -50,6 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ScoreController::ScoreController(int _panelType, QWidget *parent)
     : QWidget(parent)
+    , pSettings(Q_NULLPTR)
     , panelType(_panelType)
     , pClientListDialog(new ClientListDialog(this))
     , connectionList(QList<connection>())
@@ -59,37 +61,26 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     , slideUpdaterPort(SLIDE_UPDATER_PORT)
     , spotUpdaterPort(SPOT_UPDATER_PORT)
     , pButtonClick(Q_NULLPTR)
+
 {
     QString sFunctionName = QString(" ScoreController::ScoreController ");
     Q_UNUSED(sFunctionName)
-
-    pSettings = Q_NULLPTR;
 
     pButtonClick = new QSoundEffect(this);
     pButtonClick->setSource(QUrl::fromLocalFile(":/key.wav"));
 
     sIpAddresses = QStringList();
 
-    bool bFound = false;
+    sLogDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
+    if(!sLogDir.endsWith(QString("/"))) sLogDir+= QString("/");
+
+    QString sBaseDir;
 #ifdef Q_OS_ANDROID
-    QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
-    QStringList secondaryList = environment.value(QString("SECONDARY_STORAGE")).split(":", QString::SkipEmptyParts);
-    secondaryList.append(environment.value(QString("EXTERNAL_STORAGE")).split(":", QString::SkipEmptyParts));
-    secondaryList.append(environment.value(QString("ANDROID_STORAGE")).split(":", QString::SkipEmptyParts));
-    QDir sdPath;
-    for(int i=0; i<secondaryList.count(); i++) {
-        sBaseDir = secondaryList.at(i);
-        if(!sBaseDir.endsWith(QString("/"))) sBaseDir+= QString("/");
-        sdPath = QDir(sBaseDir+QString("slides/"));
-        if(sdPath.exists() && sdPath.isReadable()) {
-            bFound = true;
-            break;
-        }
-    }
-    if(!bFound) sBaseDir = QString("/");
+    sBaseDir = QStandardPaths::displayName(QStandardPaths::GenericDataLocation);
 #else
     sBaseDir = QDir::homePath();
 #endif
+    if(!sBaseDir.endsWith(QString("/"))) sBaseDir+= QString("/");
 
     sSlideDir   = QString("%1slides/").arg(sBaseDir);
     sSpotDir    = QString("%1spots/").arg(sBaseDir);
@@ -171,11 +162,21 @@ ScoreController::PrepareDirectories() {
     if(!slideDir.exists() || !spotDir.exists()) {
         onButtonSetupClicked();
         slideDir.setPath(sSlideDir);
-        if(!slideDir.exists()) sSlideDir = QDir::homePath();
+        if(!slideDir.exists())
+#ifdef Q_OS_ANDROID
+            sSlideDir = QStandardPaths::displayName(QStandardPaths::GenericDataLocation);
+#else
+            sSlideDir = QDir::homePath();
+#endif
+        if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
         spotDir.setPath(sSpotDir);
-        if(!spotDir.exists()) sSpotDir = QDir::homePath();
-        sBaseDir = sSlideDir.left(sSlideDir.length()-7);
-        pSettings->setValue("directories/base", sBaseDir);
+        if(!spotDir.exists())
+#ifdef Q_OS_ANDROID
+            sSpotDir = QStandardPaths::displayName(QStandardPaths::GenericDataLocation);
+#else
+            sSpotDir = QDir::homePath();
+#endif
+        if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
         pSettings->setValue("directories/slides", sSlideDir);
         pSettings->setValue("directories/spots", sSpotDir);
     }
@@ -198,8 +199,6 @@ ScoreController::PrepareDirectories() {
                    .arg(sSpotDir)
                    .arg(spotList.count()));
     }
-    if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
-    if(!sSpotDir.endsWith(QString("/")))  sSpotDir+= QString("/");
 }
 
 
@@ -1079,26 +1078,17 @@ ScoreController::onButtonPanelControlClicked() {
 
 void
 ScoreController::onButtonSetupClicked() {
-da modificare
     QString sFunctionName = QString(" ScoreController::onButtonSetupClicked ");
 
     QString sBaseDir;
 #ifdef Q_OS_ANDROID
-    QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
-    sBaseDir = environment.value(QString("SECONDARY_STORAGE"), QString(""));
-    if(sBaseDir == QString("")) {
-        sBaseDir = environment.value(QString("EXTERNAL_STORAGE"), QString("/storage/extSdCard/"));
-    }
-    else {
-        QStringList secondaryList = sBaseDir.split(":", QString::SkipEmptyParts);
-        sBaseDir = secondaryList.at(0);
-    }
+    sBaseDir = QStandardPaths::displayName(QStandardPaths::GenericDataLocation);
 #else
     sBaseDir = QDir::homePath();
 #endif
+    if(!sBaseDir.endsWith(QString("/"))) sBaseDir+= QString("/");
 
     QDir slideDir(sSlideDir);
-
     if(slideDir.exists()) {
         sSlideDir = QFileDialog::getExistingDirectory(
                         this,
@@ -1121,8 +1111,7 @@ da modificare
         slideList = slideDir.entryInfoList();
     }
     else {
-        sSlideDir = QDir::homePath();
-        if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
+        sSlideDir = sBaseDir;
         slideList = QFileInfoList();
     }
     logMessage(logFile,
@@ -1154,8 +1143,7 @@ da modificare
         spotList = spotDir.entryInfoList();
     }
     else {
-        sSpotDir = QDir::homePath();
-        if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
+        sSpotDir = sBaseDir;
         spotList = QFileInfoList();
     }
     logMessage(logFile,

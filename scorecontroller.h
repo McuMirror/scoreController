@@ -120,8 +120,7 @@ protected:
     int                   panelType;
     NetServer            *pPanelServer;
 
-    QString               sBaseDir;
-
+    QString               sLogDir;
     QString               logFileName;
     QFile*                logFile;
 
