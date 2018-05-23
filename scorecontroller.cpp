@@ -48,6 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SLIDE_UPDATER_PORT  45456
 
 
+// This is the base class of all the game controllers
 
 ScoreController::ScoreController(int _panelType, QWidget *parent)
     : QWidget(parent)
@@ -66,14 +67,19 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     QString sFunctionName = QString(" ScoreController::ScoreController ");
     Q_UNUSED(sFunctionName)
 
+    // The click sound for button press so to have an acoustic feedback
+    // on touch screen tablets.
     pButtonClick = new QSoundEffect(this);
     pButtonClick->setSource(QUrl::fromLocalFile(":/key.wav"));
 
+    // An IP Addresses list of connected Score Panels
     sIpAddresses = QStringList();
 
+    // Logged messages (if enabled) will be written in the following folder
     sLogDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
     if(!sLogDir.endsWith(QString("/"))) sLogDir+= QString("/");
 
+    // The base directory in which look for the /slides and /spots folders
     QString sBaseDir;
 #ifdef Q_OS_ANDROID
     sBaseDir = QStandardPaths::displayName(QStandardPaths::GenericDataLocation);
@@ -152,6 +158,7 @@ ScoreController::prepareServices() {
     prepareSpotUpdateService();
     prepareSlideUpdateService();
 }
+
 
 void
 ScoreController::PrepareDirectories() {
@@ -296,7 +303,10 @@ ScoreController::onSpotServerDone(bool bError) {
     }
 }
 
-
+// Create a "Discovery Service" that make possible to clients to discover
+// the presence of this Score Controller, independently from its network
+// address.
+// It listen for a short message from clients and send an appropriate answer.
 bool
 ScoreController::prepareDiscovery() {
     QString sFunctionName = QString(" ScoreController::prepareDiscovery ");
