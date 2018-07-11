@@ -1,5 +1,7 @@
 #include <QtWidgets>
+#include <QDesktopWidget>
 #include "edit.h"
+
 
 Edit::Edit(int iTeam, QWidget *parent)
     : QLineEdit(parent)
@@ -24,13 +26,11 @@ QSize
 Edit::sizeHint() const
 {
     int length = maxLength();
-    QFont myFont = this->font();
+    QFontMetrics f(font());
     QSize size = QLineEdit::sizeHint();
-    QMargins margins = this->contentsMargins();
-    int fontSize = myFont.pointSize();
-    if(fontSize < 11) fontSize = 11;
-    size.rheight() = fontSize + margins.bottom() + margins.top();
-    size.rwidth() = length*fontSize + margins.left() + margins.right();
+    QMargins margins = contentsMargins();
+    size.setHeight(f.height() + f.descent() + f.ascent() + margins.bottom() + margins.top());
+    size.setWidth(length*f.maxWidth() + margins.left() + margins.right());
     return size;
 }
 

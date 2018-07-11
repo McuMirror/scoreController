@@ -61,12 +61,9 @@ public:
     explicit Button(const QString &text, int team, QWidget *parent = 0);
 
 public:
-    QSize sizeHint() const Q_DECL_OVERRIDE;
-    QSize minimumSizeHint() const Q_DECL_OVERRIDE;
 
 public slots:
     void onClicked(bool bChecked);
-    void resizeEvent(QResizeEvent *event);
 
 signals:
     void buttonClicked(int iTeam);

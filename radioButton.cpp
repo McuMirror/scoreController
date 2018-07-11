@@ -56,21 +56,11 @@ RadioButton::RadioButton(const QString &text, int team, QWidget *parent)
     : QRadioButton(parent)
     , myTeam(team)
 {
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setText(text);
     connect(this, SIGNAL(clicked(bool)), this, SLOT(onClicked(bool)));
 }
 
-
-
-QSize
-RadioButton::sizeHint() const
-{
-    QSize size = QRadioButton::sizeHint();
-    size.rheight() += 20;
-    size.rwidth() = qMax(size.width(), size.height());
-    return size;
-}
 
 void
 RadioButton::onClicked(bool bChecked) {

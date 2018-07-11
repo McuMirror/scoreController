@@ -56,39 +56,12 @@ Button::Button(const QString &text, int team, QWidget *parent)
     : QToolButton(parent)
     , myTeam(team)
 {
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QFont font = this->font();
+    font.setWeight(QFont::Black);
+    setFont(font);
     setText(text);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(this, SIGNAL(clicked(bool)), this, SLOT(onClicked(bool)));
-}
-
-
-QSize
-Button::sizeHint() const
-{
-    QSize size = QToolButton::sizeHint();
-    size.rheight() += 20;
-    size.rwidth() = size.height();
-    return size;
-}
-
-
-QSize
-Button::minimumSizeHint() const
-{
-    QFont font = this->font();
-    int fontSize = font.pointSize();
-    if(fontSize < 11) fontSize = 11;
-    QSize size = QSize(fontSize*3, fontSize*3);
-    return size;
-}
-
-
-void
-Button::resizeEvent(QResizeEvent *event) {
-    QSize newsize = event->size();
-    QFont font = this->font();
-    font.setPointSize(newsize.height()/3);
-    this->setFont(font);
 }
 
 

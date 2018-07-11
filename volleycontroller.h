@@ -8,6 +8,7 @@
 
 QT_FORWARD_DECLARE_CLASS(QSettings)
 QT_FORWARD_DECLARE_CLASS(QGridLayout)
+QT_FORWARD_DECLARE_CLASS(QHBoxLayout)
 QT_FORWARD_DECLARE_CLASS(QGroupBox)
 QT_FORWARD_DECLARE_CLASS(Edit)
 QT_FORWARD_DECLARE_CLASS(Button)
@@ -41,8 +42,8 @@ private slots:
 
 private:
     QGridLayout  *CreateGamePanel();
-    QGroupBox    *CreateTeamBox(int iTeam);
-    QGroupBox    *CreateGameButtonBox();
+    QGridLayout  *CreateTeamBox(int iTeam);
+    QHBoxLayout  *CreateGameButtonBox();
     QString       FormatStatusMsg();
     void          SaveStatus();
 
