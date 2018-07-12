@@ -51,15 +51,16 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
-#include <QToolButton>
+#include <QPushButton>
 
-class Button : public QToolButton
+class Button : public QPushButton
 {
     Q_OBJECT
 
 public:
     explicit Button(const QString &text, int team, QWidget *parent = 0);
-
+    bool hasHeightForWidth() const;
+    int heightForWidth(int w) const;
 public:
 
 public slots:

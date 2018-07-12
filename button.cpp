@@ -53,14 +53,18 @@
 #include "button.h"
 
 Button::Button(const QString &text, int team, QWidget *parent)
-    : QToolButton(parent)
+    : QPushButton(parent)
     , myTeam(team)
 {
     QFont font = this->font();
     font.setWeight(QFont::Black);
     setFont(font);
     setText(text);
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QSizePolicy p(sizePolicy());
+    p.setHeightForWidth(true);
+    p.setHorizontalPolicy(QSizePolicy::Expanding);
+    p.setVerticalPolicy(QSizePolicy::Expanding);
+    setSizePolicy(p);
     connect(this, SIGNAL(clicked(bool)), this, SLOT(onClicked(bool)));
 }
 
@@ -69,4 +73,18 @@ void
 Button::onClicked(bool bChecked) {
     Q_UNUSED(bChecked);
     emit buttonClicked(myTeam);
+}
+
+
+bool
+Button::hasHeightForWidth() const
+{
+    return true;
+}
+
+
+int
+Button::heightForWidth(int w) const
+{
+    return w;
 }

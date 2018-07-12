@@ -14,6 +14,7 @@ QT_FORWARD_DECLARE_CLASS(Edit)
 QT_FORWARD_DECLARE_CLASS(Button)
 QT_FORWARD_DECLARE_CLASS(QRadioButton)
 QT_FORWARD_DECLARE_CLASS(QPushButton)
+QT_FORWARD_DECLARE_CLASS(QLabel)
 
 class VolleyController : public ScoreController
 {
@@ -42,8 +43,10 @@ private slots:
 
 private:
     QGridLayout  *CreateGamePanel();
-    QGridLayout  *CreateTeamBox(int iTeam);
     QHBoxLayout  *CreateGameButtonBox();
+    void          setEventHandlers();
+    void          buildControls();
+    void          buildFontSizes();
     QString       FormatStatusMsg();
     void          SaveStatus();
 
@@ -66,6 +69,12 @@ private:
     Button*       scoreIncrement[2];
     Button*       scoreDecrement[2];
     QRadioButton *service[2];
+    QLabel       *timeoutLabel;
+    QLabel       *setsLabel;
+    QLabel       *serviceLabel;
+    QLabel       *scoreLabel;
+
+    int           iTeamFontSize;
 
     QPushButton  *newSetButton;
     QPushButton  *newGameButton;
