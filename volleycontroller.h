@@ -43,7 +43,7 @@ private slots:
 
 private:
     QGridLayout  *CreateGamePanel();
-    QHBoxLayout  *CreateGameButtonBox();
+    QHBoxLayout  *CreateGameButtons();
     void          setEventHandlers();
     void          buildControls();
     void          buildFontSizes();
@@ -58,16 +58,16 @@ private:
     int           iServizio;
     int           lastService;
 
-    Edit*         teamName[2];
-    Edit*         timeoutEdit[2];
-    Edit*         setsEdit[2];
-    Edit*         scoreEdit[2];
-    Button*       timeoutIncrement[2];
-    Button*       timeoutDecrement[2];
-    Button*       setsIncrement[2];
-    Button*       setsDecrement[2];
-    Button*       scoreIncrement[2];
-    Button*       scoreDecrement[2];
+    Edit         *teamName[2];
+    Edit         *timeoutEdit[2];
+    Edit         *setsEdit[2];
+    Edit         *scoreEdit[2];
+    Button       *timeoutIncrement[2];
+    Button       *timeoutDecrement[2];
+    Button       *setsIncrement[2];
+    Button       *setsDecrement[2];
+    Button       *scoreIncrement[2];
+    Button       *scoreDecrement[2];
     QRadioButton *service[2];
     QLabel       *timeoutLabel;
     QLabel       *setsLabel;
@@ -76,6 +76,9 @@ private:
 
     int           iTeamFontSize;
     int           iTimeoutFontSize;
+    int           iSetFontSize;
+    int           iScoreFontSize;
+    int           iLabelFontSize;
 
     QPushButton  *newSetButton;
     QPushButton  *newGameButton;

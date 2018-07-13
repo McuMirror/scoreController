@@ -88,7 +88,7 @@ BasketController::BasketController()
                           gameButtonHeight,
                           gamePanelWidth);
 
-    mainLayout->addWidget(CreateSpotButtonBox(),
+    mainLayout->addLayout(CreateSpotButtonBox(),
                           0,
                           gamePanelWidth,
                           gamePanelHeight+gameBoxHeight+gameButtonHeight,
@@ -515,8 +515,7 @@ BasketController::FormatStatusMsg() {
         sMessage += QString("<live>1</live>");
     else if(!startStopLoopSpotButton->text().contains(QString("Avvia")))
         sMessage += QString("<spotloop>1</spotloop>");
-    else if(!startStopSpotButton->text().contains(QString("Avvia")))
-        sMessage += QString("<spot>1</spot>");
+
     return sMessage;
 }
 

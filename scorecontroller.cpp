@@ -625,19 +625,10 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         SendToOne(pClient, FormatStatusMsg());
     }// getStatus
 
-    sToken = XML_Parse(sMessage, "closed_spot");
-    if(sToken != sNoData) {
-        startStopSpotButton->setText(tr("Avvia\nSpot"));
-        startStopSlideShowButton->setDisabled(false);
-        startStopLoopSpotButton->setDisabled(false);
-        startStopLiveCameraButton->setDisabled(false);
-    }// closed_spot
-
     sToken = XML_Parse(sMessage, "closed_spot_loop");
     if(sToken != sNoData) {
-        startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
+        //>>>>>>startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
         startStopSlideShowButton->setDisabled(false);
-        startStopSpotButton->setDisabled(false);
         startStopLoopSpotButton->setDisabled(false);
     }// closed_spot_loop
 
@@ -790,30 +781,27 @@ ScoreController::UpdateUI() {
     Q_UNUSED(sFunctionName)
     if(connectionList.count() == 1) {
         startStopLoopSpotButton->setDisabled(false);
-        startStopSpotButton->setDisabled(false);
         startStopSlideShowButton->setDisabled(false);
         startStopLiveCameraButton->setDisabled(false);
         panelControlButton->setDisabled(false);
         generalSetupButton->setDisabled(true);
-        shutdownButton->setText(QString(tr("Spegni %1\nTabellone")).arg(connectionList.count()));
+        //>>>>>>>>>>>>>>>>>>shutdownButton->setText(QString(tr("Spegni %1\nTabellone")).arg(connectionList.count()));
         shutdownButton->setDisabled(false);
         shutdownButton->show();
     }
     else if(connectionList.count() == 0) {
         startStopLoopSpotButton->setDisabled(true);
-        startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
-        startStopSpotButton->setDisabled(true);
-        startStopSpotButton->setText(tr("Avvia\nSpot Singolo"));
+        //>>>>>>>>>>>startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
         startStopSlideShowButton->setDisabled(true);
-        startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
+        //>>>>>>>>>>>startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
         startStopLiveCameraButton->setDisabled(true);
-        startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
+        //>>>>>>>>>>>startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
         panelControlButton->setDisabled(true);
         generalSetupButton->setDisabled(false);
-        shutdownButton->hide();
+        //shutdownButton->hide();
     }
     else {
-        shutdownButton->setText(QString(tr("Spegni %1\nTabelloni")).arg(connectionList.count()));
+        //>>>>>>>>>>>shutdownButton->setText(QString(tr("Spegni %1\nTabelloni")).arg(connectionList.count()));
     }
 }
 
@@ -873,30 +861,48 @@ ScoreController::onProcessBinaryMessage(QByteArray message) {
 }
 
 
-QGroupBox*
+QHBoxLayout*
 ScoreController::CreateSpotButtonBox() {
-    QGroupBox* spotButtonBox = new QGroupBox();
-    QGridLayout* spotButtonLayout = new QGridLayout();
+    QHBoxLayout* spotButtonLayout = new QHBoxLayout();
 
-    startStopLoopSpotButton = new QPushButton(tr("Avvia\nSpot Loop"));
-    startStopSpotButton = new QPushButton(tr("Avvia\nSpot Singolo"));
-    startStopSlideShowButton = new QPushButton(tr("Avvia\nSlide Show"));
-    startStopLiveCameraButton = new QPushButton(tr("Avvia\nLive Camera"));
+    QPixmap pixmap(":/buttonIcons/org.gnome.Totem.png");
+    QIcon ButtonIcon(pixmap);
+    startStopLoopSpotButton = new QPushButton(ButtonIcon, "");
+    startStopLoopSpotButton->setIconSize(pixmap.rect().size());
 
-    panelControlButton = new QPushButton(tr("Controlo\nTabelloni"));
+    pixmap.load(":/buttonIcons/preferences-desktop-wallpaper.png");
+    ButtonIcon.addPixmap(pixmap);
+    startStopSlideShowButton = new QPushButton(ButtonIcon, "");
+    startStopSlideShowButton->setIconSize(pixmap.rect().size());
 
-    generalSetupButton = new QPushButton(tr("Setup\nGenerale"));
-    shutdownButton = new QPushButton(QString(tr("Spegni %1\nTabelloni")).arg(connectionList.count()));
+    pixmap.load(":/buttonIcons/camera-web.png");
+    ButtonIcon.addPixmap(pixmap);
+    startStopLiveCameraButton = new QPushButton(ButtonIcon, "");
+    startStopLiveCameraButton->setIconSize(pixmap.rect().size());
+
+    pixmap.load(":/buttonIcons/panel-setup.png");
+    ButtonIcon.addPixmap(pixmap);
+    panelControlButton = new QPushButton(ButtonIcon, "");
+    panelControlButton->setIconSize(pixmap.rect().size());
+
+    pixmap.load(":/buttonIcons/gnome-control-center.png");
+    ButtonIcon.addPixmap(pixmap);
+    generalSetupButton = new QPushButton(ButtonIcon, "");
+    generalSetupButton->setIconSize(pixmap.rect().size());
+
+    pixmap.load(":/buttonIcons/video-display.png");
+    ButtonIcon.addPixmap(pixmap);
+    shutdownButton = new QPushButton(ButtonIcon, "");
+    shutdownButton->setIconSize(pixmap.rect().size());
 
     startStopLoopSpotButton->setDisabled(true);
-    startStopSpotButton->setDisabled(true);
     startStopSlideShowButton->setDisabled(true);
     startStopLiveCameraButton->setDisabled(true);
 
     panelControlButton->setDisabled(true);
     generalSetupButton->setDisabled(false);
     shutdownButton->setDisabled(true);
-    shutdownButton->hide();
+    //shutdownButton->hide();
 
     connect(panelControlButton, SIGNAL(clicked()),
             pButtonClick, SLOT(play()));
@@ -906,10 +912,6 @@ ScoreController::CreateSpotButtonBox() {
     connect(startStopLoopSpotButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonStartStopSpotLoopClicked()));
     connect(startStopLoopSpotButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-    connect(startStopSpotButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonStartStopSpotClicked()));
-    connect(startStopSpotButton, SIGNAL(clicked()),
             pButtonClick, SLOT(play()));
 
     connect(startStopSlideShowButton, SIGNAL(clicked(bool)),
@@ -932,54 +934,23 @@ ScoreController::CreateSpotButtonBox() {
     connect(shutdownButton, SIGNAL(clicked()),
             pButtonClick, SLOT(play()));
 
-    spotButtonLayout->addWidget(startStopLoopSpotButton,   0, 0, 1, 1);
-    spotButtonLayout->addWidget(startStopSpotButton,       1, 0, 1, 1);
+    spotButtonLayout->addWidget(startStopLoopSpotButton);
 
-    spotButtonLayout->addWidget(new QLabel(""),            2, 0, 1, 1);
-    spotButtonLayout->addWidget(startStopSlideShowButton,  3, 0, 1, 1);
+    spotButtonLayout->addStretch();
+    spotButtonLayout->addWidget(startStopSlideShowButton);
 
-    spotButtonLayout->addWidget(new QLabel(""),            4, 0, 1, 1);
-    spotButtonLayout->addWidget(startStopLiveCameraButton, 5, 0, 1, 1);
+    spotButtonLayout->addStretch();
+    spotButtonLayout->addWidget(startStopLiveCameraButton);
 
-    spotButtonLayout->addWidget(new QLabel(""),            6, 0, 1, 1);
-    spotButtonLayout->addWidget(panelControlButton,        7, 0, 1, 1);
+    spotButtonLayout->addStretch();
+    spotButtonLayout->addWidget(panelControlButton);
 
-    spotButtonLayout->addWidget(new QLabel(""),            8, 0, 1, 1);
+    spotButtonLayout->addStretch();
 
-    spotButtonLayout->addWidget(generalSetupButton,        9, 0, 1, 1);
-    spotButtonLayout->addWidget(shutdownButton,           10, 0, 1, 1);
+    spotButtonLayout->addWidget(generalSetupButton);
+    spotButtonLayout->addWidget(shutdownButton);
 
-    spotButtonBox->setLayout(spotButtonLayout);
-    return spotButtonBox;
-}
-
-
-void
-ScoreController::onButtonStartStopSpotClicked() {
-    QString sMessage;
-    if(connectionList.count() == 0) {
-        startStopSpotButton->setText(tr("Avvia\nSpot Singolo"));
-        startStopSpotButton->setDisabled(true);
-        return;
-    }
-    if(startStopSpotButton->text().contains(QString(tr("Avvia")))) {
-        for(int i=0; i<connectionList.count(); i++) {
-            sMessage = QString("<spot>%1</spot>").arg(iCurrentSpot++);
-            SendToOne(connectionList.at(i).pClientSocket, sMessage);
-        }
-        startStopSpotButton->setText(tr("Chiudi\nSpot"));
-        startStopLoopSpotButton->setDisabled(true);
-        startStopSlideShowButton->setDisabled(true);
-        startStopLiveCameraButton->setDisabled(true);
-    }
-    else {
-        QString sMessage = "<endspot>1</endspot>";
-        SendToAll(sMessage);
-        startStopSpotButton->setText(tr("Avvia\nSpot Singolo"));
-        startStopLoopSpotButton->setDisabled(false);
-        startStopSlideShowButton->setDisabled(false);
-        startStopLiveCameraButton->setDisabled(false);
-    }
+    return spotButtonLayout;
 }
 
 
@@ -987,23 +958,21 @@ void
 ScoreController::onButtonStartStopSpotLoopClicked() {
     QString sMessage;
     if(connectionList.count() == 0) {
-        startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
+        //>>>>>>>>>>>startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
         startStopLoopSpotButton->setDisabled(true);
         return;
     }
     if(startStopLoopSpotButton->text().contains(QString(tr("Avvia")))) {
         sMessage = QString("<spotloop>1</spotloop>");
         SendToAll(sMessage);
-        startStopLoopSpotButton->setText(tr("Chiudi\nSpot Loop"));
-        startStopSpotButton->setDisabled(true);
+        //>>>>>>>>>>>startStopLoopSpotButton->setText(tr("Chiudi\nSpot Loop"));
         startStopSlideShowButton->setDisabled(true);
         startStopLiveCameraButton->setDisabled(true);
     }
     else {
         sMessage = "<endspotloop>1</endspotloop>";
         SendToAll(sMessage);
-        startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
-        startStopSpotButton->setDisabled(false);
+        //>>>>>>>>>>>startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
         startStopSlideShowButton->setDisabled(false);
         startStopLiveCameraButton->setDisabled(false);
     }
@@ -1014,24 +983,22 @@ void
 ScoreController::onButtonStartStopLiveCameraClicked() {
     QString sMessage;
     if(connectionList.count() == 0) {
-        startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
+        //>>>>>>>>>>>startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
         startStopLiveCameraButton->setDisabled(true);
         return;
     }
     if(startStopLiveCameraButton->text().contains(QString(tr("Avvia")))) {
         sMessage = QString("<live>1</live>");
         SendToAll(sMessage);
-        startStopLiveCameraButton->setText(tr("Chiudi\nLive Camera"));
+        //>>>>>>>>>>>startStopLiveCameraButton->setText(tr("Chiudi\nLive Camera"));
         startStopLoopSpotButton->setDisabled(true);
-        startStopSpotButton->setDisabled(true);
         startStopSlideShowButton->setDisabled(true);
     }
     else {
         sMessage = "<endlive>1</endlive>";
         SendToAll(sMessage);
-        startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
+        //>>>>>>>>>>>startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
         startStopLoopSpotButton->setDisabled(false);
-        startStopSpotButton->setDisabled(false);
         startStopSlideShowButton->setDisabled(false);
     }
 }
@@ -1041,7 +1008,7 @@ void
 ScoreController::onButtonStartStopSlideShowClicked() {
     QString sMessage;
     if(connectionList.count() == 0) {
-        startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
+        //>>>>>>>>>>>startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
         startStopSlideShowButton->setDisabled(true);
         return;
     }
@@ -1049,17 +1016,15 @@ ScoreController::onButtonStartStopSlideShowClicked() {
         sMessage = "<slideshow>1</slideshow>";
         SendToAll(sMessage);
         startStopLoopSpotButton->setDisabled(true);
-        startStopSpotButton->setDisabled(true);
         startStopLiveCameraButton->setDisabled(true);
-        startStopSlideShowButton->setText(tr("Chiudi\nSlideshow"));
+        //>>>>>>>>>>>startStopSlideShowButton->setText(tr("Chiudi\nSlideshow"));
     }
     else {
         sMessage = "<endslideshow>1</endslideshow>";
         SendToAll(sMessage);
         startStopLoopSpotButton->setDisabled(false);
-        startStopSpotButton->setDisabled(false);
         startStopLiveCameraButton->setDisabled(false);
-        startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
+        //>>>>>>>>>>>startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
     }
 }
 

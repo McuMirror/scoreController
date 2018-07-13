@@ -67,17 +67,17 @@ VolleyController::VolleyController()
                           gamePanelHeigth,
                           gamePanelWidth);
 
-    mainLayout->addLayout(CreateGameButtonBox(),
+    mainLayout->addLayout(CreateGameButtons(),
                           gamePanelHeigth,
                           0,
                           2,
-                          gamePanelWidth);
+                          7);
 
-    mainLayout->addWidget(CreateSpotButtonBox(),
-                          0,
-                          gamePanelWidth,
-                          gamePanelHeigth+2,
-                          5);
+    mainLayout->addLayout(CreateSpotButtonBox(),
+                          gamePanelHeigth,
+                          7,
+                          2,
+                          gamePanelWidth-7);
 
     setLayout(mainLayout);
 
@@ -113,6 +113,7 @@ VolleyController::buildControls() {
             timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
         // Sets
+        sString.sprintf("%1d", iSet[iTeam]);
         setsEdit[iTeam] = new Edit(sString);
         setsEdit[iTeam]->setMaxLength(1);
         setsEdit[iTeam]->setAlignment(Qt::AlignHCenter);
@@ -120,25 +121,20 @@ VolleyController::buildControls() {
         // Set buttons
         setsIncrement[iTeam] = new Button("+", iTeam);
         setsDecrement[iTeam] = new Button("-", iTeam);
-        sString.sprintf("%1d", iSet[iTeam]);
         if(iSet[iTeam] == 0)
             setsDecrement[iTeam]->setEnabled(false);
         if(iSet[iTeam] == MAX_SETS)
             setsIncrement[iTeam]->setEnabled(false);
         // Service
-        service[iTeam] = new RadioButton("", iTeam);
-        // Service button
-        connect(service[iTeam], SIGNAL(buttonClicked(int, bool)),
-                this, SLOT(onServiceClicked(int, bool)));
+        service[iTeam] = new RadioButton(" ", iTeam);// Android requires at least one character to work
         // Score
-
         scoreLabel = new QLabel(tr("Punti"));
         scoreLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
         sString.sprintf("%2d", iScore[iTeam]);
         scoreEdit[iTeam] = new Edit(sString);
         scoreEdit[iTeam]->setMaxLength(2);
         scoreEdit[iTeam]->setReadOnly(true);
-        scoreEdit[iTeam]->setAlignment(Qt::AlignRight);
+        scoreEdit[iTeam]->setAlignment(Qt::AlignHCenter);
         // Score buttons
         scoreIncrement[iTeam] = new Button("+", iTeam);
         scoreDecrement[iTeam] = new Button("-", iTeam);
@@ -182,10 +178,26 @@ VolleyController::buildFontSizes() {
     teamName[0]->setFont(font);
     teamName[1]->setFont(font);
 
+    font = setsEdit[0]->font();
+    iSetFontSize = QFontMetrics(font).maxWidth();
+    rH = QFontMetrics(font).height();
+    for(int i=iSetFontSize; i<100; i++) {
+        font.setPixelSize(i);
+        rW = QFontMetrics(font).maxWidth();
+        rH = QFontMetrics(font).height();
+        if((rW > setsEdit[0]->width()) || (rH > setsEdit[0]->height())){
+            iSetFontSize = i-1;
+            break;
+        }
+    }
+    font.setPixelSize(iSetFontSize);
+    setsEdit[0]->setFont(font);
+    setsEdit[1]->setFont(font);
+
     font = timeoutEdit[0]->font();
     iTimeoutFontSize = QFontMetrics(font).maxWidth();
     rH = QFontMetrics(font).height();
-    for(int i=iTimeoutFontSize; i<100; i++) {
+    for(int i=iSetFontSize; i<100; i++) {
         font.setPixelSize(i);
         rW = QFontMetrics(font).maxWidth();
         rH = QFontMetrics(font).height();
@@ -194,40 +206,71 @@ VolleyController::buildFontSizes() {
             break;
         }
     }
+    font.setPixelSize(iTimeoutFontSize);
     timeoutEdit[0]->setFont(font);
     timeoutEdit[1]->setFont(font);
-/*
-    iSetFontSize = 100;
-    for(int i=12; i<100; i++) {
-        QFontMetrics f(QFont("Arial", i, QFont::Black));
-        int rW = f.width("Set Vinti");
-        if(rW > width/2) {
-            iSetFontSize = i-1;
-            break;
-        }
-    }
-    iServiceFontSize = 100;
-    for(int i=12; i<300; i++) {
-        QFontMetrics f(QFont("Arial", i, QFont::Black));
-        int rW = f.width(" * ");
-        if(rW > width/10) {
-            iServiceFontSize = i-1;
-            break;
-        }
-    }
-    iScoreFontSize   = 100;
-    for(int i=12; i<300; i++) {
-        QFontMetrics f(QFont("Arial", i, QFont::Black));
-        int rW = f.width("Punti");
-        if(rW > width/6) {
+
+    font = scoreEdit[0]->font();
+    font.setWeight(QFont::Black);
+    iScoreFontSize = QFontMetrics(font).maxWidth();
+    rH = QFontMetrics(font).height();
+    for(int i=iScoreFontSize; i<100; i++) {
+        font.setPixelSize(i);
+        rW = QFontMetrics(font).maxWidth()*2;
+        rH = QFontMetrics(font).height();
+        if((rW > scoreEdit[0]->width()) || (rH > scoreEdit[0]->height())){
             iScoreFontSize = i-1;
             break;
         }
     }
-    int minFontSize = qMin(iScoreFontSize, iTimeoutFontSize);
-    minFontSize = qMin(minFontSize, iSetFontSize);
-    iScoreFontSize = iTimeoutFontSize = iSetFontSize = minFontSize;
-    */
+    font.setPixelSize(iScoreFontSize);
+    scoreEdit[0]->setFont(font);
+    scoreEdit[1]->setFont(font);
+
+    font = timeoutLabel->font();
+    iLabelFontSize = QFontMetrics(font).maxWidth();
+    rH = QFontMetrics(font).height();
+    for(int i=iLabelFontSize; i<100; i++) {
+        font.setPixelSize(i);
+        rW = QFontMetrics(font).maxWidth()*15;
+        rH = QFontMetrics(font).height();
+        if((rW > timeoutLabel->width()) || (rH > timeoutLabel->height())){
+            iScoreFontSize = i-1;
+            break;
+        }
+    }
+
+    font.setPixelSize(iLabelFontSize);
+    timeoutLabel->setFont(font);
+    setsLabel->setFont(font);
+    serviceLabel->setFont(font);
+    scoreLabel->setFont(font);
+
+    font = timeoutIncrement[0]->font();
+    font.setWeight(QFont::Black);
+    iTimeoutFontSize = QFontMetrics(font).maxWidth();
+    rH = QFontMetrics(font).height();
+    for(int i=iTimeoutFontSize; i<100; i++) {
+        font.setPixelSize(i);
+        rW = QFontMetrics(font).maxWidth();
+        rH = QFontMetrics(font).height();
+        if((rW > timeoutIncrement[0]->width()) || (rH > timeoutIncrement[0]->height())){
+            iTimeoutFontSize = i-1;
+            break;
+        }
+    }
+    timeoutIncrement[0]->setFont(font);
+    timeoutIncrement[1]->setFont(font);
+    timeoutDecrement[0]->setFont(font);
+    timeoutDecrement[1]->setFont(font);
+    setsIncrement[0]->setFont(font);
+    setsIncrement[1]->setFont(font);
+    setsDecrement[0]->setFont(font);
+    setsDecrement[1]->setFont(font);
+    scoreIncrement[0]->setFont(font);
+    scoreIncrement[1]->setFont(font);
+    scoreDecrement[0]->setFont(font);
+    scoreDecrement[1]->setFont(font);
 }
 
 
@@ -281,7 +324,7 @@ VolleyController::SaveStatus() {
 
 
 QHBoxLayout*
-VolleyController::CreateGameButtonBox() {
+VolleyController::CreateGameButtons() {
     QHBoxLayout* gameButtonLayout = new QHBoxLayout();
     newSetButton  = new QPushButton(tr("Set"));
     newGameButton = new QPushButton(tr("Partita"));
@@ -314,81 +357,6 @@ VolleyController::CreateGameButtonBox() {
 QGridLayout*
 VolleyController::CreateGamePanel() {
     QGridLayout* gamePanel = new QGridLayout();
-    /*
-        QScreen *screen = QGuiApplication::primaryScreen();
-        QRect screenGeometry = screen->availableGeometry();
-        int width = screenGeometry.width();
-        int rW;
-        int minFontSize = 6;
-    */
-    /*
-        QFont font(teamName[iTeam]->font());
-        font.setCapitalization(QFont::Capitalize);
-        int iTeamFontSize = font.pointSize();
-        if(iTeamFontSize) iTeamFontSize = minFontSize;
-        for(int i=iTeamFontSize; i<100; i++) {
-            font.setPointSize(i);
-            QFontMetrics f(font);
-            rW = teamName[iTeam]->maxLength()*f.width("W");
-            if(rW > width/3) {
-                iTeamFontSize = i-1;
-                break;
-            }
-        }
-        font.setPointSize(iTeamFontSize);
-        teamName[iTeam]->setFont(font);
-    */
-    /*
-        font = timeoutEdit[iTeam]->font();
-        font.setPointSize(iTimeoutLabelFontSize);
-        timeoutEdit[iTeam]->setFont(font);
-    */
-    /*
-        font = setsEdit[iTeam]->font();
-        font.setPointSize(iTimeoutLabelFontSize);
-        setsEdit[iTeam]->setFont(font);
-    */
-    /*
-        font = service[iTeam]->font();
-        font.setPointSize(iTimeoutLabelFontSize);
-        service[iTeam]->setFont(font);
-    */
-    /*
-        font = scoreLabel->font();
-        font.setPointSize(iTimeoutLabelFontSize);
-        scoreLabel->setFont(font);
-    */
-    /*
-        font = scoreEdit[iTeam]->font();
-        font.setPointSize(iTimeoutLabelFontSize);
-        scoreEdit[iTeam]->setFont(font);
-    */
-    /*
-    font = timeoutLabel->font();
-    int iTimeoutLabelFontSize = font.pointSize();
-    if(iTimeoutLabelFontSize) iTimeoutLabelFontSize = minFontSize;
-    for(int i=iTimeoutLabelFontSize; i<100; i++) {
-        font.setPointSize(i);
-        QFontMetrics f(font);
-        rW = f.width(timeoutLabel->text());
-        if(rW > width/10) {
-            iTimeoutLabelFontSize = i-1;
-            break;
-        }
-    }
-    font.setPointSize(iTimeoutLabelFontSize);
-    timeoutLabel->setFont(font);
-*/
-    /*
-        font = setsLabel->font();
-        font.setPointSize(iTimeoutLabelFontSize);
-        setsLabel->setFont(font);
-    */
-    /*
-    font = scoreLabel->font();
-    font.setPointSize(iTimeoutLabelFontSize);
-    scoreLabel->setFont(font);
-*/
     // Team
     for(int iTeam=0; iTeam<2; iTeam++) {
         // Matrice x righe e 8 colonne
@@ -444,8 +412,7 @@ VolleyController::FormatStatusMsg() {
         sMessage += QString("<live>1</live>");
     else if(!startStopLoopSpotButton->text().contains(QString("Avvia")))
         sMessage += QString("<spotloop>1</spotloop>");
-    else if(!startStopSpotButton->text().contains(QString("Avvia")))
-        sMessage += QString("<spot>1</spot>");
+
     return sMessage;
 }
 
@@ -520,6 +487,8 @@ VolleyController::setEventHandlers() {
                 pButtonClick, SLOT(play()));
         connect(service[iTeam], SIGNAL(buttonClicked(int, bool)),
                 this, SLOT(onServiceClicked(int, bool)));
+        connect(service[iTeam], SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
         connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onScoreIncrement(int)));
         connect(scoreIncrement[iTeam], SIGNAL(clicked()),

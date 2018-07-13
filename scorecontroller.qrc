@@ -5,5 +5,11 @@
         <file>android/ic_ScorePanel_L.png</file>
         <file>android/ic_ScorePanel_M.png</file>
         <file>scoreController_en.qm</file>
+        <file>buttonIcons/gnome-control-center.png</file>
+        <file>buttonIcons/org.gnome.Totem.png</file>
+        <file>buttonIcons/preferences-desktop-wallpaper.png</file>
+        <file>buttonIcons/camera-web.png</file>
+        <file>buttonIcons/panel-setup.png</file>
+        <file>buttonIcons/video-display.png</file>
     </qresource>
 </RCC>

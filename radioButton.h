@@ -60,9 +60,6 @@ class RadioButton : public QRadioButton
 public:
     explicit RadioButton(const QString &text, int team, QWidget *parent = 0);
 
-public:
-//    QSize sizeHint() const Q_DECL_OVERRIDE;
-
 public slots:
     void onClicked(bool bChecked);
 

@@ -41,6 +41,7 @@ QT_FORWARD_DECLARE_CLASS(NetServer)
 QT_FORWARD_DECLARE_CLASS(FileServer)
 QT_FORWARD_DECLARE_CLASS(QGroupBox)
 QT_FORWARD_DECLARE_CLASS(QGridLayout)
+QT_FORWARD_DECLARE_CLASS(QHBoxLayout)
 
 
 
@@ -61,7 +62,6 @@ signals:
     void panelDone();
 
 protected slots:
-    void onButtonStartStopSpotClicked();
     void onButtonStartStopSpotLoopClicked();
     void onButtonStartStopSlideShowClicked();
     void onButtonStartStopLiveCameraClicked();
@@ -96,7 +96,7 @@ protected:
     void            prepareSpotUpdateService();
     void            prepareSlideUpdateService();
     QGroupBox      *CreateClientListBox();
-    QGroupBox      *CreateSpotButtonBox();
+    QHBoxLayout    *CreateSpotButtonBox();
     void            WaitForNetworkReady();
     int             SendToAll(QString sMessage);
     int             SendToOne(QWebSocket* pSocket, QString sMessage);
@@ -152,7 +152,6 @@ protected:
     QTimer                exitTimer;
 
     QPushButton*          startStopLoopSpotButton;
-    QPushButton*          startStopSpotButton;
     QPushButton*          startStopSlideShowButton;
     QPushButton*          startStopLiveCameraButton;
     QPushButton*          panelControlButton;
