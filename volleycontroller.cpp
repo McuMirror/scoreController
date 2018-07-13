@@ -326,9 +326,17 @@ VolleyController::SaveStatus() {
 QHBoxLayout*
 VolleyController::CreateGameButtons() {
     QHBoxLayout* gameButtonLayout = new QHBoxLayout();
-    newSetButton  = new QPushButton(tr("Set"));
-    newGameButton = new QPushButton(tr("Partita"));
-    changeFieldButton = new QPushButton(tr("Campo"));
+    QPixmap pixmap(":/buttonIcons/Volley-Field.png");
+    QIcon ButtonIcon(pixmap);
+
+    newSetButton  = new QPushButton(ButtonIcon, "");
+    newSetButton->setIconSize(pixmap.rect().size());
+
+    newGameButton = new QPushButton(ButtonIcon, "");
+    newGameButton->setIconSize(pixmap.rect().size());
+
+    changeFieldButton = new QPushButton(ButtonIcon, "");
+    changeFieldButton->setIconSize(pixmap.rect().size());
 
     connect(newSetButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonNewSetClicked()));
@@ -343,7 +351,6 @@ VolleyController::CreateGameButtons() {
     connect(changeFieldButton, SIGNAL(clicked()),
             pButtonClick, SLOT(play()));
 
-    gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(newSetButton);
     gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(newGameButton);

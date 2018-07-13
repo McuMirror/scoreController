@@ -11,5 +11,6 @@
         <file>buttonIcons/camera-web.png</file>
         <file>buttonIcons/panel-setup.png</file>
         <file>buttonIcons/video-display.png</file>
+        <file>buttonIcons/Volley-Field.png</file>
     </qresource>
 </RCC>
