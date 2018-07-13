@@ -165,10 +165,6 @@ VolleyController::buildFontSizes() {
     int rW, rH;
     QFont font;
 
-    QScreen *screen = QGuiApplication::primaryScreen();
-    QRect  screenGeometry = screen->geometry();
-    int width = screenGeometry.width();// In pixels
-
     font = teamName[0]->font();
     font.setCapitalization(QFont::Capitalize);
     iTeamFontSize = QFontMetrics(font).maxWidth();
@@ -185,28 +181,22 @@ VolleyController::buildFontSizes() {
     font.setPixelSize(iTeamFontSize);
     teamName[0]->setFont(font);
     teamName[1]->setFont(font);
-/*
-    QScreen *screen = QGuiApplication::primaryScreen();
-    QRect  screenGeometry = screen->geometry();
-    int width = screenGeometry.width();
-    iTeamFontSize = 100;
-    for(int i=12; i<100; i++) {
-        QFontMetrics f(QFont("Arial", i, QFont::Black));
-        int rW = f.maxWidth()*maxTeamNameLen;
-        if(rW > width/2) {
-            iTeamFontSize = i-1;
-            break;
-        }
-    }
-    iTimeoutFontSize = 100;
-    for(int i=12; i<100; i++) {
-        QFontMetrics f(QFont("Arial", i, QFont::Black));
-        int rW = f.width("Timeout");
-        if(rW > width/2) {
+
+    font = timeoutEdit[0]->font();
+    iTimeoutFontSize = QFontMetrics(font).maxWidth();
+    rH = QFontMetrics(font).height();
+    for(int i=iTimeoutFontSize; i<100; i++) {
+        font.setPixelSize(i);
+        rW = QFontMetrics(font).maxWidth();
+        rH = QFontMetrics(font).height();
+        if((rW > timeoutEdit[0]->width()) || (rH > timeoutEdit[0]->height())){
             iTimeoutFontSize = i-1;
             break;
         }
     }
+    timeoutEdit[0]->setFont(font);
+    timeoutEdit[1]->setFont(font);
+/*
     iSetFontSize = 100;
     for(int i=12; i<100; i++) {
         QFontMetrics f(QFont("Arial", i, QFont::Black));

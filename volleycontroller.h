@@ -75,6 +75,7 @@ private:
     QLabel       *scoreLabel;
 
     int           iTeamFontSize;
+    int           iTimeoutFontSize;
 
     QPushButton  *newSetButton;
     QPushButton  *newGameButton;
