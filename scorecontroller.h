@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTimer>
 #include <QSettings>
 
+#include "fileserver.h"
 #include "panelorientation.h"
 #include "utility.h"
 
@@ -158,6 +159,14 @@ protected:
     QPushButton*          generalSetupButton;
     QPushButton*          shutdownButton;
 
+private:
+    enum status {
+        showPanel,
+        showSpots,
+        showSlides,
+        showCamera
+    };
+    status                myStatus;
 };
 
 #endif // SCORECONTROLLER_H

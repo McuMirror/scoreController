@@ -62,7 +62,6 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     , slideUpdaterPort(SLIDE_UPDATER_PORT)
     , spotUpdaterPort(SPOT_UPDATER_PORT)
     , pButtonClick(Q_NULLPTR)
-
 {
     QString sFunctionName = QString(" ScoreController::ScoreController ");
     Q_UNUSED(sFunctionName)
@@ -129,6 +128,8 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
             this, SLOT(onGetIsPanelScoreOnly(QString)));
     connect(pClientListDialog, SIGNAL(changeScoreOnly(QString, bool)),
             this, SLOT(onSetScoreOnly(QString, bool)));
+
+    myStatus = showPanel;
 }
 
 
@@ -366,6 +367,7 @@ ScoreController::onStartCamera(QString sClientIp) {
             SendToOne(connectionList.at(i).pClientSocket, sMessage);
             return;
         }
+        myStatus = showCamera;
     }
 }
 
@@ -374,6 +376,7 @@ void
 ScoreController::onStopCamera() {
     QString sMessage = QString("<endlive>1</endlive>");
     SendToAll(sMessage);
+    myStatus = showPanel;
 }
 
 
@@ -441,6 +444,7 @@ ScoreController::PrepareLogFile() {
 bool
 ScoreController::isConnectedToNetwork() {
     QString sFunctionName = " ScoreController::isConnectedToNetwork ";
+    Q_UNUSED(sFunctionName)
     QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
     bool result = false;
 
@@ -473,6 +477,7 @@ ScoreController::onProcessConnectionRequest() {
     QUdpSocket* pDiscoverySocket = qobject_cast<QUdpSocket*>(sender());
     QString sNoData = QString("NoData");
     QString sMessage;
+    Q_UNUSED(sMessage)
     QHostAddress hostAddress;
     quint16 port;
 
@@ -627,7 +632,11 @@ ScoreController::onProcessTextMessage(QString sMessage) {
 
     sToken = XML_Parse(sMessage, "closed_spot_loop");
     if(sToken != sNoData) {
-        //>>>>>>startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
+        myStatus = showPanel;
+        QPixmap pixmap(":/buttonIcons/org.gnome.Totem.png");
+        QIcon ButtonIcon(pixmap);
+        startStopLoopSpotButton->setIcon(ButtonIcon);
+        startStopLoopSpotButton->setIconSize(pixmap.rect().size());
         startStopSlideShowButton->setDisabled(false);
         startStopLoopSpotButton->setDisabled(false);
     }// closed_spot_loop
@@ -785,23 +794,36 @@ ScoreController::UpdateUI() {
         startStopLiveCameraButton->setDisabled(false);
         panelControlButton->setDisabled(false);
         generalSetupButton->setDisabled(true);
-        //>>>>>>>>>>>>>>>>>>shutdownButton->setText(QString(tr("Spegni %1\nTabellone")).arg(connectionList.count()));
+//>>>>>>>>>>>>>>>>>>shutdownButton->setText(QString(tr("Spegni %1\nTabellone")).arg(connectionList.count()));
         shutdownButton->setDisabled(false);
         shutdownButton->show();
     }
     else if(connectionList.count() == 0) {
         startStopLoopSpotButton->setDisabled(true);
-        //>>>>>>>>>>>startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
+        QPixmap pixmap(":/buttonIcons/org.gnome.Totem.png");
+        QIcon ButtonIcon(pixmap);
+        startStopLoopSpotButton->setIcon(ButtonIcon);
+        startStopLoopSpotButton->setIconSize(pixmap.rect().size());
+
         startStopSlideShowButton->setDisabled(true);
-        //>>>>>>>>>>>startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
+        pixmap.load(":/buttonIcons/preferences-desktop-wallpaper.png");
+        ButtonIcon.addPixmap(pixmap);
+        startStopSlideShowButton->setIcon(ButtonIcon);
+        startStopSlideShowButton->setIconSize(pixmap.rect().size());
+
         startStopLiveCameraButton->setDisabled(true);
-        //>>>>>>>>>>>startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
+        pixmap.load(":/buttonIcons/camera-web.png");
+        ButtonIcon.addPixmap(pixmap);
+        startStopLiveCameraButton->setIcon(ButtonIcon);
+        startStopLiveCameraButton->setIconSize(pixmap.rect().size());
+
         panelControlButton->setDisabled(true);
         generalSetupButton->setDisabled(false);
-        //shutdownButton->hide();
+        shutdownButton->setDisabled(true);
+        myStatus = showPanel;
     }
     else {
-        //>>>>>>>>>>>shutdownButton->setText(QString(tr("Spegni %1\nTabelloni")).arg(connectionList.count()));
+        shutdownButton->setEnabled(true);
     }
 }
 
@@ -902,7 +924,6 @@ ScoreController::CreateSpotButtonBox() {
     panelControlButton->setDisabled(true);
     generalSetupButton->setDisabled(false);
     shutdownButton->setDisabled(true);
-    //shutdownButton->hide();
 
     connect(panelControlButton, SIGNAL(clicked()),
             pButtonClick, SLOT(play()));
@@ -957,24 +978,40 @@ ScoreController::CreateSpotButtonBox() {
 void
 ScoreController::onButtonStartStopSpotLoopClicked() {
     QString sMessage;
+    QPixmap pixmap;
+    QIcon ButtonIcon;
     if(connectionList.count() == 0) {
-        //>>>>>>>>>>>startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
+        pixmap.load(":/buttonIcons/org.gnome.Totem.png");
+        ButtonIcon.addPixmap(pixmap);
+        startStopLoopSpotButton->setIcon(ButtonIcon);
+        startStopLoopSpotButton->setIconSize(pixmap.rect().size());
         startStopLoopSpotButton->setDisabled(true);
+        myStatus = showPanel;
         return;
     }
-    if(startStopLoopSpotButton->text().contains(QString(tr("Avvia")))) {
+    if(myStatus == showPanel) {
         sMessage = QString("<spotloop>1</spotloop>");
         SendToAll(sMessage);
-        //>>>>>>>>>>>startStopLoopSpotButton->setText(tr("Chiudi\nSpot Loop"));
+        pixmap.load(":/buttonIcons/sign_stop.png");
+        ButtonIcon.addPixmap(pixmap);
+        startStopLoopSpotButton->setIcon(ButtonIcon);
+        startStopLoopSpotButton->setIconSize(pixmap.rect().size());
+//>>>>>>>>>>>startStopLoopSpotButton->setText(tr("Chiudi\nSpot Loop"));
         startStopSlideShowButton->setDisabled(true);
         startStopLiveCameraButton->setDisabled(true);
+        myStatus = showSpots;
     }
     else {
         sMessage = "<endspotloop>1</endspotloop>";
         SendToAll(sMessage);
-        //>>>>>>>>>>>startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
+        pixmap.load(":/buttonIcons/org.gnome.Totem.png");
+        ButtonIcon.addPixmap(pixmap);
+        startStopLoopSpotButton->setIcon(ButtonIcon);
+        startStopLoopSpotButton->setIconSize(pixmap.rect().size());
+//>>>>>>>>>>>startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
         startStopSlideShowButton->setDisabled(false);
         startStopLiveCameraButton->setDisabled(false);
+        myStatus = showPanel;
     }
 }
 
@@ -982,24 +1019,41 @@ ScoreController::onButtonStartStopSpotLoopClicked() {
 void
 ScoreController::onButtonStartStopLiveCameraClicked() {
     QString sMessage;
+    QPixmap pixmap;
+    QIcon ButtonIcon;
     if(connectionList.count() == 0) {
-        //>>>>>>>>>>>startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
+        pixmap.load(":/buttonIcons/camera-web.png");
+        ButtonIcon.addPixmap(pixmap);
+        startStopLiveCameraButton = new QPushButton(ButtonIcon, "");
+        startStopLiveCameraButton->setIconSize(pixmap.rect().size());
+//>>>>>>>>>>>startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
         startStopLiveCameraButton->setDisabled(true);
+        myStatus = showPanel;
         return;
     }
-    if(startStopLiveCameraButton->text().contains(QString(tr("Avvia")))) {
+    if(myStatus == showPanel) {
         sMessage = QString("<live>1</live>");
         SendToAll(sMessage);
-        //>>>>>>>>>>>startStopLiveCameraButton->setText(tr("Chiudi\nLive Camera"));
+        pixmap.load(":/buttonIcons/sign_stop.png");
+        ButtonIcon.addPixmap(pixmap);
+        startStopLiveCameraButton = new QPushButton(ButtonIcon, "");
+        startStopLiveCameraButton->setIconSize(pixmap.rect().size());
+//>>>>>>>>>>>startStopLiveCameraButton->setText(tr("Chiudi\nLive Camera"));
         startStopLoopSpotButton->setDisabled(true);
         startStopSlideShowButton->setDisabled(true);
+        myStatus = showCamera;
     }
     else {
         sMessage = "<endlive>1</endlive>";
         SendToAll(sMessage);
-        //>>>>>>>>>>>startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
+        pixmap.load(":/buttonIcons/camera-web.png");
+        ButtonIcon.addPixmap(pixmap);
+        startStopLiveCameraButton->setIcon(ButtonIcon);
+        startStopLiveCameraButton->setIconSize(pixmap.rect().size());
+//>>>>>>>>>>>startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
         startStopLoopSpotButton->setDisabled(false);
         startStopSlideShowButton->setDisabled(false);
+        myStatus = showPanel;
     }
 }
 
@@ -1007,9 +1061,16 @@ ScoreController::onButtonStartStopLiveCameraClicked() {
 void
 ScoreController::onButtonStartStopSlideShowClicked() {
     QString sMessage;
+    QPixmap pixmap;
+    QIcon ButtonIcon;
     if(connectionList.count() == 0) {
-        //>>>>>>>>>>>startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
+        pixmap.load(":/buttonIcons/preferences-desktop-wallpaper.png");
+        ButtonIcon.addPixmap(pixmap);
+        startStopSlideShowButton->setIcon(ButtonIcon);
+        startStopSlideShowButton->setIconSize(pixmap.rect().size());
+//>>>>>>>>>>>startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
         startStopSlideShowButton->setDisabled(true);
+        myStatus = showPanel;
         return;
     }
     if(startStopSlideShowButton->text().contains(QString(tr("Avvia")))) {
@@ -1017,14 +1078,24 @@ ScoreController::onButtonStartStopSlideShowClicked() {
         SendToAll(sMessage);
         startStopLoopSpotButton->setDisabled(true);
         startStopLiveCameraButton->setDisabled(true);
-        //>>>>>>>>>>>startStopSlideShowButton->setText(tr("Chiudi\nSlideshow"));
+        pixmap.load(":/buttonIcons/sign_stop.png");
+        ButtonIcon.addPixmap(pixmap);
+        startStopSlideShowButton->setIcon(ButtonIcon);
+        startStopSlideShowButton->setIconSize(pixmap.rect().size());
+//>>>>>>>>>>>startStopSlideShowButton->setText(tr("Chiudi\nSlideshow"));
+        myStatus = showSlides;
     }
     else {
         sMessage = "<endslideshow>1</endslideshow>";
         SendToAll(sMessage);
         startStopLoopSpotButton->setDisabled(false);
         startStopLiveCameraButton->setDisabled(false);
-        //>>>>>>>>>>>startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
+        pixmap.load(":/buttonIcons/preferences-desktop-wallpaper.png");
+        ButtonIcon.addPixmap(pixmap);
+        startStopSlideShowButton->setIcon(ButtonIcon);
+        startStopSlideShowButton->setIconSize(pixmap.rect().size());
+//>>>>>>>>>>>startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
+        myStatus = showPanel;
     }
 }
 
@@ -1064,20 +1135,19 @@ ScoreController::onButtonSetupClicked() {
     if(!sBaseDir.endsWith(QString("/"))) sBaseDir+= QString("/");
 
     QDir slideDir(sSlideDir);
+    QFileDialog* pGetDirDlg;
     if(slideDir.exists()) {
-        sSlideDir = QFileDialog::getExistingDirectory(
-                        this,
-                        tr("Slide Dir"),
-                        sSlideDir,
-                        QFileDialog::ShowDirsOnly);
+        pGetDirDlg = new QFileDialog(Q_NULLPTR, tr("Slide Dir"), sSlideDir);
     }
     else {
-        sSlideDir = QFileDialog::getExistingDirectory(
-                        this,
-                        tr("Slide Dir"),
-                        sBaseDir,
-                        QFileDialog::ShowDirsOnly);
+        pGetDirDlg = new QFileDialog(Q_NULLPTR, tr("Slide Dir"), sBaseDir);
     }
+    pGetDirDlg->setOptions(QFileDialog::ShowDirsOnly);
+    pGetDirDlg->setViewMode(QFileDialog::List);
+    pGetDirDlg->setWindowFlags(Qt::Window);
+    if(pGetDirDlg->exec() == QDialog::Accepted)
+        sSlideDir = pGetDirDlg->directory().absolutePath();
+    delete pGetDirDlg;
     if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
     slideDir = QDir(sSlideDir);
     if(sSlideDir != QString() && slideDir.exists()) {
@@ -1095,20 +1165,17 @@ ScoreController::onButtonSetupClicked() {
 
     QDir spotDir(sSpotDir);
     if(spotDir.exists()) {
-        sSpotDir = QFileDialog::getExistingDirectory(
-                       this,
-                       tr("Spot Dir"),
-                       sSpotDir,
-                       QFileDialog::ShowDirsOnly);
+        pGetDirDlg = new QFileDialog(Q_NULLPTR, tr("Spot Dir"), sSpotDir);
     }
     else {
-        sSpotDir = QFileDialog::getExistingDirectory(
-                       this,
-                       tr("Spot Dir"),
-                       sBaseDir,
-                       QFileDialog::ShowDirsOnly);
+        pGetDirDlg = new QFileDialog(Q_NULLPTR, tr("Spot Dir"), sBaseDir);
     }
-
+    pGetDirDlg->setOptions(QFileDialog::ShowDirsOnly);
+    pGetDirDlg->setViewMode(QFileDialog::List);
+    pGetDirDlg->setWindowFlags(Qt::Window);
+    if(pGetDirDlg->exec() == QDialog::Accepted)
+        sSpotDir = pGetDirDlg->directory().absolutePath();
+    delete pGetDirDlg;
     if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
     spotDir = QDir(sSpotDir);
     if(sSpotDir != QString() && spotDir.exists()) {
