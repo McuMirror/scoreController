@@ -135,7 +135,7 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
 
 void
 ScoreController::prepareServices() {
-    QString sFunctionName = QString(" ScoreController::PrepareDirectories ");
+    QString sFunctionName = QString(" ScoreController::prepareServices ");
     Q_UNUSED(sFunctionName)
     // Start listening to the discovery port
     if(!prepareDiscovery()) {
