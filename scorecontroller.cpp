@@ -786,17 +786,15 @@ ScoreController::RemoveClient(QHostAddress hAddress) {
 
 void
 ScoreController::UpdateUI() {
-    QString sFunctionName = " ScoreController::RemoveClient ";
+    QString sFunctionName = " ScoreController::UpdateUI ";
     Q_UNUSED(sFunctionName)
     if(connectionList.count() == 1) {
-        startStopLoopSpotButton->setDisabled(false);
-        startStopSlideShowButton->setDisabled(false);
-        startStopLiveCameraButton->setDisabled(false);
-        panelControlButton->setDisabled(false);
+        startStopLoopSpotButton->setEnabled(true);
+        startStopSlideShowButton->setEnabled(true);
+        startStopLiveCameraButton->setEnabled(true);
+        panelControlButton->setEnabled(true);
         generalSetupButton->setDisabled(true);
-//>>>>>>>>>>>>>>>>>>shutdownButton->setText(QString(tr("Spegni %1\nTabellone")).arg(connectionList.count()));
-        shutdownButton->setDisabled(false);
-        shutdownButton->show();
+        shutdownButton->setEnabled(true);
     }
     else if(connectionList.count() == 0) {
         startStopLoopSpotButton->setDisabled(true);
@@ -818,12 +816,9 @@ ScoreController::UpdateUI() {
         startStopLiveCameraButton->setIconSize(pixmap.rect().size());
 
         panelControlButton->setDisabled(true);
-        generalSetupButton->setDisabled(false);
+        generalSetupButton->setEnabled(true);
         shutdownButton->setDisabled(true);
         myStatus = showPanel;
-    }
-    else {
-        shutdownButton->setEnabled(true);
     }
 }
 
@@ -922,7 +917,7 @@ ScoreController::CreateSpotButtonBox() {
     startStopLiveCameraButton->setDisabled(true);
 
     panelControlButton->setDisabled(true);
-    generalSetupButton->setDisabled(false);
+    generalSetupButton->setEnabled(true);
     shutdownButton->setDisabled(true);
 
     connect(panelControlButton, SIGNAL(clicked()),
@@ -1026,7 +1021,6 @@ ScoreController::onButtonStartStopLiveCameraClicked() {
         ButtonIcon.addPixmap(pixmap);
         startStopLiveCameraButton = new QPushButton(ButtonIcon, "");
         startStopLiveCameraButton->setIconSize(pixmap.rect().size());
-//>>>>>>>>>>>startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
         startStopLiveCameraButton->setDisabled(true);
         myStatus = showPanel;
         return;
@@ -1036,9 +1030,8 @@ ScoreController::onButtonStartStopLiveCameraClicked() {
         SendToAll(sMessage);
         pixmap.load(":/buttonIcons/sign_stop.png");
         ButtonIcon.addPixmap(pixmap);
-        startStopLiveCameraButton = new QPushButton(ButtonIcon, "");
+        startStopLiveCameraButton->setIcon(ButtonIcon);
         startStopLiveCameraButton->setIconSize(pixmap.rect().size());
-//>>>>>>>>>>>startStopLiveCameraButton->setText(tr("Chiudi\nLive Camera"));
         startStopLoopSpotButton->setDisabled(true);
         startStopSlideShowButton->setDisabled(true);
         myStatus = showCamera;
@@ -1050,7 +1043,6 @@ ScoreController::onButtonStartStopLiveCameraClicked() {
         ButtonIcon.addPixmap(pixmap);
         startStopLiveCameraButton->setIcon(ButtonIcon);
         startStopLiveCameraButton->setIconSize(pixmap.rect().size());
-//>>>>>>>>>>>startStopLiveCameraButton->setText(tr("Avvia\nLive Camera"));
         startStopLoopSpotButton->setDisabled(false);
         startStopSlideShowButton->setDisabled(false);
         myStatus = showPanel;
@@ -1068,12 +1060,11 @@ ScoreController::onButtonStartStopSlideShowClicked() {
         ButtonIcon.addPixmap(pixmap);
         startStopSlideShowButton->setIcon(ButtonIcon);
         startStopSlideShowButton->setIconSize(pixmap.rect().size());
-//>>>>>>>>>>>startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
         startStopSlideShowButton->setDisabled(true);
         myStatus = showPanel;
         return;
     }
-    if(startStopSlideShowButton->text().contains(QString(tr("Avvia")))) {
+    if(myStatus == showPanel) {
         sMessage = "<slideshow>1</slideshow>";
         SendToAll(sMessage);
         startStopLoopSpotButton->setDisabled(true);
@@ -1082,19 +1073,17 @@ ScoreController::onButtonStartStopSlideShowClicked() {
         ButtonIcon.addPixmap(pixmap);
         startStopSlideShowButton->setIcon(ButtonIcon);
         startStopSlideShowButton->setIconSize(pixmap.rect().size());
-//>>>>>>>>>>>startStopSlideShowButton->setText(tr("Chiudi\nSlideshow"));
         myStatus = showSlides;
     }
     else {
         sMessage = "<endslideshow>1</endslideshow>";
         SendToAll(sMessage);
-        startStopLoopSpotButton->setDisabled(false);
-        startStopLiveCameraButton->setDisabled(false);
+        startStopLoopSpotButton->setEnabled(true);
+        startStopLiveCameraButton->setEnabled(true);
         pixmap.load(":/buttonIcons/preferences-desktop-wallpaper.png");
         ButtonIcon.addPixmap(pixmap);
         startStopSlideShowButton->setIcon(ButtonIcon);
         startStopSlideShowButton->setIconSize(pixmap.rect().size());
-//>>>>>>>>>>>startStopSlideShowButton->setText(tr("Avvia\nSlide Show"));
         myStatus = showPanel;
     }
 }
@@ -1117,6 +1106,7 @@ ScoreController::onButtonShutdownClicked() {
 void
 ScoreController::onButtonPanelControlClicked() {
     hide();
+    pClientListDialog->setWindowFlags(Qt::Window);
     pClientListDialog->exec();
     show();
 }
