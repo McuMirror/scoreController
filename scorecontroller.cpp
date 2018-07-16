@@ -1133,11 +1133,12 @@ ScoreController::onButtonSetupClicked() {
         pGetDirDlg = new QFileDialog(Q_NULLPTR, tr("Slide Dir"), sBaseDir);
     }
     pGetDirDlg->setOptions(QFileDialog::ShowDirsOnly);
+    pGetDirDlg->setFileMode(QFileDialog::Directory);
     pGetDirDlg->setViewMode(QFileDialog::List);
     pGetDirDlg->setWindowFlags(Qt::Window);
     if(pGetDirDlg->exec() == QDialog::Accepted)
         sSlideDir = pGetDirDlg->directory().absolutePath();
-    delete pGetDirDlg;
+    pGetDirDlg->deleteLater();
     if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
     slideDir = QDir(sSlideDir);
     if(sSlideDir != QString() && slideDir.exists()) {
@@ -1161,6 +1162,7 @@ ScoreController::onButtonSetupClicked() {
         pGetDirDlg = new QFileDialog(Q_NULLPTR, tr("Spot Dir"), sBaseDir);
     }
     pGetDirDlg->setOptions(QFileDialog::ShowDirsOnly);
+    pGetDirDlg->setFileMode(QFileDialog::Directory);
     pGetDirDlg->setViewMode(QFileDialog::List);
     pGetDirDlg->setWindowFlags(Qt::Window);
     if(pGetDirDlg->exec() == QDialog::Accepted)
