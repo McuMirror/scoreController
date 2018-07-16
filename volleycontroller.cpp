@@ -92,6 +92,12 @@ VolleyController::VolleyController()
 void
 VolleyController::buildControls() {
     QString sString;
+    QPixmap plusPixmap, minusPixmap;
+    QIcon plusButtonIcon, minusButtonIcon;
+    plusPixmap.load(":/buttonIcons/Plus.png");
+    plusButtonIcon.addPixmap(plusPixmap);
+    minusPixmap.load(":/buttonIcons/Minus.png");
+    minusButtonIcon.addPixmap(minusPixmap);
     for(int iTeam=0; iTeam<2; iTeam++){
         // Teams
         teamName[iTeam] = new Edit(sTeam[iTeam], iTeam);
@@ -104,8 +110,12 @@ VolleyController::buildControls() {
         timeoutEdit[iTeam]->setAlignment(Qt::AlignHCenter);
         timeoutEdit[iTeam]->setReadOnly(true);
         // Timeout buttons
-        timeoutIncrement[iTeam] = new Button("+", iTeam);
-        timeoutDecrement[iTeam] = new Button("-", iTeam);
+        timeoutIncrement[iTeam] = new Button("", iTeam);
+        timeoutIncrement[iTeam]->setIcon(plusButtonIcon);
+        timeoutIncrement[iTeam]->setIconSize(plusPixmap.rect().size());
+        timeoutDecrement[iTeam] = new Button("", iTeam);
+        timeoutDecrement[iTeam]->setIcon(minusButtonIcon);
+        timeoutDecrement[iTeam]->setIconSize(minusPixmap.rect().size());
         if(iTimeout[iTeam] == 0)
             timeoutDecrement[iTeam]->setEnabled(false);
         if(iTimeout[iTeam] == MAX_TIMEOUTS) {
@@ -119,8 +129,12 @@ VolleyController::buildControls() {
         setsEdit[iTeam]->setAlignment(Qt::AlignHCenter);
         setsEdit[iTeam]->setReadOnly(true);
         // Set buttons
-        setsIncrement[iTeam] = new Button("+", iTeam);
-        setsDecrement[iTeam] = new Button("-", iTeam);
+        setsIncrement[iTeam] = new Button("", iTeam);
+        setsIncrement[iTeam]->setIcon(plusButtonIcon);
+        setsIncrement[iTeam]->setIconSize(plusPixmap.rect().size());
+        setsDecrement[iTeam] = new Button("", iTeam);
+        setsDecrement[iTeam]->setIcon(minusButtonIcon);
+        setsDecrement[iTeam]->setIconSize(minusPixmap.rect().size());
         if(iSet[iTeam] == 0)
             setsDecrement[iTeam]->setEnabled(false);
         if(iSet[iTeam] == MAX_SETS)
@@ -136,8 +150,12 @@ VolleyController::buildControls() {
         scoreEdit[iTeam]->setReadOnly(true);
         scoreEdit[iTeam]->setAlignment(Qt::AlignHCenter);
         // Score buttons
-        scoreIncrement[iTeam] = new Button("+", iTeam);
-        scoreDecrement[iTeam] = new Button("-", iTeam);
+        scoreIncrement[iTeam] = new Button("", iTeam);
+        scoreIncrement[iTeam]->setIcon(plusButtonIcon);
+        scoreIncrement[iTeam]->setIconSize(plusPixmap.rect().size());
+        scoreDecrement[iTeam] = new Button("", iTeam);
+        scoreDecrement[iTeam]->setIcon(minusButtonIcon);
+        scoreDecrement[iTeam]->setIconSize(minusPixmap.rect().size());
         if(iScore[iTeam] == 0)
             scoreDecrement[iTeam]->setEnabled(false);
     }
