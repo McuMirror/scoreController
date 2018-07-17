@@ -262,6 +262,7 @@ VolleyController::buildFontSizes() {
     timeoutLabel->setFont(font);
     setsLabel->setFont(font);
     serviceLabel->setFont(font);
+    font.setWeight(QFont::Black);
     scoreLabel->setFont(font);
 
     font = timeoutIncrement[0]->font();
@@ -347,14 +348,18 @@ VolleyController::CreateGameButtons() {
     QPixmap pixmap(":/buttonIcons/ExchangeVolleyField.png");
     QIcon ButtonIcon(pixmap);
 
-    newSetButton  = new QPushButton(ButtonIcon, "");
-    newSetButton->setIconSize(pixmap.rect().size());
+    changeFieldButton = new QPushButton(ButtonIcon, "");
+    changeFieldButton->setIconSize(pixmap.rect().size());
 
+    pixmap.load(":/buttonIcons/New-Game-Volley.png");
+    ButtonIcon.addPixmap(pixmap);
     newGameButton = new QPushButton(ButtonIcon, "");
     newGameButton->setIconSize(pixmap.rect().size());
 
-    changeFieldButton = new QPushButton(ButtonIcon, "");
-    changeFieldButton->setIconSize(pixmap.rect().size());
+    pixmap.load(":/buttonIcons/New-Set-Volley.png");
+    ButtonIcon.addPixmap(pixmap);
+    newSetButton  = new QPushButton(ButtonIcon, "");
+    newSetButton->setIconSize(pixmap.rect().size());
 
     connect(newSetButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonNewSetClicked()));

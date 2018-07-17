@@ -16,5 +16,7 @@
         <file>buttonIcons/Plus.png</file>
         <file>buttonIcons/Minus.png</file>
         <file>buttonIcons/ExchangeVolleyField.png</file>
+        <file>buttonIcons/New-Game-Volley.png</file>
+        <file>buttonIcons/New-Set-Volley.png</file>
     </qresource>
 </RCC>
