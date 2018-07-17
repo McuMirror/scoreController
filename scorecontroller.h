@@ -158,8 +158,6 @@ protected:
     QPushButton*          panelControlButton;
     QPushButton*          generalSetupButton;
     QPushButton*          shutdownButton;
-
-private:
     enum status {
         showPanel,
         showSpots,
