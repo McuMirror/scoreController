@@ -344,7 +344,7 @@ VolleyController::SaveStatus() {
 QHBoxLayout*
 VolleyController::CreateGameButtons() {
     QHBoxLayout* gameButtonLayout = new QHBoxLayout();
-    QPixmap pixmap(":/buttonIcons/Volley-Field.png");
+    QPixmap pixmap(":/buttonIcons/ExchangeVolleyField.png");
     QIcon ButtonIcon(pixmap);
 
     newSetButton  = new QPushButton(ButtonIcon, "");

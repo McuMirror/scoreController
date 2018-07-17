@@ -15,5 +15,6 @@
         <file>buttonIcons/sign_stop.png</file>
         <file>buttonIcons/Plus.png</file>
         <file>buttonIcons/Minus.png</file>
+        <file>buttonIcons/ExchangeVolleyField.png</file>
     </qresource>
 </RCC>
