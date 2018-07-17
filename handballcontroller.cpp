@@ -59,21 +59,18 @@ HandballController::HandballController()
     pSpotUpdaterServer->setDir(sSpotDir, "*.mp4 *.MP4");
     emit startSpotServer();
 
+    buildControls();
     QGridLayout *mainLayout = new QGridLayout();
+
     int gamePanelWidth   = 15;
     int gamePanelHeight  = 13;
     int gameBoxHeight    = 3;
     int gameButtonHeight = 3;
+
     mainLayout->addLayout(CreateGamePanel(),
                           0,
                           0,
                           gamePanelHeight,
-                          gamePanelWidth);
-
-    mainLayout->addWidget(CreateGameBox(),
-                          gamePanelHeight,
-                          0,
-                          gameBoxHeight,
                           gamePanelWidth);
 
     mainLayout->addWidget(CreateGameButtonBox(),
@@ -88,6 +85,215 @@ HandballController::HandballController()
                           gamePanelHeight+gameBoxHeight+gameButtonHeight,
                           2);
     setLayout(mainLayout);
+    buildFontSizes();
+    setEventHandlers();
+}
+
+
+void
+HandballController::buildControls() {
+    QString sString;
+    QPixmap plusPixmap, minusPixmap;
+    QIcon plusButtonIcon, minusButtonIcon;
+    plusPixmap.load(":/buttonIcons/Plus.png");
+    plusButtonIcon.addPixmap(plusPixmap);
+    minusPixmap.load(":/buttonIcons/Minus.png");
+    minusButtonIcon.addPixmap(minusPixmap);
+    for(int iTeam=0; iTeam<2; iTeam++) {
+        // Teams
+        teamName[iTeam] = new Edit(sTeam[iTeam], iTeam);
+        teamName[iTeam]->setAlignment(Qt::AlignHCenter);
+        teamName[iTeam]->setMaxLength(15);
+        // Timeout
+        sString.sprintf("%1d", iTimeout[iTeam]);
+        timeoutEdit[iTeam] = new Edit(sString);
+        timeoutEdit[iTeam]->setMaxLength(1);
+        timeoutEdit[iTeam]->setAlignment(Qt::AlignHCenter);
+        timeoutEdit[iTeam]->setReadOnly(true);
+        // Timeout buttons
+        timeoutIncrement[iTeam] = new Button("", iTeam);
+        timeoutIncrement[iTeam]->setIcon(plusButtonIcon);
+        timeoutIncrement[iTeam]->setIconSize(plusPixmap.rect().size());
+        timeoutDecrement[iTeam] = new Button("", iTeam);
+        timeoutDecrement[iTeam]->setIcon(minusButtonIcon);
+        timeoutDecrement[iTeam]->setIconSize(minusPixmap.rect().size());
+        if(iTimeout[iTeam] == 0)
+            timeoutDecrement[iTeam]->setEnabled(false);
+        if(iTimeout[iTeam] == MAX_TIMEOUTS) {
+            timeoutIncrement[iTeam]->setEnabled(false);
+            timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
+        }
+        // Score
+        sString.sprintf("%3d", iScore[iTeam]);
+        scoreEdit[iTeam] = new Edit(sString);
+        scoreEdit[iTeam]->setMaxLength(3);
+        scoreEdit[iTeam]->setReadOnly(true);
+        scoreEdit[iTeam]->setAlignment(Qt::AlignRight);
+        // Score buttons
+        scoreIncrement[iTeam] = new Button("", iTeam);
+        scoreIncrement[iTeam]->setIcon(plusButtonIcon);
+        scoreIncrement[iTeam]->setIconSize(plusPixmap.rect().size());
+        scoreDecrement[iTeam] = new Button("", iTeam);
+        scoreDecrement[iTeam]->setIcon(minusButtonIcon);
+        scoreDecrement[iTeam]->setIconSize(minusPixmap.rect().size());
+        if(iScore[iTeam] == 0)
+            scoreDecrement[iTeam]->setEnabled(false);
+    }
+    // Period
+    sString.sprintf("%2d", iPeriod);
+    periodEdit = new Edit(sString);
+    periodEdit->setMaxLength(2);
+    periodEdit->setReadOnly(true);
+    periodEdit->setAlignment(Qt::AlignRight);
+    // Period Buttons
+    periodIncrement = new QPushButton();
+    periodIncrement->setIcon(plusButtonIcon);
+    periodIncrement->setIconSize(plusPixmap.rect().size());
+    periodDecrement = new QPushButton();
+    periodDecrement->setIcon(minusButtonIcon);
+    periodDecrement->setIconSize(minusPixmap.rect().size());
+    if(iPeriod < 2)
+        periodDecrement->setDisabled(true);
+
+    //Labels:
+
+    // Timeout
+    timeoutLabel = new QLabel(tr("Timeout"));
+    timeoutLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
+    // Score
+    scoreLabel = new QLabel(tr("Score"));
+    scoreLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
+    // Period
+    periodLabel = new QLabel(tr("Period"));
+    periodLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
+}
+
+
+void
+HandballController::buildFontSizes() {
+    int rW, rH;
+    QFont font;
+    // Teams
+    font = teamName[0]->font();
+    font.setCapitalization(QFont::Capitalize);
+    iTeamFontSize = QFontMetrics(font).maxWidth();
+    rH = QFontMetrics(font).height();
+    for(int i=iTeamFontSize; i<100; i++) {
+        font.setPixelSize(i);
+        rW = QFontMetrics(font).maxWidth()*15;
+        rH = QFontMetrics(font).height();
+        if((rW > teamName[0]->width()) || (rH > teamName[0]->height())){
+            iTeamFontSize = i-1;
+            break;
+        }
+    }
+    font.setPixelSize(iTeamFontSize);
+    teamName[0]->setFont(font);
+    teamName[1]->setFont(font);
+    // Timeout
+    font = timeoutEdit[0]->font();
+    iTimeoutFontSize = QFontMetrics(font).maxWidth();
+    rH = QFontMetrics(font).height();
+    for(int i=iTimeoutFontSize; i<100; i++) {
+        font.setPixelSize(i);
+        rW = QFontMetrics(font).maxWidth();
+        rH = QFontMetrics(font).height();
+        if((rW > timeoutEdit[0]->width()) || (rH > timeoutEdit[0]->height())){
+            iTimeoutFontSize = i-1;
+            break;
+        }
+    }
+    font.setPixelSize(iTimeoutFontSize);
+    timeoutEdit[0]->setFont(font);
+    timeoutEdit[1]->setFont(font);
+    // Score
+    font = scoreEdit[0]->font();
+    font.setWeight(QFont::Black);
+    iScoreFontSize = QFontMetrics(font).maxWidth();
+    rH = QFontMetrics(font).height();
+    for(int i=iScoreFontSize; i<100; i++) {
+        font.setPixelSize(i);
+        rW = QFontMetrics(font).maxWidth()*2;
+        rH = QFontMetrics(font).height();
+        if((rW > scoreEdit[0]->width()) || (rH > scoreEdit[0]->height())){
+            iScoreFontSize = i-1;
+            break;
+        }
+    }
+    font.setPixelSize(iScoreFontSize);
+    scoreEdit[0]->setFont(font);
+    scoreEdit[1]->setFont(font);
+    //Labels:
+    // Period
+    font = periodLabel->font();
+    int iPeriodLabelFontSize = font.pointSize();
+    for(int i=iPeriodLabelFontSize; i<100; i++) {
+        font.setPointSize(i);
+        rW = QFontMetrics(font).width(periodLabel->text());
+        rH = QFontMetrics(font).height();
+        if((rW > periodLabel->width()) || (rH > periodLabel->height())){
+            iPeriodLabelFontSize = i-1;
+            break;
+        }
+    }
+    font.setPointSize(iPeriodLabelFontSize);
+    periodLabel->setFont(font);
+    periodEdit->setFont(font);
+    // Timeout
+    font = timeoutLabel->font();
+    iLabelFontSize = QFontMetrics(font).maxWidth();
+    rH = QFontMetrics(font).height();
+    for(int i=iLabelFontSize; i<100; i++) {
+        font.setPixelSize(i);
+        rW = QFontMetrics(font).width(timeoutLabel->text());
+        rH = QFontMetrics(font).height();
+        if((rW > timeoutLabel->width()) || (rH > timeoutLabel->height())){
+            iScoreFontSize = i-1;
+            break;
+        }
+    }
+
+    font.setPixelSize(iLabelFontSize);
+    timeoutLabel->setFont(font);
+    font.setWeight(QFont::Black);
+    scoreLabel->setFont(font);
+}
+
+
+void
+HandballController::setEventHandlers() {
+    for(int iTeam=0; iTeam <2; iTeam++) {
+        // Teams
+        connect(teamName[iTeam], SIGNAL(textChanged(QString, int)),
+                this, SLOT(onTeamTextChanged(QString, int)));
+        // Timeouts
+        connect(timeoutIncrement[iTeam], SIGNAL(buttonClicked(int)),
+                this, SLOT(onTimeOutIncrement(int)));
+        connect(timeoutIncrement[iTeam], SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
+        connect(timeoutDecrement[iTeam], SIGNAL(buttonClicked(int)),
+                this, SLOT(onTimeOutDecrement(int)));
+        connect(timeoutDecrement[iTeam], SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
+        // Scores
+        connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
+                this, SLOT(onScoreIncrement(int)));
+        connect(scoreIncrement[iTeam], SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
+        connect(scoreDecrement[iTeam], SIGNAL(buttonClicked(int)),
+                this, SLOT(onScoreDecrement(int)));
+        connect(scoreDecrement[iTeam], SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
+        // Period
+        connect(periodIncrement, SIGNAL(clicked()),
+                this, SLOT(onPeriodIncrement()));
+        connect(periodIncrement, SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
+        connect(periodDecrement, SIGNAL(clicked()),
+                this, SLOT(onPeriodDecrement()));
+        connect(periodDecrement, SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
+    }
 }
 
 
@@ -145,212 +351,6 @@ HandballController::closeEvent(QCloseEvent *event) {
 
 
 QGroupBox*
-HandballController::CreateTeamBox(int iTeam) {
-    QGroupBox* teamBox      = new QGroupBox();
-    QString sString;
-    QGridLayout* teamLayout = new QGridLayout();
-    QLabel* labelSpacer = new QLabel(QString());
-
-    QScreen *screen = QGuiApplication::primaryScreen();
-    QRect screenGeometry = screen->geometry();
-    int width = screenGeometry.width();
-    int rW;
-
-    // Team
-    int nextRow = 0;
-    teamName[iTeam] = new Edit(sTeam[iTeam], iTeam);
-    teamName[iTeam]->setAlignment(Qt::AlignHCenter);
-    teamName[iTeam]->setMaxLength(15);
-    connect(teamName[iTeam], SIGNAL(textChanged(QString, int)),
-            this, SLOT(onTeamTextChanged(QString, int)));
-
-    QFont font(teamName[iTeam]->font());
-    int iTeamFontSize = font.pointSize();
-    if(iTeamFontSize < 11) iTeamFontSize = 11;
-    for(int i=iTeamFontSize; i<100; i++) {
-        font.setPointSize(i);
-        QFontMetrics f(font);
-        rW = teamName[iTeam]->maxLength()*f.width("W");
-        if(rW > width/3) {
-            iTeamFontSize = i-1;
-            break;
-        }
-    }
-    font.setPointSize(iTeamFontSize);
-    teamName[iTeam]->setFont(font);
-    teamLayout->addWidget(teamName[iTeam], nextRow, 0, 2, 10);
-    nextRow += 2;
-
-    teamLayout->addWidget(labelSpacer, nextRow, 0, 1, 10);
-    nextRow += 1;
-
-    // Timeout
-    QLabel *timeoutLabel;
-    timeoutLabel = new QLabel(tr("Timeout"));
-    timeoutLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
-
-    font = timeoutLabel->font();
-    int iTimeoutLabelFontSize = font.pointSize();
-    if(iTimeoutLabelFontSize < 11) iTimeoutLabelFontSize = 11;
-    for(int i=iTimeoutLabelFontSize; i<100; i++) {
-        font.setPointSize(i);
-        QFontMetrics f(font);
-        rW = f.width(timeoutLabel->text());
-        if(rW > width/10) {
-            iTimeoutLabelFontSize = i-1;
-            break;
-        }
-    }
-    font.setPointSize(iTimeoutLabelFontSize);
-    timeoutLabel->setFont(font);
-
-    sString.sprintf("%1d", iTimeout[iTeam]);
-    timeoutEdit[iTeam] = new Edit(sString);
-    timeoutEdit[iTeam]->setMaxLength(1);
-    timeoutEdit[iTeam]->setAlignment(Qt::AlignHCenter);
-    timeoutEdit[iTeam]->setReadOnly(true);
-
-    font = timeoutEdit[iTeam]->font();
-    font.setPointSize(iTimeoutLabelFontSize);
-    timeoutEdit[iTeam]->setFont(font);
-
-    timeoutIncrement[iTeam] = new Button("+", iTeam);
-    timeoutDecrement[iTeam] = new Button("-", iTeam);
-
-    connect(timeoutIncrement[iTeam], SIGNAL(buttonClicked(int)),
-            this, SLOT(onTimeOutIncrement(int)));
-    connect(timeoutIncrement[iTeam], SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-    connect(timeoutDecrement[iTeam], SIGNAL(buttonClicked(int)),
-            this, SLOT(onTimeOutDecrement(int)));
-    connect(timeoutDecrement[iTeam], SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-
-    if(iTimeout[iTeam] == 0)
-        timeoutDecrement[iTeam]->setEnabled(false);
-
-    teamLayout->addWidget(timeoutLabel,            nextRow, 0, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
-    teamLayout->addWidget(timeoutDecrement[iTeam], nextRow, 3, 2, 2, Qt::AlignRight);
-    teamLayout->addWidget(timeoutEdit[iTeam],      nextRow, 5, 2, 3, Qt::AlignHCenter|Qt::AlignVCenter);
-    teamLayout->addWidget(timeoutIncrement[iTeam], nextRow, 8, 2, 2, Qt::AlignLeft);
-    nextRow+= 2;
-    teamLayout->addWidget(labelSpacer, nextRow, 0, 1, 10);
-    nextRow += 1;
-
-    // Score
-    QLabel *scoreLabel;
-    scoreLabel = new QLabel(tr("Score"));
-    scoreLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
-
-    font = scoreLabel->font();
-    font.setPointSize(iTimeoutLabelFontSize);
-    scoreLabel->setFont(font);
-
-    scoreEdit[iTeam] = new Edit();
-    scoreEdit[iTeam]->setMaxLength(3);
-    scoreEdit[iTeam]->setReadOnly(true);
-    scoreEdit[iTeam]->setAlignment(Qt::AlignRight);
-    sString.sprintf("%3d", iScore[iTeam]);
-    scoreEdit[iTeam]->setText(sString);
-
-    font = scoreEdit[iTeam]->font();
-    font.setPointSize(iTimeoutLabelFontSize);
-    scoreEdit[iTeam]->setFont(font);
-
-    scoreIncrement[iTeam] = new Button("+", iTeam);
-    scoreDecrement[iTeam] = new Button("-", iTeam);
-
-    connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
-            this, SLOT(onScoreIncrement(int)));
-    connect(scoreIncrement[iTeam], SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-    connect(scoreDecrement[iTeam], SIGNAL(buttonClicked(int)),
-            this, SLOT(onScoreDecrement(int)));
-    connect(scoreDecrement[iTeam], SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-
-    if(iScore[iTeam] == 0)
-        scoreDecrement[iTeam]->setEnabled(false);
-
-    teamLayout->addWidget(scoreLabel,            nextRow, 0, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
-    teamLayout->addWidget(scoreDecrement[iTeam], nextRow, 3, 2, 2, Qt::AlignRight);
-    teamLayout->addWidget(scoreEdit[iTeam],      nextRow, 5, 2, 3, Qt::AlignHCenter|Qt::AlignVCenter);
-    teamLayout->addWidget(scoreIncrement[iTeam], nextRow, 8, 2, 2, Qt::AlignLeft);
-
-    teamBox->setLayout(teamLayout);
-    return teamBox;
-}
-
-
-QGroupBox*
-HandballController::CreateGameBox() {
-    QGroupBox* gameBox      = new QGroupBox();
-    QString sString;
-    QGridLayout* gameLayout = new QGridLayout();
-
-    QScreen *screen = QGuiApplication::primaryScreen();
-    QRect screenGeometry = screen->geometry();
-    int width = screenGeometry.width();
-    int rW;
-
-    // Period
-    QLabel *periodLabel;
-    periodLabel = new QLabel(tr("Period"));
-    periodLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
-
-    QFont font = periodLabel->font();
-    int iPeriodLabelFontSize = font.pointSize();
-    for(int i=iPeriodLabelFontSize; i<100; i++) {
-        font.setPointSize(i);
-        QFontMetrics f(font);
-        rW = f.width(periodLabel->text());
-        if(rW > width/10) {
-            iPeriodLabelFontSize = i-1;
-            break;
-        }
-    }
-    font.setPointSize(iPeriodLabelFontSize);
-
-    font = periodLabel->font();
-    font.setPointSize(iPeriodLabelFontSize);
-    periodLabel->setFont(font);
-
-    periodEdit = new Edit();
-    periodEdit->setMaxLength(2);
-    periodEdit->setReadOnly(true);
-    periodEdit->setAlignment(Qt::AlignRight);
-    sString.sprintf("%2d", iPeriod);
-    periodEdit->setText(sString);
-
-    font = periodEdit->font();
-    font.setPointSize(iPeriodLabelFontSize);
-    periodEdit->setFont(font);
-
-    periodIncrement = new Button("+", 0);
-    periodDecrement = new Button("-", 0);
-
-    connect(periodIncrement, SIGNAL(buttonClicked(int)),
-            this, SLOT(onPeriodIncrement(int)));
-    connect(periodIncrement, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-    connect(periodDecrement, SIGNAL(buttonClicked(int)),
-            this, SLOT(onPeriodDecrement(int)));
-    connect(periodDecrement, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-
-    if(iPeriod < 2)
-        periodDecrement->setEnabled(false);
-
-    gameLayout->addWidget(periodLabel,     0,  2, 2, 2, Qt::AlignRight|Qt::AlignVCenter);
-    gameLayout->addWidget(periodDecrement, 0,  4, 2, 2, Qt::AlignRight);
-    gameLayout->addWidget(periodEdit,      0,  6, 2, 2, Qt::AlignHCenter|Qt::AlignVCenter);
-    gameLayout->addWidget(periodIncrement, 0,  8, 2, 2, Qt::AlignLeft);
-    gameBox->setLayout(gameLayout);
-    return gameBox;
-}
-
-
-QGroupBox*
 HandballController::CreateGameButtonBox() {
     QGroupBox* gameButtonBox = new QGroupBox();
     QHBoxLayout* gameButtonLayout = new QHBoxLayout();
@@ -387,8 +387,30 @@ HandballController::CreateGameButtonBox() {
 QGridLayout*
 HandballController::CreateGamePanel() {
     QGridLayout* gamePanel = new QGridLayout();
-    gamePanel->addWidget(CreateTeamBox(0),      0, 0, 1, 1);
-    gamePanel->addWidget(CreateTeamBox(1),      0, 1, 1, 1);
+    //
+    int iRow;
+    for(int iTeam=0; iTeam<2; iTeam++) {
+        // Matrice x righe e 8 colonne
+        iRow = 0;
+        gamePanel->addWidget(teamName[iTeam], iRow, iTeam*4, 1, 4);
+        int iCol = iTeam*5;
+        iRow += 1;
+        gamePanel->addWidget(timeoutDecrement[iTeam], iRow, iCol,   1, 1, Qt::AlignRight);
+        gamePanel->addWidget(timeoutEdit[iTeam],      iRow, iCol+1, 1, 1, Qt::AlignHCenter|Qt::AlignVCenter);
+        gamePanel->addWidget(timeoutIncrement[iTeam], iRow, iCol+2, 1, 1, Qt::AlignLeft);
+        iRow += 1;
+        gamePanel->addWidget(scoreDecrement[iTeam], iRow, iCol,   2, 1, Qt::AlignRight);
+        gamePanel->addWidget(scoreEdit[iTeam],      iRow, iCol+1, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
+        gamePanel->addWidget(scoreIncrement[iTeam], iRow, iCol+2, 2, 1, Qt::AlignLeft);
+        iRow += 2;
+    }
+    gamePanel->addWidget(periodLabel,     iRow,  0, 2, 4, Qt::AlignRight|Qt::AlignVCenter);
+    gamePanel->addWidget(periodDecrement, iRow,  4, 2, 1, Qt::AlignRight);
+    gamePanel->addWidget(periodEdit,      iRow,  5, 2, 2, Qt::AlignHCenter|Qt::AlignVCenter);
+    gamePanel->addWidget(periodIncrement, iRow,  7, 2, 1, Qt::AlignLeft);
+    gamePanel->addWidget(timeoutLabel, 1, 3, 1, 2, Qt::AlignHCenter|Qt::AlignVCenter);
+    gamePanel->addWidget(scoreLabel, 2, 3, 2, 2, Qt::AlignHCenter|Qt::AlignVCenter);
+
     return gamePanel;
 }
 
@@ -540,8 +562,7 @@ HandballController::onTeamTextChanged(QString sText, int iTeam) {
 
 
 void
-HandballController::onPeriodIncrement(int iDummy) {
-    Q_UNUSED(iDummy)
+HandballController::onPeriodIncrement() {
     if(iPeriod < maxPeriods) {
         iPeriod++;
     }
@@ -560,8 +581,7 @@ HandballController::onPeriodIncrement(int iDummy) {
 
 
 void
-HandballController::onPeriodDecrement(int iDummy) {
-    Q_UNUSED(iDummy)
+HandballController::onPeriodDecrement() {
     if(iPeriod > 1) {
         iPeriod--;
     }

@@ -215,7 +215,7 @@ VolleyController::buildFontSizes() {
     font = timeoutEdit[0]->font();
     iTimeoutFontSize = QFontMetrics(font).maxWidth();
     rH = QFontMetrics(font).height();
-    for(int i=iSetFontSize; i<100; i++) {
+    for(int i=iTimeoutFontSize; i<100; i++) {
         font.setPixelSize(i);
         rW = QFontMetrics(font).maxWidth();
         rH = QFontMetrics(font).height();
@@ -388,9 +388,10 @@ QGridLayout*
 VolleyController::CreateGamePanel() {
     QGridLayout* gamePanel = new QGridLayout();
     // Team
+    int iRow;
     for(int iTeam=0; iTeam<2; iTeam++) {
         // Matrice x righe e 8 colonne
-        int iRow = 0;
+        iRow = 0;
         gamePanel->addWidget(teamName[iTeam], iRow, iTeam*4, 1, 4);
         int iCol = iTeam*5;
         iRow += 1;
@@ -407,6 +408,7 @@ VolleyController::CreateGamePanel() {
         gamePanel->addWidget(scoreDecrement[iTeam], iRow, iCol,   2, 1, Qt::AlignRight);
         gamePanel->addWidget(scoreEdit[iTeam],      iRow, iCol+1, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
         gamePanel->addWidget(scoreIncrement[iTeam], iRow, iCol+2, 2, 1, Qt::AlignLeft);
+        iRow++;
     }
 
     gamePanel->addWidget(timeoutLabel, 1, 3, 1, 2);

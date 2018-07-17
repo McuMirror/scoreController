@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QLabel>
 
 #include "scorecontroller.h"
 
@@ -26,17 +27,18 @@ private slots:
     void onScoreIncrement(int iTeam);
     void onScoreDecrement(int iTeam);
     void onTeamTextChanged(QString sText, int iTeam);
-    void onPeriodIncrement(int iDummy);
-    void onPeriodDecrement(int iDummy);
+    void onPeriodIncrement();
+    void onPeriodDecrement();
 
     void onButtonChangeFieldClicked();
     void onButtonNewPeriodClicked();
     void onButtonNewGameClicked();
 
 private:
+    void          setEventHandlers();
+    void          buildControls();
+    void          buildFontSizes();
     QGridLayout  *CreateGamePanel();
-    QGroupBox    *CreateTeamBox(int iTeam);
-    QGroupBox    *CreateGameBox();
     QGroupBox    *CreateGameButtonBox();
     QString       FormatStatusMsg();
     void          SaveStatus() ;
@@ -55,8 +57,17 @@ private:
     Button       *timeoutDecrement[2];
     Button       *scoreIncrement[2];
     Button       *scoreDecrement[2];
-    Button       *periodIncrement;
-    Button       *periodDecrement;
+    QPushButton  *periodIncrement;
+    QPushButton  *periodDecrement;
+    QLabel       *timeoutLabel;
+    QLabel       *scoreLabel;
+    QLabel       *periodLabel;
+
+    int           iTeamFontSize;
+    int           iTimeoutFontSize;
+    int           iScoreFontSize;
+    int           iLabelFontSize;
+    int           iPeriodLabelFontSize;
 
     int           maxTimeouts;
     int           maxPeriods;
