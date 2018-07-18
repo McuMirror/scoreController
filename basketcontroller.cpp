@@ -182,10 +182,10 @@ BasketController::buildControls() {
     periodEdit->setReadOnly(true);
     periodEdit->setAlignment(Qt::AlignRight);
     // Period Buttons
-    periodIncrement = new Button("", 0);
+    periodIncrement = new QPushButton("");
     periodIncrement->setIcon(plusButtonIcon);
     periodIncrement->setIconSize(plusPixmap.rect().size());
-    periodDecrement = new Button("", 0);
+    periodDecrement = new QPushButton("");
     periodDecrement->setIcon(minusButtonIcon);
     periodDecrement->setIconSize(minusPixmap.rect().size());
     if(iPeriod < 2)
@@ -363,17 +363,9 @@ BasketController::setEventHandlers() {
                 this, SLOT(onFaulsDecrement(int)));
         connect(faulsDecrement[iTeam], SIGNAL(clicked()),
                 pButtonClick, SLOT(play()));
-        // Period
-        connect(periodIncrement, SIGNAL(buttonClicked(int)),
-                this, SLOT(onPeriodIncrement(int)));
-        connect(periodIncrement, SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
-        connect(periodDecrement, SIGNAL(buttonClicked(int)),
-                this, SLOT(onPeriodDecrement(int)));
-        connect(periodDecrement, SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
         // Possess
-        connect(possess[iTeam], SIGNAL(buttonClicked(int, bool)), this, SLOT(onPossessClicked(int, bool)));
+        connect(possess[iTeam], SIGNAL(buttonClicked(int, bool)),
+                this, SLOT(onPossessClicked(int, bool)));
         // Score
         connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onScoreIncrement(int)));
@@ -383,20 +375,29 @@ BasketController::setEventHandlers() {
                 this, SLOT(onScoreDecrement(int)));
         connect(scoreDecrement[iTeam], SIGNAL(clicked()),
                 pButtonClick, SLOT(play()));
-        // Buttons
-        connect(newPeriodButton, SIGNAL(clicked(bool)),
-                this, SLOT(onButtonNewPeriodClicked()));
-        connect(newPeriodButton, SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
-        connect(newGameButton, SIGNAL(clicked(bool)),
-                this, SLOT(onButtonNewGameClicked()));
-        connect(newGameButton, SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
-        connect(changeFieldButton, SIGNAL(clicked(bool)),
-                this, SLOT(onButtonChangeFieldClicked()));
-        connect(changeFieldButton, SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
     }
+    // Period
+    connect(periodIncrement, SIGNAL(clicked()),
+            this, SLOT(onIncrementPeriod()));
+    connect(periodIncrement, SIGNAL(clicked()),
+            pButtonClick, SLOT(play()));
+    connect(periodDecrement, SIGNAL(clicked()),
+            this, SLOT(onDecrementPeriod()));
+    connect(periodDecrement, SIGNAL(clicked()),
+            pButtonClick, SLOT(play()));
+    // Buttons
+    connect(newPeriodButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonNewPeriodClicked()));
+    connect(newPeriodButton, SIGNAL(clicked()),
+            pButtonClick, SLOT(play()));
+    connect(newGameButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonNewGameClicked()));
+    connect(newGameButton, SIGNAL(clicked()),
+            pButtonClick, SLOT(play()));
+    connect(changeFieldButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonChangeFieldClicked()));
+    connect(changeFieldButton, SIGNAL(clicked()),
+            pButtonClick, SLOT(play()));
 }
 
 
@@ -921,12 +922,11 @@ BasketController::onButtonNewGameClicked() {
 
 
 void
-BasketController::onPeriodIncrement(int iDummy) {
-    Q_UNUSED(iDummy)
+BasketController::onIncrementPeriod() {
     if(iPeriod < MAX_PERIODS) {
         iPeriod++;
     }
-    if(iPeriod >= MAX_PERIODS) {
+    else if(iPeriod >= MAX_PERIODS) {
         periodIncrement->setDisabled(true);
         iPeriod= MAX_PERIODS;
     }
@@ -944,12 +944,11 @@ BasketController::onPeriodIncrement(int iDummy) {
 
 
 void
-BasketController::onPeriodDecrement(int iDummy) {
-    Q_UNUSED(iDummy)
+BasketController::onDecrementPeriod() {
     if(iPeriod > 1) {
         iPeriod--;
     }
-    if(iPeriod < 2)
+    else if(iPeriod < 2)
         periodDecrement->setDisabled(true);
     if(iPeriod >= MAX_PERIODS) {
         periodIncrement->setDisabled(true);

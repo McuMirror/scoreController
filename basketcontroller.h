@@ -34,8 +34,8 @@ private slots:
     void onFaulsIncrement(int iTeam);
     void onFaulsDecrement(int iTeam);
     void onTeamTextChanged(QString sText, int iTeam);
-    void onPeriodIncrement(int iDummy);
-    void onPeriodDecrement(int iDummy);
+    void onIncrementPeriod();
+    void onDecrementPeriod();
     void onPossessClicked(int iTeam, bool bChecked);
 
     void onButtonChangeFieldClicked();
@@ -72,8 +72,8 @@ private:
     Button       *scoreDecrement[2];
     Button       *faulsIncrement[2];
     Button       *faulsDecrement[2];
-    Button       *periodIncrement;
-    Button       *periodDecrement;
+    QPushButton  *periodIncrement;
+    QPushButton  *periodDecrement;
     QRadioButton *possess[2];
 
     QLabel       *timeoutLabel;
@@ -82,6 +82,10 @@ private:
     QLabel       *periodLabel;
     QLabel       *possessLabel;
 
+    QPushButton  *newPeriodButton;
+    QPushButton  *newGameButton;
+    QPushButton  *changeFieldButton;
+
     int           iTeamFontSize;
     int           iTimeoutFontSize;
     int           iFaulsFontSize;
@@ -89,10 +93,6 @@ private:
     int           iLabelFontSize;
     int           iPeriodLabelFontSize;
     int           iBonusEditFontSize;
-
-    QPushButton  *newPeriodButton;
-    QPushButton  *newGameButton;
-    QPushButton  *changeFieldButton;
 };
 
 #endif // BASKETCONTROLLER_H

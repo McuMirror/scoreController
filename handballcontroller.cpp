@@ -284,31 +284,31 @@ HandballController::setEventHandlers() {
                 this, SLOT(onScoreDecrement(int)));
         connect(scoreDecrement[iTeam], SIGNAL(clicked()),
                 pButtonClick, SLOT(play()));
-        // Period
-        connect(periodIncrement, SIGNAL(clicked()),
-                this, SLOT(onPeriodIncrement()));
-        connect(periodIncrement, SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
-        connect(periodDecrement, SIGNAL(clicked()),
-                this, SLOT(onPeriodDecrement()));
-        connect(periodDecrement, SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
-        // New Period
-        connect(newPeriodButton, SIGNAL(clicked(bool)),
-                this, SLOT(onButtonNewPeriodClicked()));
-        connect(newPeriodButton, SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
-        // New Game
-        connect(newGameButton, SIGNAL(clicked(bool)),
-                this, SLOT(onButtonNewGameClicked()));
-        connect(newGameButton, SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
-        // Exchange Field Position
-        connect(changeFieldButton, SIGNAL(clicked(bool)),
-                this, SLOT(onButtonChangeFieldClicked()));
-        connect(changeFieldButton, SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
     }
+    // Period
+    connect(periodIncrement, SIGNAL(clicked()),
+            this, SLOT(onPeriodIncrement()));
+    connect(periodIncrement, SIGNAL(clicked()),
+            pButtonClick, SLOT(play()));
+    connect(periodDecrement, SIGNAL(clicked()),
+            this, SLOT(onPeriodDecrement()));
+    connect(periodDecrement, SIGNAL(clicked()),
+            pButtonClick, SLOT(play()));
+    // New Period
+    connect(newPeriodButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonNewPeriodClicked()));
+    connect(newPeriodButton, SIGNAL(clicked()),
+            pButtonClick, SLOT(play()));
+    // New Game
+    connect(newGameButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonNewGameClicked()));
+    connect(newGameButton, SIGNAL(clicked()),
+            pButtonClick, SLOT(play()));
+    // Exchange Field Position
+    connect(changeFieldButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonChangeFieldClicked()));
+    connect(changeFieldButton, SIGNAL(clicked()),
+            pButtonClick, SLOT(play()));
 }
 
 

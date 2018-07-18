@@ -63,8 +63,8 @@ public:
     int heightForWidth(int w) const;
 public:
 
-public slots:
-    void onClicked(bool bChecked);
+private slots:
+    void onButtonClicked();
 
 signals:
     void buttonClicked(int iTeam);
