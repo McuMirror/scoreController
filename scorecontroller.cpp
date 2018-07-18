@@ -879,7 +879,7 @@ ScoreController::onProcessBinaryMessage(QByteArray message) {
 
 
 QHBoxLayout*
-ScoreController::CreateSpotButtonBox() {
+ScoreController::CreateSpotButtons() {
     QHBoxLayout* spotButtonLayout = new QHBoxLayout();
 
     QPixmap pixmap(":/buttonIcons/org.gnome.Totem.png");

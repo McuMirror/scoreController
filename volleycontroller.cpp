@@ -71,21 +71,21 @@ VolleyController::VolleyController()
                           gamePanelHeigth,
                           0,
                           2,
-                          7);
+                          5);
 
-    mainLayout->addLayout(CreateSpotButtonBox(),
+    mainLayout->addLayout(CreateSpotButtons(),
                           gamePanelHeigth,
-                          7,
+                          5,
                           2,
-                          gamePanelWidth-7);
+                          gamePanelWidth-5);
 
     setLayout(mainLayout);
 
     buildFontSizes();
+    setEventHandlers();
+
     service[iServizio ? 1 : 0]->setChecked(true);
     service[iServizio ? 0 : 1]->setChecked(false);
-
-    setEventHandlers();
 }
 
 
@@ -361,19 +361,6 @@ VolleyController::CreateGameButtons() {
     newSetButton  = new QPushButton(ButtonIcon, "");
     newSetButton->setIconSize(pixmap.rect().size());
 
-    connect(newSetButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonNewSetClicked()));
-    connect(newSetButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-    connect(newGameButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonNewGameClicked()));
-    connect(newGameButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-    connect(changeFieldButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonChangeFieldClicked()));
-    connect(changeFieldButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-
     gameButtonLayout->addWidget(newSetButton);
     gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(newGameButton);
@@ -528,6 +515,21 @@ VolleyController::setEventHandlers() {
         connect(scoreDecrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onScoreDecrement(int)));
         connect(scoreDecrement[iTeam], SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
+        // New Set
+        connect(newSetButton, SIGNAL(clicked(bool)),
+                this, SLOT(onButtonNewSetClicked()));
+        connect(newSetButton, SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
+        // New Game
+        connect(newGameButton, SIGNAL(clicked(bool)),
+                this, SLOT(onButtonNewGameClicked()));
+        connect(newGameButton, SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
+        // Exchange Field Position
+        connect(changeFieldButton, SIGNAL(clicked(bool)),
+                this, SLOT(onButtonChangeFieldClicked()));
+        connect(changeFieldButton, SIGNAL(clicked()),
                 pButtonClick, SLOT(play()));
     }
 }

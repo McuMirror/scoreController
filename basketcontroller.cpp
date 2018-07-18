@@ -88,7 +88,7 @@ BasketController::BasketController()
                           gameButtonHeight,
                           gamePanelWidth);
 
-    mainLayout->addLayout(CreateSpotButtonBox(),
+    mainLayout->addLayout(CreateSpotButtons(),
                           0,
                           gamePanelWidth,
                           gamePanelHeight+gameBoxHeight+gameButtonHeight,

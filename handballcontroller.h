@@ -39,7 +39,7 @@ private:
     void          buildControls();
     void          buildFontSizes();
     QGridLayout  *CreateGamePanel();
-    QGroupBox    *CreateGameButtonBox();
+    QHBoxLayout  *CreateGameButtons();
     QString       FormatStatusMsg();
     void          SaveStatus() ;
 

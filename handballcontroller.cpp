@@ -63,9 +63,7 @@ HandballController::HandballController()
     QGridLayout *mainLayout = new QGridLayout();
 
     int gamePanelWidth   = 15;
-    int gamePanelHeight  = 13;
-    int gameBoxHeight    = 3;
-    int gameButtonHeight = 3;
+    int gamePanelHeight  = 8;
 
     mainLayout->addLayout(CreateGamePanel(),
                           0,
@@ -73,18 +71,19 @@ HandballController::HandballController()
                           gamePanelHeight,
                           gamePanelWidth);
 
-    mainLayout->addWidget(CreateGameButtonBox(),
-                          gamePanelHeight+gameBoxHeight,
+    mainLayout->addLayout(CreateGameButtons(),
+                          gamePanelHeight,
                           0,
-                          gameButtonHeight,
-                          gamePanelWidth);
+                          2,
+                          5);
 
-    mainLayout->addLayout(CreateSpotButtonBox(),
-                          0,
-                          gamePanelWidth,
-                          gamePanelHeight+gameBoxHeight+gameButtonHeight,
-                          2);
+    mainLayout->addLayout(CreateSpotButtons(),
+                          gamePanelHeight,
+                          5,
+                          2,
+                          gamePanelWidth-5);
     setLayout(mainLayout);
+
     buildFontSizes();
     setEventHandlers();
 }
@@ -294,6 +293,21 @@ HandballController::setEventHandlers() {
                 this, SLOT(onPeriodDecrement()));
         connect(periodDecrement, SIGNAL(clicked()),
                 pButtonClick, SLOT(play()));
+        // New Period
+        connect(newPeriodButton, SIGNAL(clicked(bool)),
+                this, SLOT(onButtonNewPeriodClicked()));
+        connect(newPeriodButton, SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
+        // New Game
+        connect(newGameButton, SIGNAL(clicked(bool)),
+                this, SLOT(onButtonNewGameClicked()));
+        connect(newGameButton, SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
+        // Exchange Field Position
+        connect(changeFieldButton, SIGNAL(clicked(bool)),
+                this, SLOT(onButtonChangeFieldClicked()));
+        connect(changeFieldButton, SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
     }
 }
 
@@ -351,37 +365,31 @@ HandballController::closeEvent(QCloseEvent *event) {
 }
 
 
-QGroupBox*
-HandballController::CreateGameButtonBox() {
-    QGroupBox* gameButtonBox = new QGroupBox();
+QHBoxLayout*
+HandballController::CreateGameButtons() {
     QHBoxLayout* gameButtonLayout = new QHBoxLayout();
+    QPixmap pixmap(":/buttonIcons/ExchangeVolleyField.png");
+    QIcon ButtonIcon(pixmap);
+    changeFieldButton = new QPushButton(ButtonIcon, "");
+    changeFieldButton->setIconSize(pixmap.rect().size());
 
-    newPeriodButton   = new QPushButton(tr("Nuovo\nPeriodo"));
-    newGameButton     = new QPushButton(tr("Nuova\nPartita"));
-    changeFieldButton = new QPushButton(tr("Cambio\nCampo"));
+    pixmap.load(":/buttonIcons/New-Set-Volley.png");
+    ButtonIcon.addPixmap(pixmap);
+    newPeriodButton   = new QPushButton(ButtonIcon, "");
+    newPeriodButton->setIconSize(pixmap.rect().size());
 
-    connect(newPeriodButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonNewPeriodClicked()));
-    connect(newPeriodButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-    connect(newGameButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonNewGameClicked()));
-    connect(newGameButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-    connect(changeFieldButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonChangeFieldClicked()));
-    connect(changeFieldButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
+    pixmap.load(":/buttonIcons/New-Game-Volley.png");
+    ButtonIcon.addPixmap(pixmap);
+    newGameButton = new QPushButton(ButtonIcon, "");
+    newGameButton->setIconSize(pixmap.rect().size());
 
-    gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(newPeriodButton);
     gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(newGameButton);
     gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(changeFieldButton);
     gameButtonLayout->addStretch();
-    gameButtonBox->setLayout(gameButtonLayout);
-    return gameButtonBox;
+    return gameButtonLayout;
 }
 
 
@@ -399,19 +407,20 @@ HandballController::CreateGamePanel() {
         gamePanel->addWidget(timeoutDecrement[iTeam], iRow, iCol,   1, 1, Qt::AlignRight);
         gamePanel->addWidget(timeoutEdit[iTeam],      iRow, iCol+1, 1, 1, Qt::AlignHCenter|Qt::AlignVCenter);
         gamePanel->addWidget(timeoutIncrement[iTeam], iRow, iCol+2, 1, 1, Qt::AlignLeft);
-        iRow += 1;
+        iRow += 3; // Leave space for Period controls
         gamePanel->addWidget(scoreDecrement[iTeam], iRow, iCol,   2, 1, Qt::AlignRight);
         gamePanel->addWidget(scoreEdit[iTeam],      iRow, iCol+1, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
         gamePanel->addWidget(scoreIncrement[iTeam], iRow, iCol+2, 2, 1, Qt::AlignLeft);
-        iRow += 2;
     }
-    gamePanel->addWidget(periodLabel,     iRow,  0, 2, 4, Qt::AlignRight|Qt::AlignVCenter);
-    gamePanel->addWidget(periodDecrement, iRow,  4, 2, 1, Qt::AlignRight);
-    gamePanel->addWidget(periodEdit,      iRow,  5, 2, 2, Qt::AlignHCenter|Qt::AlignVCenter);
-    gamePanel->addWidget(periodIncrement, iRow,  7, 2, 1, Qt::AlignLeft);
+    gamePanel->addWidget(scoreLabel, iRow, 3, 2, 2, Qt::AlignHCenter|Qt::AlignVCenter);
+
+    iRow -= 2;
+    gamePanel->addWidget(periodLabel,     iRow,  0, 2, 2, Qt::AlignRight|Qt::AlignVCenter);
+    gamePanel->addWidget(periodDecrement, iRow,  2, 2, 1, Qt::AlignRight);
+    gamePanel->addWidget(periodEdit,      iRow,  3, 2, 2, Qt::AlignHCenter|Qt::AlignVCenter);
+    gamePanel->addWidget(periodIncrement, iRow,  5, 2, 1, Qt::AlignLeft);
 
     gamePanel->addWidget(timeoutLabel, 1, 3, 1, 2, Qt::AlignHCenter|Qt::AlignVCenter);
-    gamePanel->addWidget(scoreLabel, 2, 3, 2, 2, Qt::AlignHCenter|Qt::AlignVCenter);
 
     return gamePanel;
 }
