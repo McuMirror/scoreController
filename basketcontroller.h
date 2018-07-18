@@ -13,6 +13,7 @@ QT_FORWARD_DECLARE_CLASS(Edit)
 QT_FORWARD_DECLARE_CLASS(Button)
 QT_FORWARD_DECLARE_CLASS(QRadioButton)
 QT_FORWARD_DECLARE_CLASS(QPushButton)
+QT_FORWARD_DECLARE_CLASS(QLabel)
 
 class BasketController : public ScoreController
 {
@@ -42,6 +43,9 @@ private slots:
     void onButtonNewGameClicked();
 
 private:
+    void          buildControls();
+    void          buildFontSizes();
+    void          setEventHandlers();
     QGridLayout  *CreateGamePanel();
     QGroupBox    *CreateTeamBox(int iTeam);
     QGroupBox    *CreateGameBox();
@@ -70,9 +74,22 @@ private:
     Button       *scoreDecrement[2];
     Button       *faulsIncrement[2];
     Button       *faulsDecrement[2];
-    Button       *periodIncrement;
-    Button       *periodDecrement;
+    QPushButton  *periodIncrement;
+    QPushButton  *periodDecrement;
     QRadioButton *possess[2];
+
+    QLabel       *timeoutLabel;
+    QLabel       *faulsLabel;
+    QLabel       *scoreLabel;
+    QLabel       *periodLabel;
+    QLabel       *possessLabel;
+
+    int           iTeamFontSize;
+    int           iTimeoutFontSize;
+    int           iFaulsFontSize;
+    int           iScoreFontSize;
+    int           iLabelFontSize;
+    int           iPeriodLabelFontSize;
 
     QPushButton  *newPeriodButton;
     QPushButton  *newGameButton;
