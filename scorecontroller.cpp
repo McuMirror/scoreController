@@ -991,7 +991,6 @@ ScoreController::onButtonStartStopSpotLoopClicked() {
         ButtonIcon.addPixmap(pixmap);
         startStopLoopSpotButton->setIcon(ButtonIcon);
         startStopLoopSpotButton->setIconSize(pixmap.rect().size());
-//>>>>>>>>>>>startStopLoopSpotButton->setText(tr("Chiudi\nSpot Loop"));
         startStopSlideShowButton->setDisabled(true);
         startStopLiveCameraButton->setDisabled(true);
         myStatus = showSpots;
@@ -1003,7 +1002,6 @@ ScoreController::onButtonStartStopSpotLoopClicked() {
         ButtonIcon.addPixmap(pixmap);
         startStopLoopSpotButton->setIcon(ButtonIcon);
         startStopLoopSpotButton->setIconSize(pixmap.rect().size());
-//>>>>>>>>>>>startStopLoopSpotButton->setText(tr("Avvia\nSpot Loop"));
         startStopSlideShowButton->setDisabled(false);
         startStopLiveCameraButton->setDisabled(false);
         myStatus = showPanel;
