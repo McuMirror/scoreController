@@ -47,9 +47,7 @@ private:
     void          buildFontSizes();
     void          setEventHandlers();
     QGridLayout  *CreateGamePanel();
-    QGroupBox    *CreateTeamBox(int iTeam);
-    QGroupBox    *CreateGameBox();
-    QGroupBox    *CreateGameButtonBox();
+    QHBoxLayout  *CreateGameButtonBox();
     QString       FormatStatusMsg();
     void          SaveStatus() ;
 
@@ -74,8 +72,8 @@ private:
     Button       *scoreDecrement[2];
     Button       *faulsIncrement[2];
     Button       *faulsDecrement[2];
-    QPushButton  *periodIncrement;
-    QPushButton  *periodDecrement;
+    Button       *periodIncrement;
+    Button       *periodDecrement;
     QRadioButton *possess[2];
 
     QLabel       *timeoutLabel;
@@ -90,6 +88,7 @@ private:
     int           iScoreFontSize;
     int           iLabelFontSize;
     int           iPeriodLabelFontSize;
+    int           iBonusEditFontSize;
 
     QPushButton  *newPeriodButton;
     QPushButton  *newGameButton;

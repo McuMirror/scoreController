@@ -68,9 +68,7 @@ BasketController::BasketController()
     QGridLayout *mainLayout = new QGridLayout();
 
     int gamePanelWidth   = 15;
-    int gamePanelHeight  = 13;
-    int gameBoxHeight    = 3;
-    int gameButtonHeight = 3;
+    int gamePanelHeight  = 8;
 
     mainLayout->addLayout(CreateGamePanel(),
                           0,
@@ -78,23 +76,17 @@ BasketController::BasketController()
                           gamePanelHeight,
                           gamePanelWidth);
 
-//    mainLayout->addWidget(CreateGameBox(),
-//                          gamePanelHeight,
-//                          0,
-//                          gameBoxHeight,
-//                          gamePanelWidth);
-
-    mainLayout->addWidget(CreateGameButtonBox(),
-                          gamePanelHeight+gameBoxHeight,
+    mainLayout->addLayout(CreateGameButtonBox(),
+                          gamePanelHeight,
                           0,
-                          gameButtonHeight,
-                          gamePanelWidth);
+                          2,
+                          5);
 
     mainLayout->addLayout(CreateSpotButtons(),
-                          0,
-                          gamePanelWidth,
-                          gamePanelHeight+gameBoxHeight+gameButtonHeight,
-                          2);
+                          gamePanelHeight,
+                          5,
+                          2,
+                          gamePanelWidth-5);
     setLayout(mainLayout);
     buildFontSizes();
     setEventHandlers();
@@ -156,6 +148,17 @@ BasketController::buildControls() {
             faulsIncrement[iTeam]->setEnabled(false);
         // Possess
         possess[iTeam] = new RadioButton(tr(" "), iTeam);
+        // Bonus
+        bonusEdit[iTeam] = new Edit(QString(tr("Bonus")));
+        bonusEdit[iTeam]->setFrame(false);
+        bonusEdit[iTeam]->setAlignment(Qt::AlignHCenter);
+        bonusEdit[iTeam]->setReadOnly(true);
+        if(iFauls[iTeam] < BONUS_TARGET) {
+            bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
+        }
+        else {
+            bonusEdit[iTeam]->setStyleSheet("background:transparent;color:transparent;");
+        }
         // Score
         sString.sprintf("%3d", iScore[iTeam]);
         scoreEdit[iTeam] = new Edit(sString);
@@ -179,10 +182,10 @@ BasketController::buildControls() {
     periodEdit->setReadOnly(true);
     periodEdit->setAlignment(Qt::AlignRight);
     // Period Buttons
-    periodIncrement = new QPushButton();
+    periodIncrement = new Button("", 0);
     periodIncrement->setIcon(plusButtonIcon);
     periodIncrement->setIconSize(plusPixmap.rect().size());
-    periodDecrement = new QPushButton();
+    periodDecrement = new Button("", 0);
     periodDecrement->setIcon(minusButtonIcon);
     periodDecrement->setIconSize(minusPixmap.rect().size());
     if(iPeriod < 2)
@@ -201,7 +204,7 @@ BasketController::buildControls() {
     scoreLabel->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
     // Period
     periodLabel = new QLabel(tr("Period"));
-    periodLabel->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
+    periodLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     // Posses
     possessLabel = new QLabel(tr("Possess"));
     possessLabel->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
@@ -261,6 +264,22 @@ BasketController::buildFontSizes() {
     font.setPixelSize(iFaulsFontSize);
     faulsEdit[0]->setFont(font);
     faulsEdit[1]->setFont(font);
+    // Bonus
+    font = bonusEdit[0]->font();
+    iBonusEditFontSize =  QFontMetrics(font).maxWidth();
+    rH = QFontMetrics(font).height();
+    for(int i=iBonusEditFontSize; i<100; i++) {
+        font.setPixelSize(i);
+        rW = QFontMetrics(font).maxWidth()*bonusEdit[0]->text().length();
+        rH = QFontMetrics(font).height();
+        if((rW > bonusEdit[0]->width()) || (rH > bonusEdit[0]->height())){
+            iBonusEditFontSize = i-1;
+            break;
+        }
+    }
+    font.setPixelSize(iBonusEditFontSize);
+    bonusEdit[0]->setFont(font);
+    bonusEdit[1]->setFont(font);
     // Score
     font = scoreEdit[0]->font();
     font.setWeight(QFont::Black);
@@ -344,6 +363,15 @@ BasketController::setEventHandlers() {
                 this, SLOT(onFaulsDecrement(int)));
         connect(faulsDecrement[iTeam], SIGNAL(clicked()),
                 pButtonClick, SLOT(play()));
+        // Period
+        connect(periodIncrement, SIGNAL(buttonClicked(int)),
+                this, SLOT(onPeriodIncrement(int)));
+        connect(periodIncrement, SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
+        connect(periodDecrement, SIGNAL(buttonClicked(int)),
+                this, SLOT(onPeriodDecrement(int)));
+        connect(periodDecrement, SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
         // Possess
         connect(possess[iTeam], SIGNAL(buttonClicked(int, bool)), this, SLOT(onPossessClicked(int, bool)));
         // Score
@@ -354,6 +382,19 @@ BasketController::setEventHandlers() {
         connect(scoreDecrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onScoreDecrement(int)));
         connect(scoreDecrement[iTeam], SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
+        // Buttons
+        connect(newPeriodButton, SIGNAL(clicked(bool)),
+                this, SLOT(onButtonNewPeriodClicked()));
+        connect(newPeriodButton, SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
+        connect(newGameButton, SIGNAL(clicked(bool)),
+                this, SLOT(onButtonNewGameClicked()));
+        connect(newGameButton, SIGNAL(clicked()),
+                pButtonClick, SLOT(play()));
+        connect(changeFieldButton, SIGNAL(clicked(bool)),
+                this, SLOT(onButtonChangeFieldClicked()));
+        connect(changeFieldButton, SIGNAL(clicked()),
                 pButtonClick, SLOT(play()));
     }
 }
@@ -419,147 +460,24 @@ BasketController::SaveStatus() {
 }
 
 
-QGroupBox*
-BasketController::CreateTeamBox(int iTeam) {
-    QGroupBox* teamBox      = new QGroupBox();
-    QString sString;
-    QGridLayout* teamLayout = new QGridLayout();
-    QLabel* labelSpacer = new QLabel(QString(""));
-    QFont font;
-
-    QScreen *screen = QGuiApplication::primaryScreen();
-    QRect screenGeometry = screen->geometry();
-    int width = screenGeometry.width();
-    int rW;
-
-    // Team
-    int iRow = 0;
-    iRow += 3;
-    teamLayout->addWidget(timeoutLabel,            iRow, 0, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
-
-    iRow += 3;
-    teamLayout->addWidget(faulsLabel,            iRow, 0, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
-
-    // Possess
-    iRow += 2;
-//    teamLayout->addWidget(labelSpacer, iRow+1, 0, 1, 10);
-
-    // Score
-    iRow += 1;
-    teamLayout->addWidget(scoreLabel,            iRow, 0, 2, 3, Qt::AlignRight|Qt::AlignVCenter);
-    teamLayout->addWidget(scoreDecrement[iTeam], iRow, 3, 2, 2, Qt::AlignRight);
-    teamLayout->addWidget(scoreEdit[iTeam],      iRow, 5, 2, 3, Qt::AlignHCenter|Qt::AlignVCenter);
-    teamLayout->addWidget(scoreIncrement[iTeam], iRow, 8, 2, 2, Qt::AlignLeft);
-
-    teamBox->setLayout(teamLayout);
-    return teamBox;
-}
-
-
-QGroupBox*
-BasketController::CreateGameBox() {
-    QGroupBox* gameBox      = new QGroupBox();
-    QString sString;
-    QGridLayout* gameLayout = new QGridLayout();
-
-    QScreen *screen = QGuiApplication::primaryScreen();
-    QRect screenGeometry = screen->geometry();
-    int width = screenGeometry.width();
-    int rW;
-
-    // Bonus
-    for(int iTeam=0; iTeam<2; iTeam++) {
-        bonusEdit[iTeam] = new Edit(QString(tr("Bonus")));
-        bonusEdit[iTeam]->setFrame(false);
-        bonusEdit[iTeam]->setAlignment(Qt::AlignHCenter);
-        bonusEdit[iTeam]->setReadOnly(true);
-        if(iFauls[iTeam] < BONUS_TARGET) {
-            bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
-        }
-        else {
-            bonusEdit[iTeam]->setStyleSheet("background:transparent;color:transparent;");
-        }
-    }
-
-    QFont font = bonusEdit[0]->font();
-    int iBonusEditFontSize = font.pointSize();
-    for(int i=iBonusEditFontSize; i<100; i++) {
-        font.setPointSize(i);
-        QFontMetrics f(font);
-        rW = f.width(bonusEdit[0]->text());
-        if(rW > width/10) {
-            iBonusEditFontSize = i-1;
-            break;
-        }
-    }
-    font.setPointSize(iBonusEditFontSize);
-    for(int iTeam=0; iTeam<2; iTeam++) {
-        bonusEdit[iTeam]->setFont(font);
-    }
-
-    // Period
-    font = periodLabel->font();
-    font.setPointSize(iBonusEditFontSize);
-    periodLabel->setFont(font);
-
-    periodEdit = new Edit();
-    periodEdit->setMaxLength(2);
-    periodEdit->setReadOnly(true);
-    periodEdit->setAlignment(Qt::AlignRight);
-    sString.sprintf("%2d", iPeriod);
-    periodEdit->setText(sString);
-
-    font = periodEdit->font();
-    font.setPointSize(iBonusEditFontSize);
-    periodEdit->setFont(font);
-
-    periodIncrement = new Button("+", 0);
-    periodDecrement = new Button("-", 0);
-
-    connect(periodIncrement, SIGNAL(buttonClicked(int)),
-            this, SLOT(onPeriodIncrement(int)));
-    connect(periodIncrement, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-    connect(periodDecrement, SIGNAL(buttonClicked(int)),
-            this, SLOT(onPeriodDecrement(int)));
-    connect(periodDecrement, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-
-    if(iPeriod < 2)
-        periodDecrement->setEnabled(false);
-
-    gameLayout->addWidget(bonusEdit[0],    0,  0, 2, 2, Qt::AlignRight|Qt::AlignVCenter);
-    gameLayout->addWidget(periodLabel,     0,  2, 2, 2, Qt::AlignRight|Qt::AlignVCenter);
-    gameLayout->addWidget(periodDecrement, 0,  4, 2, 2, Qt::AlignRight);
-    gameLayout->addWidget(periodEdit,      0,  6, 2, 2, Qt::AlignHCenter|Qt::AlignVCenter);
-    gameLayout->addWidget(periodIncrement, 0,  8, 2, 2, Qt::AlignLeft);
-    gameLayout->addWidget(bonusEdit[1],    0, 10, 2, 2, Qt::AlignRight|Qt::AlignVCenter);
-    gameBox->setLayout(gameLayout);
-    return gameBox;
-}
-
-
-QGroupBox*
+QHBoxLayout*
 BasketController::CreateGameButtonBox() {
-    QGroupBox* gameButtonBox = new QGroupBox();
     QHBoxLayout* gameButtonLayout = new QHBoxLayout();
+    QPixmap pixmap(":/buttonIcons/ExchangeVolleyField.png");
+    QIcon ButtonIcon(pixmap);
 
-    newPeriodButton   = new QPushButton(tr("Nuovo\nPeriodo"));
-    newGameButton     = new QPushButton(tr("Nuova\nPartita"));
-    changeFieldButton = new QPushButton(tr("Cambio\nCampo"));
+    changeFieldButton = new QPushButton(ButtonIcon, "");
+    changeFieldButton->setIconSize(pixmap.rect().size());
 
-    connect(newPeriodButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonNewPeriodClicked()));
-    connect(newPeriodButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-    connect(newGameButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonNewGameClicked()));
-    connect(newGameButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
-    connect(changeFieldButton, SIGNAL(clicked(bool)),
-            this, SLOT(onButtonChangeFieldClicked()));
-    connect(changeFieldButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
+    pixmap.load(":/buttonIcons/New-Set-Volley.png");
+    ButtonIcon.addPixmap(pixmap);
+    newPeriodButton   = new QPushButton(ButtonIcon, "");
+    newPeriodButton->setIconSize(pixmap.rect().size());
+
+    pixmap.load(":/buttonIcons/New-Game-Volley.png");
+    ButtonIcon.addPixmap(pixmap);
+    newGameButton = new QPushButton(ButtonIcon, "");
+    newGameButton->setIconSize(pixmap.rect().size());
 
     gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(newPeriodButton);
@@ -568,8 +486,7 @@ BasketController::CreateGameButtonBox() {
     gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(changeFieldButton);
     gameButtonLayout->addStretch();
-    gameButtonBox->setLayout(gameButtonLayout);
-    return gameButtonBox;
+    return gameButtonLayout;
 }
 
 
@@ -593,11 +510,11 @@ BasketController::CreateGamePanel() {
         gamePanel->addWidget(faulsIncrement[iTeam], iRow, iCol+2, 1, 1, Qt::AlignLeft);
         iRow += 1;
         if(iTeam == 0) {
-            gamePanel->addWidget(possess[iTeam],   iRow, iCol, 1, 3, Qt::AlignRight|Qt::AlignVCenter);
+            gamePanel->addWidget(possess[iTeam],   iRow, 2, 1, 1, Qt::AlignRight|Qt::AlignVCenter);
         } else {
-            gamePanel->addWidget(possess[iTeam],   iRow, iCol, 1, 3, Qt::AlignLeft|Qt::AlignVCenter);
+            gamePanel->addWidget(possess[iTeam],   iRow, 5, 1, 1, Qt::AlignLeft|Qt::AlignVCenter);
         }
-        iRow += 1;
+        iRow += 2;// Leave space for Bonus & Period
         gamePanel->addWidget(scoreDecrement[iTeam], iRow, iCol,   2, 1, Qt::AlignRight);
         gamePanel->addWidget(scoreEdit[iTeam],      iRow, iCol+1, 2, 1, Qt::AlignHCenter|Qt::AlignVCenter);
         gamePanel->addWidget(scoreIncrement[iTeam], iRow, iCol+2, 2, 1, Qt::AlignLeft);
@@ -605,7 +522,15 @@ BasketController::CreateGamePanel() {
     gamePanel->addWidget(timeoutLabel,  1, 3, 1, 2, Qt::AlignHCenter|Qt::AlignVCenter);
     gamePanel->addWidget(faulsLabel,    2, 3, 1, 2, Qt::AlignHCenter|Qt::AlignVCenter);
     gamePanel->addWidget(possessLabel,  3, 3, 1, 2, Qt::AlignHCenter|Qt::AlignVCenter);
-    gamePanel->addWidget(scoreLabel,    4, 3, 2, 2, Qt::AlignHCenter|Qt::AlignVCenter);
+    gamePanel->addWidget(bonusEdit[0],  3, 0, 1, 2, Qt::AlignLeft|Qt::AlignVCenter);
+    gamePanel->addWidget(bonusEdit[1],  3, 6, 1, 2, Qt::AlignRight|Qt::AlignVCenter);
+
+    gamePanel->addWidget(periodLabel,      4, 0, 1, 2, Qt::AlignRight|Qt::AlignVCenter);
+    gamePanel->addWidget(periodDecrement,  4, 2, 1, 1, Qt::AlignRight);
+    gamePanel->addWidget(periodEdit,       4, 3, 1, 2, Qt::AlignHCenter|Qt::AlignVCenter);
+    gamePanel->addWidget(periodIncrement,  4, 5, 1, 1, Qt::AlignLeft);
+
+    gamePanel->addWidget(scoreLabel,       5, 3, 2, 2, Qt::AlignHCenter|Qt::AlignVCenter);
 
     return gamePanel;
 }
