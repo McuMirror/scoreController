@@ -223,12 +223,13 @@ HandballController::buildFontSizes() {
     font.setPixelSize(iScoreFontSize);
     scoreEdit[0]->setFont(font);
     scoreEdit[1]->setFont(font);
+
     //Labels:
     // Period
     font = periodLabel->font();
-    int iPeriodLabelFontSize = font.pointSize();
+    iPeriodLabelFontSize = QFontMetrics(font).maxWidth();
     for(int i=iPeriodLabelFontSize; i<100; i++) {
-        font.setPointSize(i);
+        font.setPixelSize(i);
         rW = QFontMetrics(font).width(periodLabel->text());
         rH = QFontMetrics(font).height();
         if((rW > periodLabel->width()) || (rH > periodLabel->height())){
@@ -236,9 +237,10 @@ HandballController::buildFontSizes() {
             break;
         }
     }
-    font.setPointSize(iPeriodLabelFontSize);
+    font.setPixelSize(iPeriodLabelFontSize);
     periodLabel->setFont(font);
     periodEdit->setFont(font);
+
     // Timeout
     font = timeoutLabel->font();
     iLabelFontSize = QFontMetrics(font).maxWidth();
@@ -252,7 +254,6 @@ HandballController::buildFontSizes() {
             break;
         }
     }
-
     font.setPixelSize(iLabelFontSize);
     timeoutLabel->setFont(font);
     font.setWeight(QFont::Black);
@@ -408,6 +409,7 @@ HandballController::CreateGamePanel() {
     gamePanel->addWidget(periodDecrement, iRow,  4, 2, 1, Qt::AlignRight);
     gamePanel->addWidget(periodEdit,      iRow,  5, 2, 2, Qt::AlignHCenter|Qt::AlignVCenter);
     gamePanel->addWidget(periodIncrement, iRow,  7, 2, 1, Qt::AlignLeft);
+
     gamePanel->addWidget(timeoutLabel, 1, 3, 1, 2, Qt::AlignHCenter|Qt::AlignVCenter);
     gamePanel->addWidget(scoreLabel, 2, 3, 2, 2, Qt::AlignHCenter|Qt::AlignVCenter);
 
@@ -750,5 +752,4 @@ HandballController::onButtonChangeFieldClicked() {
     SendToAll(FormatStatusMsg());
     SaveStatus();
 }
-
 
