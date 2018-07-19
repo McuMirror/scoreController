@@ -43,7 +43,7 @@ HandballController::HandballController()
     , periodTime(REGULAR_TIME)
 
 {
-    QString sFunctionName = QString(" HandballController::BasketController ");
+    QString sFunctionName = QString(" HandballController::HandballController ");
     Q_UNUSED(sFunctionName)
 
     GetSettings();
