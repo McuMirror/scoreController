@@ -680,7 +680,7 @@ HandballController::onButtonNewPeriodClicked() {
 void
 HandballController::onButtonNewGameClicked() {
     int iRes = QMessageBox::question(this, tr("Handball Controller"),
-                                     tr("Vuoi davvero azzerare tutto ?"),
+                                     tr("Iniziare una Nuova Partita ?"),
                                      QMessageBox::Yes | QMessageBox::No,
                                      QMessageBox::No);
     if(iRes != QMessageBox::Yes) return;

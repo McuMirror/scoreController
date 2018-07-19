@@ -361,9 +361,9 @@ VolleyController::CreateGameButtons() {
     newSetButton  = new QPushButton(ButtonIcon, "");
     newSetButton->setIconSize(pixmap.rect().size());
 
-    gameButtonLayout->addWidget(newSetButton);
-    gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(newGameButton);
+    gameButtonLayout->addStretch();
+    gameButtonLayout->addWidget(newSetButton);
     gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(changeFieldButton);
     gameButtonLayout->addStretch();
@@ -516,22 +516,22 @@ VolleyController::setEventHandlers() {
                 this, SLOT(onScoreDecrement(int)));
         connect(scoreDecrement[iTeam], SIGNAL(clicked()),
                 pButtonClick, SLOT(play()));
-        // New Set
-        connect(newSetButton, SIGNAL(clicked(bool)),
-                this, SLOT(onButtonNewSetClicked()));
-        connect(newSetButton, SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
-        // New Game
-        connect(newGameButton, SIGNAL(clicked(bool)),
-                this, SLOT(onButtonNewGameClicked()));
-        connect(newGameButton, SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
-        // Exchange Field Position
-        connect(changeFieldButton, SIGNAL(clicked(bool)),
-                this, SLOT(onButtonChangeFieldClicked()));
-        connect(changeFieldButton, SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
     }
+    // New Set
+    connect(newSetButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonNewSetClicked()));
+    connect(newSetButton, SIGNAL(clicked()),
+            pButtonClick, SLOT(play()));
+    // New Game
+    connect(newGameButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonNewGameClicked()));
+    connect(newGameButton, SIGNAL(clicked()),
+            pButtonClick, SLOT(play()));
+    // Exchange Field Position
+    connect(changeFieldButton, SIGNAL(clicked(bool)),
+            this, SLOT(onButtonChangeFieldClicked()));
+    connect(changeFieldButton, SIGNAL(clicked()),
+            pButtonClick, SLOT(play()));
 }
 
 
@@ -770,7 +770,7 @@ VolleyController::onButtonNewSetClicked() {
 void
 VolleyController::onButtonNewGameClicked() {
     int iRes = QMessageBox::question(this, tr("Volley_Controller"),
-                                     tr("Vuoi davvero azzerare tutto ?"),
+                                     tr("Iniziare una Nuova Partita ?"),
                                      QMessageBox::Yes | QMessageBox::No,
                                      QMessageBox::No);
     if(iRes != QMessageBox::Yes) return;
