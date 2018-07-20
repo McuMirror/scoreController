@@ -633,7 +633,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
     sToken = XML_Parse(sMessage, "closed_spot_loop");
     if(sToken != sNoData) {
         myStatus = showPanel;
-        QPixmap pixmap(":/buttonIcons/org.gnome.Totem.png");
+        QPixmap pixmap(":/buttonIcons/PlaySpots.png");
         QIcon ButtonIcon(pixmap);
         startStopLoopSpotButton->setIcon(ButtonIcon);
         startStopLoopSpotButton->setIconSize(pixmap.rect().size());
@@ -798,7 +798,7 @@ ScoreController::UpdateUI() {
     }
     else if(connectionList.count() == 0) {
         startStopLoopSpotButton->setDisabled(true);
-        QPixmap pixmap(":/buttonIcons/org.gnome.Totem.png");
+        QPixmap pixmap(":/buttonIcons/PlaySpots.png");
         QIcon ButtonIcon(pixmap);
         startStopLoopSpotButton->setIcon(ButtonIcon);
         startStopLoopSpotButton->setIconSize(pixmap.rect().size());
@@ -882,7 +882,7 @@ QHBoxLayout*
 ScoreController::CreateSpotButtons() {
     QHBoxLayout* spotButtonLayout = new QHBoxLayout();
 
-    QPixmap pixmap(":/buttonIcons/org.gnome.Totem.png");
+    QPixmap pixmap(":/buttonIcons/PlaySpots.png");
     QIcon ButtonIcon(pixmap);
     startStopLoopSpotButton = new QPushButton(ButtonIcon, "");
     startStopLoopSpotButton->setIconSize(pixmap.rect().size());
@@ -976,7 +976,7 @@ ScoreController::onButtonStartStopSpotLoopClicked() {
     QPixmap pixmap;
     QIcon ButtonIcon;
     if(connectionList.count() == 0) {
-        pixmap.load(":/buttonIcons/org.gnome.Totem.png");
+        pixmap.load(":/buttonIcons/PlaySpots.png");
         ButtonIcon.addPixmap(pixmap);
         startStopLoopSpotButton->setIcon(ButtonIcon);
         startStopLoopSpotButton->setIconSize(pixmap.rect().size());
@@ -998,7 +998,7 @@ ScoreController::onButtonStartStopSpotLoopClicked() {
     else {
         sMessage = "<endspotloop>1</endspotloop>";
         SendToAll(sMessage);
-        pixmap.load(":/buttonIcons/org.gnome.Totem.png");
+        pixmap.load(":/buttonIcons/PlaySpots.png");
         ButtonIcon.addPixmap(pixmap);
         startStopLoopSpotButton->setIcon(ButtonIcon);
         startStopLoopSpotButton->setIconSize(pixmap.rect().size());
