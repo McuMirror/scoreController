@@ -6,7 +6,6 @@
         <file>android/ic_ScorePanel_M.png</file>
         <file>scoreController_en.qm</file>
         <file>buttonIcons/camera-web.png</file>
-        <file>buttonIcons/panel-setup.png</file>
         <file>buttonIcons/video-display.png</file>
         <file>buttonIcons/sign_stop.png</file>
         <file>buttonIcons/Plus.png</file>
@@ -17,5 +16,6 @@
         <file>buttonIcons/PlaySpots.png</file>
         <file>buttonIcons/PlaySlides.png</file>
         <file>buttonIcons/GeneralSetup.png</file>
+        <file>buttonIcons/PanelSetup.png</file>
     </qresource>
 </RCC>

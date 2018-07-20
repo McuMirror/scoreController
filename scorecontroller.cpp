@@ -897,7 +897,7 @@ ScoreController::CreateSpotButtons() {
     startStopLiveCameraButton = new QPushButton(ButtonIcon, "");
     startStopLiveCameraButton->setIconSize(pixmap.rect().size());
 
-    pixmap.load(":/buttonIcons/panel-setup.png");
+    pixmap.load(":/buttonIcons/PanelSetup.png");
     ButtonIcon.addPixmap(pixmap);
     panelControlButton = new QPushButton(ButtonIcon, "");
     panelControlButton->setIconSize(pixmap.rect().size());
