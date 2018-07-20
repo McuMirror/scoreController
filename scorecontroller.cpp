@@ -804,7 +804,7 @@ ScoreController::UpdateUI() {
         startStopLoopSpotButton->setIconSize(pixmap.rect().size());
 
         startStopSlideShowButton->setDisabled(true);
-        pixmap.load(":/buttonIcons/preferences-desktop-wallpaper.png");
+        pixmap.load(":/buttonIcons/PlaySlides.png");
         ButtonIcon.addPixmap(pixmap);
         startStopSlideShowButton->setIcon(ButtonIcon);
         startStopSlideShowButton->setIconSize(pixmap.rect().size());
@@ -887,7 +887,7 @@ ScoreController::CreateSpotButtons() {
     startStopLoopSpotButton = new QPushButton(ButtonIcon, "");
     startStopLoopSpotButton->setIconSize(pixmap.rect().size());
 
-    pixmap.load(":/buttonIcons/preferences-desktop-wallpaper.png");
+    pixmap.load(":/buttonIcons/PlaySlides.png");
     ButtonIcon.addPixmap(pixmap);
     startStopSlideShowButton = new QPushButton(ButtonIcon, "");
     startStopSlideShowButton->setIconSize(pixmap.rect().size());
@@ -1054,7 +1054,7 @@ ScoreController::onButtonStartStopSlideShowClicked() {
     QPixmap pixmap;
     QIcon ButtonIcon;
     if(connectionList.count() == 0) {
-        pixmap.load(":/buttonIcons/preferences-desktop-wallpaper.png");
+        pixmap.load(":/buttonIcons/PlaySlides.png");
         ButtonIcon.addPixmap(pixmap);
         startStopSlideShowButton->setIcon(ButtonIcon);
         startStopSlideShowButton->setIconSize(pixmap.rect().size());
@@ -1078,7 +1078,7 @@ ScoreController::onButtonStartStopSlideShowClicked() {
         SendToAll(sMessage);
         startStopLoopSpotButton->setEnabled(true);
         startStopLiveCameraButton->setEnabled(true);
-        pixmap.load(":/buttonIcons/preferences-desktop-wallpaper.png");
+        pixmap.load(":/buttonIcons/PlaySlides.png");
         ButtonIcon.addPixmap(pixmap);
         startStopSlideShowButton->setIcon(ButtonIcon);
         startStopSlideShowButton->setIconSize(pixmap.rect().size());
