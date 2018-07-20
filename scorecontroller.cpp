@@ -902,7 +902,7 @@ ScoreController::CreateSpotButtons() {
     panelControlButton = new QPushButton(ButtonIcon, "");
     panelControlButton->setIconSize(pixmap.rect().size());
 
-    pixmap.load(":/buttonIcons/gnome-control-center.png");
+    pixmap.load(":/buttonIcons/GeneralSetup.png");
     ButtonIcon.addPixmap(pixmap);
     generalSetupButton = new QPushButton(ButtonIcon, "");
     generalSetupButton->setIconSize(pixmap.rect().size());
