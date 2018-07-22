@@ -17,6 +17,7 @@ class HandballController : public ScoreController
 public:
     HandballController();
     void closeEvent(QCloseEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 public:
     void GetSettings();
@@ -44,6 +45,7 @@ private:
     void          SaveStatus() ;
 
 private:
+    bool          bFontBuilt;
     QString       sTeam[2];
     int           iTimeout[2];
     int           iScore[2];
@@ -62,12 +64,6 @@ private:
     QLabel       *timeoutLabel;
     QLabel       *scoreLabel;
     QLabel       *periodLabel;
-
-    int           iTeamFontSize;
-    int           iTimeoutFontSize;
-    int           iScoreFontSize;
-    int           iLabelFontSize;
-    int           iPeriodLabelFontSize;
 
     int           maxTimeouts;
     int           maxPeriods;

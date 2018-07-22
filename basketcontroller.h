@@ -22,6 +22,7 @@ class BasketController : public ScoreController
 public:
     BasketController();
     void closeEvent(QCloseEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 public:
     void GetSettings();
@@ -52,6 +53,7 @@ private:
     void          SaveStatus() ;
 
 private:
+    bool          bFontBuilt;
     QString       sTeam[2];
     int           iTimeout[2];
     int           iScore[2];
@@ -85,14 +87,6 @@ private:
     QPushButton  *newPeriodButton;
     QPushButton  *newGameButton;
     QPushButton  *changeFieldButton;
-
-    int           iTeamFontSize;
-    int           iTimeoutFontSize;
-    int           iFaulsFontSize;
-    int           iScoreFontSize;
-    int           iLabelFontSize;
-    int           iPeriodLabelFontSize;
-    int           iBonusEditFontSize;
 };
 
 #endif // BASKETCONTROLLER_H

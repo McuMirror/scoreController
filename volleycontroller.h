@@ -23,6 +23,7 @@ class VolleyController : public ScoreController
 public:
     VolleyController();
     void closeEvent(QCloseEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 public:
     void GetSettings();
@@ -51,6 +52,7 @@ private:
     void          SaveStatus();
 
 private:
+    bool          bFontBuilt;
     QString       sTeam[2];
     int           iTimeout[2];
     int           iSet[2];
@@ -73,12 +75,6 @@ private:
     QLabel       *setsLabel;
     QLabel       *serviceLabel;
     QLabel       *scoreLabel;
-
-    int           iTeamFontSize;
-    int           iTimeoutFontSize;
-    int           iSetFontSize;
-    int           iScoreFontSize;
-    int           iLabelFontSize;
 
     QPushButton  *newSetButton;
     QPushButton  *newGameButton;

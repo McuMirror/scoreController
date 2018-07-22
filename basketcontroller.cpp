@@ -47,6 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 BasketController::BasketController()
     : ScoreController(BASKET_PANEL, Q_NULLPTR)
+    , bFontBuilt(false)
 {
     QString sFunctionName = QString(" BasketController::BasketController ");
     Q_UNUSED(sFunctionName)
@@ -88,7 +89,7 @@ BasketController::BasketController()
                           2,
                           gamePanelWidth-5);
     setLayout(mainLayout);
-    buildFontSizes();
+
     setEventHandlers();
 
     possess[iPossess ? 1 : 0]->setChecked(true);
@@ -212,130 +213,97 @@ BasketController::buildControls() {
 
 
 void
+BasketController::resizeEvent(QResizeEvent *event) {
+    if(!bFontBuilt) {
+        bFontBuilt = true;
+        buildFontSizes();
+        event->setAccepted(true);
+    }
+}
+
+
+void
 BasketController::buildFontSizes() {
-    int rW, rH;
     QFont font;
+    int iFontSize;
+    int hMargin, vMargin;
+    QMargins margins;
+
     // Teams
     font = teamName[0]->font();
+    margins = teamName[0]->contentsMargins();
+    hMargin = margins.bottom() + margins.top();
+    vMargin = margins.left() + margins.right();
     font.setCapitalization(QFont::Capitalize);
-    iTeamFontSize = QFontMetrics(font).maxWidth();
-    rH = QFontMetrics(font).height();
-    for(int i=iTeamFontSize; i<100; i++) {
-        font.setPixelSize(i);
-        rW = QFontMetrics(font).maxWidth()*15;
-        rH = QFontMetrics(font).height();
-        if((rW > teamName[0]->width()) || (rH > teamName[0]->height())){
-            iTeamFontSize = i-1;
-            break;
-        }
-    }
-    font.setPixelSize(iTeamFontSize);
+    iFontSize = qMin((teamName[0]->width()/teamName[0]->maxLength())-2*hMargin,
+                     teamName[0]->height()-vMargin);
+    font.setPixelSize(iFontSize);
     teamName[0]->setFont(font);
     teamName[1]->setFont(font);
     // Timeout
     font = timeoutEdit[0]->font();
-    iTimeoutFontSize = QFontMetrics(font).maxWidth();
-    rH = QFontMetrics(font).height();
-    for(int i=iTimeoutFontSize; i<100; i++) {
-        font.setPixelSize(i);
-        rW = QFontMetrics(font).maxWidth();
-        rH = QFontMetrics(font).height();
-        if((rW > timeoutEdit[0]->width()) || (rH > timeoutEdit[0]->height())){
-            iTimeoutFontSize = i-1;
-            break;
-        }
-    }
-    font.setPixelSize(iTimeoutFontSize);
+    margins = timeoutEdit[0]->contentsMargins();
+    hMargin = margins.bottom() + margins.top();
+    vMargin = margins.left() + margins.right();
+    iFontSize = qMin((timeoutEdit[0]->width()/timeoutEdit[0]->maxLength())-2*hMargin,
+                     timeoutEdit[0]->height()-vMargin);
+    font.setPixelSize(iFontSize);
     timeoutEdit[0]->setFont(font);
     timeoutEdit[1]->setFont(font);
     // Fauls
     font = faulsEdit[0]->font();
-    iFaulsFontSize  = QFontMetrics(font).maxWidth();
-    rH = QFontMetrics(font).height();
-    for(int i=iFaulsFontSize; i<100; i++) {
-        font.setPixelSize(i);
-        rW = QFontMetrics(font).maxWidth()*2;
-        rH = QFontMetrics(font).height();
-        if((rW > faulsEdit[0]->width()) || (rH > faulsEdit[0]->height())){
-            iFaulsFontSize = i-1;
-            break;
-        }
-    }
-    font.setPixelSize(iFaulsFontSize);
+    margins = faulsEdit[0]->contentsMargins();
+    hMargin = margins.bottom() + margins.top();
+    vMargin = margins.left() + margins.right();
+    iFontSize = qMin((faulsEdit[0]->width()/faulsEdit[0]->maxLength())-2*hMargin,
+                     faulsEdit[0]->height()-vMargin);
+    font.setPixelSize(iFontSize);
     faulsEdit[0]->setFont(font);
     faulsEdit[1]->setFont(font);
     // Bonus
     font = bonusEdit[0]->font();
-    iBonusEditFontSize =  QFontMetrics(font).maxWidth();
-    rH = QFontMetrics(font).height();
-    for(int i=iBonusEditFontSize; i<100; i++) {
-        font.setPixelSize(i);
-        rW = QFontMetrics(font).maxWidth()*bonusEdit[0]->text().length();
-        rH = QFontMetrics(font).height();
-        if((rW > bonusEdit[0]->width()) || (rH > bonusEdit[0]->height())){
-            iBonusEditFontSize = i-1;
-            break;
-        }
-    }
-    font.setPixelSize(iBonusEditFontSize);
+    margins = bonusEdit[0]->contentsMargins();
+    hMargin = margins.bottom() + margins.top();
+    vMargin = margins.left() + margins.right();
+    iFontSize = qMin((bonusEdit[0]->width()/bonusEdit[0]->maxLength())-2*hMargin,
+                     bonusEdit[0]->height()-vMargin);
+    font.setPixelSize(iFontSize);
     bonusEdit[0]->setFont(font);
     bonusEdit[1]->setFont(font);
+    // Period
+    font = periodEdit->font();
+    margins = periodEdit->contentsMargins();
+    hMargin = margins.bottom() + margins.top();
+    vMargin = margins.left() + margins.right();
+    iFontSize = qMin((periodEdit->width()/periodEdit->maxLength())-2*hMargin,
+                     periodEdit->height()-vMargin);
+    font.setPixelSize(iFontSize);
+    periodEdit->setFont(font);
     // Score
     font = scoreEdit[0]->font();
+    margins = scoreEdit[0]->contentsMargins();
+    hMargin = margins.bottom() + margins.top();
+    vMargin = margins.left() + margins.right();
     font.setWeight(QFont::Black);
-    iScoreFontSize = QFontMetrics(font).maxWidth();
-    rH = QFontMetrics(font).height();
-    for(int i=iScoreFontSize; i<100; i++) {
-        font.setPixelSize(i);
-        rW = QFontMetrics(font).maxWidth()*2;
-        rH = QFontMetrics(font).height();
-        if((rW > scoreEdit[0]->width()) || (rH > scoreEdit[0]->height())){
-            iScoreFontSize = i-1;
-            break;
-        }
-    }
-    font.setPixelSize(iScoreFontSize);
+    iFontSize = qMin((scoreEdit[0]->width()/scoreEdit[0]->maxLength())-2*hMargin,
+                     scoreEdit[0]->height()-vMargin);
+    font.setPixelSize(iFontSize);
     scoreEdit[0]->setFont(font);
     scoreEdit[1]->setFont(font);
 
-    //Labels:
-    // Period
-    font = periodLabel->font();
-    iPeriodLabelFontSize = QFontMetrics(font).maxWidth();
-    for(int i=iPeriodLabelFontSize; i<100; i++) {
-        font.setPixelSize(i);
-        rW = QFontMetrics(font).width(periodLabel->text());
-        rH = QFontMetrics(font).height();
-        if((rW > periodLabel->width()) || (rH > periodLabel->height())){
-            iPeriodLabelFontSize = i-1;
-            break;
-        }
-    }
-    font.setPixelSize(iPeriodLabelFontSize);
-    periodLabel->setFont(font);
-    periodEdit->setFont(font);
-
-    // Timeout
-    font = timeoutLabel->font();
-    iLabelFontSize = QFontMetrics(font).maxWidth();
-    rH = QFontMetrics(font).height();
-    for(int i=iLabelFontSize; i<100; i++) {
-        font.setPixelSize(i);
-        rW = QFontMetrics(font).width(timeoutLabel->text());
-        rH = QFontMetrics(font).height();
-        if((rW > timeoutLabel->width()) || (rH > timeoutLabel->height())){
-            iScoreFontSize = i-1;
-            break;
-        }
-    }
-    font.setPixelSize(iLabelFontSize);
+//Labels:
+// Can't understand why it is not working
+//    font = faulsLabel->font();
+//    iFontSize = qMin(faulsLabel->width()/faulsLabel->text().length(),
+//                     faulsLabel->height());
+//    font.setPixelSize(iFontSize);
+    faulsLabel->setFont(font);
+    scoreLabel->setFont(font);
+    font.setWeight(QFont::Normal);
     timeoutLabel->setFont(font);
     faulsLabel->setFont(font);
-    possess[0]->setFont(font);
-    possess[1]->setFont(font);
     possessLabel->setFont(font);
-    font.setWeight(QFont::Black);
-    scoreLabel->setFont(font);
+    periodLabel->setFont(font);
 }
 
 

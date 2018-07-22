@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 VolleyController::VolleyController()
     : ScoreController(VOLLEY_PANEL, Q_NULLPTR)
+    , bFontBuilt(false)
 {
     QString sFunctionName = QString(" VolleyController::VolleyController ");
     Q_UNUSED(sFunctionName)
@@ -81,7 +82,6 @@ VolleyController::VolleyController()
 
     setLayout(mainLayout);
 
-    buildFontSizes();
     setEventHandlers();
 
     service[iServizio ? 1 : 0]->setChecked(true);
@@ -175,121 +175,77 @@ VolleyController::buildControls() {
 
 
 void
+VolleyController::resizeEvent(QResizeEvent *event) {
+    if(!bFontBuilt) {
+        bFontBuilt = true;
+        buildFontSizes();
+        event->setAccepted(true);
+    }
+}
+
+
+void
 VolleyController::buildFontSizes() {
-    int rW, rH;
     QFont font;
+    int iFontSize;
+    int hMargin, vMargin;
+    QMargins margins;
 
     font = teamName[0]->font();
+    margins = teamName[0]->contentsMargins();
+    hMargin = margins.bottom() + margins.top();
+    vMargin = margins.left() + margins.right();
     font.setCapitalization(QFont::Capitalize);
-    iTeamFontSize = QFontMetrics(font).maxWidth();
-    rH = QFontMetrics(font).height();
-    for(int i=iTeamFontSize; i<100; i++) {
-        font.setPixelSize(i);
-        rW = QFontMetrics(font).maxWidth()*15;
-        rH = QFontMetrics(font).height();
-        if((rW > teamName[0]->width()) || (rH > teamName[0]->height())){
-            iTeamFontSize = i-1;
-            break;
-        }
-    }
-    font.setPixelSize(iTeamFontSize);
+    iFontSize = qMin((teamName[0]->width()/teamName[0]->maxLength())-2*hMargin,
+                     teamName[0]->height()-vMargin);
+    font.setPixelSize(iFontSize);
     teamName[0]->setFont(font);
     teamName[1]->setFont(font);
 
     font = setsEdit[0]->font();
-    iSetFontSize = QFontMetrics(font).maxWidth();
-    rH = QFontMetrics(font).height();
-    for(int i=iSetFontSize; i<100; i++) {
-        font.setPixelSize(i);
-        rW = QFontMetrics(font).maxWidth();
-        rH = QFontMetrics(font).height();
-        if((rW > setsEdit[0]->width()) || (rH > setsEdit[0]->height())){
-            iSetFontSize = i-1;
-            break;
-        }
-    }
-    font.setPixelSize(iSetFontSize);
+    margins = setsEdit[0]->contentsMargins();
+    hMargin = margins.bottom() + margins.top();
+    vMargin = margins.left() + margins.right();
+    iFontSize = qMin((setsEdit[0]->width()/setsEdit[0]->maxLength())-2*hMargin,
+                     setsEdit[0]->height()-vMargin);
+    font.setPixelSize(iFontSize);
     setsEdit[0]->setFont(font);
     setsEdit[1]->setFont(font);
 
     font = timeoutEdit[0]->font();
-    iTimeoutFontSize = QFontMetrics(font).maxWidth();
-    rH = QFontMetrics(font).height();
-    for(int i=iTimeoutFontSize; i<100; i++) {
-        font.setPixelSize(i);
-        rW = QFontMetrics(font).maxWidth();
-        rH = QFontMetrics(font).height();
-        if((rW > timeoutEdit[0]->width()) || (rH > timeoutEdit[0]->height())){
-            iTimeoutFontSize = i-1;
-            break;
-        }
-    }
-    font.setPixelSize(iTimeoutFontSize);
+    margins = timeoutEdit[0]->contentsMargins();
+    hMargin = margins.bottom() + margins.top();
+    vMargin = margins.left() + margins.right();
+    iFontSize = qMin((timeoutEdit[0]->width()/timeoutEdit[0]->maxLength())-2*hMargin,
+                     timeoutEdit[0]->height()-vMargin);
+    font.setPixelSize(iFontSize);
     timeoutEdit[0]->setFont(font);
     timeoutEdit[1]->setFont(font);
 
     font = scoreEdit[0]->font();
+    margins = scoreEdit[0]->contentsMargins();
+    hMargin = margins.bottom() + margins.top();
+    vMargin = margins.left() + margins.right();
     font.setWeight(QFont::Black);
-    iScoreFontSize = QFontMetrics(font).maxWidth();
-    rH = QFontMetrics(font).height();
-    for(int i=iScoreFontSize; i<100; i++) {
-        font.setPixelSize(i);
-        rW = QFontMetrics(font).maxWidth()*2;
-        rH = QFontMetrics(font).height();
-        if((rW > scoreEdit[0]->width()) || (rH > scoreEdit[0]->height())){
-            iScoreFontSize = i-1;
-            break;
-        }
-    }
-    font.setPixelSize(iScoreFontSize);
+    iFontSize = qMin((scoreEdit[0]->width()/scoreEdit[0]->maxLength())-2*hMargin,
+                     scoreEdit[0]->height()-vMargin);
+    font.setPixelSize(iFontSize);
     scoreEdit[0]->setFont(font);
     scoreEdit[1]->setFont(font);
 
     font = timeoutLabel->font();
-    iLabelFontSize = QFontMetrics(font).maxWidth();
-    rH = QFontMetrics(font).height();
-    for(int i=iLabelFontSize; i<100; i++) {
-        font.setPixelSize(i);
-        rW = QFontMetrics(font).maxWidth()*15;
-        rH = QFontMetrics(font).height();
-        if((rW > timeoutLabel->width()) || (rH > timeoutLabel->height())){
-            iScoreFontSize = i-1;
-            break;
-        }
-    }
+    margins = timeoutLabel->contentsMargins();
+    hMargin = margins.bottom() + margins.top();
+    vMargin = margins.left() + margins.right();
+    iFontSize = qMin((timeoutLabel->width()/timeoutLabel->text().length())-2*hMargin,
+                     timeoutLabel->height()-vMargin);
+    font.setPixelSize(iFontSize);
 
-    font.setPixelSize(iLabelFontSize);
     timeoutLabel->setFont(font);
     setsLabel->setFont(font);
     serviceLabel->setFont(font);
     font.setWeight(QFont::Black);
     scoreLabel->setFont(font);
-
-    font = timeoutIncrement[0]->font();
-    font.setWeight(QFont::Black);
-    iTimeoutFontSize = QFontMetrics(font).maxWidth();
-    rH = QFontMetrics(font).height();
-    for(int i=iTimeoutFontSize; i<100; i++) {
-        font.setPixelSize(i);
-        rW = QFontMetrics(font).maxWidth();
-        rH = QFontMetrics(font).height();
-        if((rW > timeoutIncrement[0]->width()) || (rH > timeoutIncrement[0]->height())){
-            iTimeoutFontSize = i-1;
-            break;
-        }
-    }
-    timeoutIncrement[0]->setFont(font);
-    timeoutIncrement[1]->setFont(font);
-    timeoutDecrement[0]->setFont(font);
-    timeoutDecrement[1]->setFont(font);
-    setsIncrement[0]->setFont(font);
-    setsIncrement[1]->setFont(font);
-    setsDecrement[0]->setFont(font);
-    setsDecrement[1]->setFont(font);
-    scoreIncrement[0]->setFont(font);
-    scoreIncrement[1]->setFont(font);
-    scoreDecrement[0]->setFont(font);
-    scoreDecrement[1]->setFont(font);
 }
 
 
