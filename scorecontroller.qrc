@@ -17,5 +17,7 @@
         <file>buttonIcons/PlaySlides.png</file>
         <file>buttonIcons/GeneralSetup.png</file>
         <file>buttonIcons/PanelSetup.png</file>
+        <file>buttonIcons/ExchangeBasketField.png</file>
+        <file>buttonIcons/NewGameHandball.png</file>
     </qresource>
 </RCC>

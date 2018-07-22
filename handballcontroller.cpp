@@ -351,7 +351,7 @@ HandballController::closeEvent(QCloseEvent *event) {
 QHBoxLayout*
 HandballController::CreateGameButtons() {
     QHBoxLayout* gameButtonLayout = new QHBoxLayout();
-    QPixmap pixmap(":/buttonIcons/ExchangeVolleyField.png");
+    QPixmap pixmap(":/buttonIcons/ExchangeBasketField.png");
     QIcon ButtonIcon(pixmap);
     changeFieldButton = new QPushButton(ButtonIcon, "");
     changeFieldButton->setIconSize(pixmap.rect().size());
@@ -361,7 +361,7 @@ HandballController::CreateGameButtons() {
     newPeriodButton   = new QPushButton(ButtonIcon, "");
     newPeriodButton->setIconSize(pixmap.rect().size());
 
-    pixmap.load(":/buttonIcons/New-Game-Volley.png");
+    pixmap.load(":/buttonIcons/NewGameHandball.png");
     ButtonIcon.addPixmap(pixmap);
     newGameButton = new QPushButton(ButtonIcon, "");
     newGameButton->setIconSize(pixmap.rect().size());

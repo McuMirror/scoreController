@@ -432,7 +432,7 @@ BasketController::SaveStatus() {
 QHBoxLayout*
 BasketController::CreateGameButtonBox() {
     QHBoxLayout* gameButtonLayout = new QHBoxLayout();
-    QPixmap pixmap(":/buttonIcons/ExchangeVolleyField.png");
+    QPixmap pixmap(":/buttonIcons/ExchangeBasketField.png");
     QIcon ButtonIcon(pixmap);
 
     changeFieldButton = new QPushButton(ButtonIcon, "");
