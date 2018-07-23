@@ -426,11 +426,11 @@ HandballController::FormatStatusMsg() {
     }
     sTemp.sprintf("<period>%d,%d</period>", iPeriod, periodTime);
     sMessage += sTemp;
-    if(!startStopSlideShowButton->text().contains(QString(tr("Avvia"))))
+    if(myStatus == showSlides)
         sMessage += "<slideshow>1</slideshow>";
-    else if(!startStopLiveCameraButton->text().contains(QString(tr("Avvia"))))
+    else if(myStatus == showCamera)
         sMessage += QString("<live>1</live>");
-    else if(!startStopLoopSpotButton->text().contains(QString(tr("Avvia"))))
+    else if(myStatus == showSpots)
         sMessage += QString("<spotloop>1</spotloop>");
 
     return sMessage;
