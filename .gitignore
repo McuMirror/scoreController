@@ -1,0 +1,3 @@
+*.pro.user
+gradle.properties*
+local.properties*

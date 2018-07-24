@@ -810,7 +810,7 @@ ScoreController::UpdateUI() {
         startStopSlideShowButton->setIconSize(pixmap.rect().size());
 
         startStopLiveCameraButton->setDisabled(true);
-        pixmap.load(":/buttonIcons/camera-web.png");
+        pixmap.load(":/buttonIcons/Camera.png");
         ButtonIcon.addPixmap(pixmap);
         startStopLiveCameraButton->setIcon(ButtonIcon);
         startStopLiveCameraButton->setIconSize(pixmap.rect().size());
@@ -892,7 +892,7 @@ ScoreController::CreateSpotButtons() {
     startStopSlideShowButton = new QPushButton(ButtonIcon, "");
     startStopSlideShowButton->setIconSize(pixmap.rect().size());
 
-    pixmap.load(":/buttonIcons/camera-web.png");
+    pixmap.load(":/buttonIcons/Camera.png");
     ButtonIcon.addPixmap(pixmap);
     startStopLiveCameraButton = new QPushButton(ButtonIcon, "");
     startStopLiveCameraButton->setIconSize(pixmap.rect().size());
@@ -1015,7 +1015,7 @@ ScoreController::onButtonStartStopLiveCameraClicked() {
     QPixmap pixmap;
     QIcon ButtonIcon;
     if(connectionList.count() == 0) {
-        pixmap.load(":/buttonIcons/camera-web.png");
+        pixmap.load(":/buttonIcons/Camera.png");
         ButtonIcon.addPixmap(pixmap);
         startStopLiveCameraButton = new QPushButton(ButtonIcon, "");
         startStopLiveCameraButton->setIconSize(pixmap.rect().size());
@@ -1037,7 +1037,7 @@ ScoreController::onButtonStartStopLiveCameraClicked() {
     else {
         sMessage = "<endlive>1</endlive>";
         SendToAll(sMessage);
-        pixmap.load(":/buttonIcons/camera-web.png");
+        pixmap.load(":/buttonIcons/Camera.png");
         ButtonIcon.addPixmap(pixmap);
         startStopLiveCameraButton->setIcon(ButtonIcon);
         startStopLiveCameraButton->setIconSize(pixmap.rect().size());
