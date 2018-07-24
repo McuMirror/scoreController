@@ -1096,6 +1096,9 @@ ScoreController::onButtonPanelControlClicked() {
 }
 
 
+// ToDo:
+// To be changed... We should present a dialog allowing to change
+// one, the other or both the directories...
 void
 ScoreController::onButtonSetupClicked() {
     QString sFunctionName = QString(" ScoreController::onButtonSetupClicked ");
