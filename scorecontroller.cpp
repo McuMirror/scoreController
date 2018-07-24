@@ -78,17 +78,11 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     sLogDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
     if(!sLogDir.endsWith(QString("/"))) sLogDir+= QString("/");
 
-    // The base directory in which look for the /slides and /spots folders
-    QString sBaseDir;
-#ifdef Q_OS_ANDROID
-    sBaseDir = QStandardPaths::displayName(QStandardPaths::GenericDataLocation);
-#else
-    sBaseDir = QDir::homePath();
-#endif
-    if(!sBaseDir.endsWith(QString("/"))) sBaseDir+= QString("/");
-
-    sSlideDir   = QString("%1slides/").arg(sBaseDir);
-    sSpotDir    = QString("%1spots/").arg(sBaseDir);
+    // The directories in which to look for the slides and spots
+    sSlideDir   = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
+    if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
+    sSpotDir    = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
+    if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
 
     logFile       = Q_NULLPTR;
     slideList     = QFileInfoList();
