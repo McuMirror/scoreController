@@ -165,19 +165,11 @@ ScoreController::PrepareDirectories() {
         onButtonSetupClicked();
         slideDir.setPath(sSlideDir);
         if(!slideDir.exists())
-#ifdef Q_OS_ANDROID
             sSlideDir = QStandardPaths::displayName(QStandardPaths::GenericDataLocation);
-#else
-            sSlideDir = QDir::homePath();
-#endif
         if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
         spotDir.setPath(sSpotDir);
         if(!spotDir.exists())
-#ifdef Q_OS_ANDROID
             sSpotDir = QStandardPaths::displayName(QStandardPaths::GenericDataLocation);
-#else
-            sSpotDir = QDir::homePath();
-#endif
         if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
         pSettings->setValue("directories/slides", sSlideDir);
         pSettings->setValue("directories/spots", sSpotDir);
@@ -1109,11 +1101,7 @@ ScoreController::onButtonSetupClicked() {
     QString sFunctionName = QString(" ScoreController::onButtonSetupClicked ");
 
     QString sBaseDir;
-#ifdef Q_OS_ANDROID
     sBaseDir = QStandardPaths::displayName(QStandardPaths::GenericDataLocation);
-#else
-    sBaseDir = QDir::homePath();
-#endif
     if(!sBaseDir.endsWith(QString("/"))) sBaseDir+= QString("/");
 
     QDir slideDir(sSlideDir);
