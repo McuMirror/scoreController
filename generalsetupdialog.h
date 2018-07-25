@@ -19,6 +19,11 @@ public:
     void setSpotDir(QString sDir);
     QString getSlideDir();
     QString getSpotDir();
+
+public slots:
+    void onSelectSlideDir();
+    void onSelectSpotDir();
+
 private:
     QLineEdit slidesDirEdit;
     QLineEdit spotsDirEdit;

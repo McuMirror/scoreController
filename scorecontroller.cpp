@@ -1107,75 +1107,44 @@ void
 ScoreController::onButtonSetupClicked() {
     QString sFunctionName = QString(" ScoreController::onButtonSetupClicked ");
 
-    QString sBaseDir;
-    sBaseDir = QStandardPaths::displayName(QStandardPaths::GenericDataLocation);
-    if(!sBaseDir.endsWith(QString("/"))) sBaseDir+= QString("/");
-
     pGeneralSetupDialog->setSlideDir(sSlideDir);
     pGeneralSetupDialog->setSpotDir(sSpotDir);
-    pGeneralSetupDialog->exec();
+    if(pGeneralSetupDialog->exec() == QDialog::Accepted) {
+        sSlideDir = pGeneralSetupDialog->getSlideDir();
+        if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
+        QDir slideDir(sSlideDir);
+        if(sSlideDir != QString() && slideDir.exists()) {
+            QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png" << "*.JPG" << "*.JPEG" << "*.PNG");
+            slideDir.setNameFilters(filter);
+            slideList = slideDir.entryInfoList();
+        }
+        else {
+            sSlideDir = QStandardPaths::displayName(QStandardPaths::GenericDataLocation);
+            slideList = QFileInfoList();
+        }
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Found %1 slides").arg(slideList.count()));
 
-    QDir slideDir(sSlideDir);
-    QFileDialog* pGetDirDlg;
-    if(slideDir.exists()) {
-        pGetDirDlg = new QFileDialog(Q_NULLPTR, tr("Slide Dir"), sSlideDir);
+        sSpotDir = pGeneralSetupDialog->getSpotDir();
+        if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
+        QDir spotDir(sSpotDir);
+        if(sSpotDir != QString() && spotDir.exists()) {
+            QStringList nameFilter(QStringList() << "*.mp4" << "*.MP4");
+            spotDir.setNameFilters(nameFilter);
+            spotDir.setFilter(QDir::Files);
+            spotList = spotDir.entryInfoList();
+        }
+        else {
+            sSpotDir = QStandardPaths::displayName(QStandardPaths::GenericDataLocation);
+            spotList = QFileInfoList();
+        }
+        logMessage(logFile,
+                   sFunctionName,
+                   QString("Found %1 spots")
+                   .arg(spotList.count()));
+        SaveStatus();
     }
-    else {
-        pGetDirDlg = new QFileDialog(Q_NULLPTR, tr("Slide Dir"), sBaseDir);
-    }
-    pGetDirDlg->setOptions(QFileDialog::ShowDirsOnly);
-    pGetDirDlg->setFileMode(QFileDialog::Directory);
-    pGetDirDlg->setViewMode(QFileDialog::List);
-    pGetDirDlg->setWindowFlags(Qt::Window);
-    if(pGetDirDlg->exec() == QDialog::Accepted)
-        sSlideDir = pGetDirDlg->directory().absolutePath();
-    pGetDirDlg->deleteLater();
-    if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
-    slideDir = QDir(sSlideDir);
-    if(sSlideDir != QString() && slideDir.exists()) {
-        QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png" << "*.JPG" << "*.JPEG" << "*.PNG");
-        slideDir.setNameFilters(filter);
-        slideList = slideDir.entryInfoList();
-    }
-    else {
-        sSlideDir = sBaseDir;
-        slideList = QFileInfoList();
-    }
-    logMessage(logFile,
-               sFunctionName,
-               QString("Found %1 slides").arg(slideList.count()));
-
-    QDir spotDir(sSpotDir);
-    if(spotDir.exists()) {
-        pGetDirDlg = new QFileDialog(Q_NULLPTR, tr("Spot Dir"), sSpotDir);
-    }
-    else {
-        pGetDirDlg = new QFileDialog(Q_NULLPTR, tr("Spot Dir"), sBaseDir);
-    }
-    pGetDirDlg->setOptions(QFileDialog::ShowDirsOnly);
-    pGetDirDlg->setFileMode(QFileDialog::Directory);
-    pGetDirDlg->setViewMode(QFileDialog::List);
-    pGetDirDlg->setWindowFlags(Qt::Window);
-    if(pGetDirDlg->exec() == QDialog::Accepted)
-        sSpotDir = pGetDirDlg->directory().absolutePath();
-    delete pGetDirDlg;
-    if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
-    spotDir = QDir(sSpotDir);
-    if(sSpotDir != QString() && spotDir.exists()) {
-        QStringList nameFilter(QStringList() << "*.mp4" << "*.MP4");
-        spotDir.setNameFilters(nameFilter);
-        spotDir.setFilter(QDir::Files);
-        spotList = spotDir.entryInfoList();
-    }
-    else {
-        sSpotDir = sBaseDir;
-        spotList = QFileInfoList();
-    }
-    logMessage(logFile,
-               sFunctionName,
-               QString("Found %1 spots")
-               .arg(spotList.count()));
-    SaveStatus();
 }
 
 

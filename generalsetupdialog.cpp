@@ -4,6 +4,8 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QDir>
+#include <QFileDialog>
+#include <QStandardPaths>
 
 
 GeneralSetupDialog::GeneralSetupDialog(QWidget *parent)
@@ -13,9 +15,6 @@ GeneralSetupDialog::GeneralSetupDialog(QWidget *parent)
 
     pDirectoryTab = new DirectoryTab();
     tabWidget->addTab(pDirectoryTab, tr("General"));
-
-    tabWidget->addTab(pDirectoryTab, tr("Permissions"));
-    tabWidget->addTab(pDirectoryTab, tr("Applications"));
 
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
                                      QDialogButtonBox::Cancel);
@@ -69,24 +68,25 @@ DirectoryTab::DirectoryTab(QWidget *parent)
 
     buttonSelectSlidesDir.setText("...");
     buttonSelectSpotsDir.setText("...");
+    connect(&buttonSelectSlidesDir, SIGNAL(clicked()),
+            this, SLOT(onSelectSlideDir()));
+    connect(&buttonSelectSpotsDir, SIGNAL(clicked()),
+            this, SLOT(onSelectSpotDir()));
 
     slidesDirEdit.setReadOnly(true);
     spotsDirEdit.setReadOnly(true);
 
     QLabel *slidesPathLabel = new QLabel(tr("Slides folder:"));
-    slidesPathLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-
     QLabel *spotsPathLabel = new QLabel(tr("Spots folder:"));
-    spotsPathLabel->setFrameStyle(QFrame::Panel | QFrame::Sunken);
 
     QGridLayout *mainLayout = new QGridLayout;
     mainLayout->addWidget(slidesPathLabel,        0, 0, 1, 1);
     mainLayout->addWidget(&slidesDirEdit,         0, 1, 1, 3);
-    mainLayout->addWidget(&buttonSelectSlidesDir, 0, 3, 1, 1);
+    mainLayout->addWidget(&buttonSelectSlidesDir, 0, 4, 1, 1);
 
     mainLayout->addWidget(spotsPathLabel,        1, 0, 1, 1);
     mainLayout->addWidget(&spotsDirEdit,         1, 1, 1, 3);
-    mainLayout->addWidget(&buttonSelectSpotsDir, 1, 3, 1, 1);
+    mainLayout->addWidget(&buttonSelectSpotsDir, 1, 4, 1, 1);
 
     setLayout(mainLayout);
 }
@@ -127,4 +127,68 @@ DirectoryTab::getSlideDir() {
 QString
 DirectoryTab::getSpotDir(){
     return spotsDirEdit.text();
+}
+
+
+void
+DirectoryTab::onSelectSlideDir() {
+    QString sSlideDir = slidesDirEdit.text();
+    QFileDialog* pGetDirDlg;
+    QDir slideDir = QDir(sSlideDir);
+    if(slideDir.exists()) {
+        pGetDirDlg = new QFileDialog(this, tr("Slide Dir"),
+                                     sSlideDir);
+    }
+    else {
+        pGetDirDlg = new QFileDialog(this, tr("Slide Dir"),
+                                     QStandardPaths::displayName(QStandardPaths::GenericDataLocation));
+    }
+    pGetDirDlg->setOptions(QFileDialog::ShowDirsOnly);
+    pGetDirDlg->setFileMode(QFileDialog::Directory);
+    pGetDirDlg->setViewMode(QFileDialog::List);
+    pGetDirDlg->setWindowFlags(Qt::Window);
+    if(pGetDirDlg->exec() == QDialog::Accepted)
+        sSlideDir = pGetDirDlg->directory().absolutePath();
+    pGetDirDlg->deleteLater();
+    if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
+    slidesDirEdit.setText(sSlideDir);
+    slideDir.setPath(sSlideDir);
+    if(slideDir.exists()) {
+        slidesDirEdit.setStyleSheet(styleSheet());
+    }
+    else {
+        slidesDirEdit.setStyleSheet("background:red;color:white;");
+    }
+}
+
+
+void
+DirectoryTab::onSelectSpotDir() {
+    QString sSpotDir = spotsDirEdit.text();
+    QFileDialog* pGetDirDlg;
+    QDir spotDir = QDir(sSpotDir);
+    if(spotDir.exists()) {
+        pGetDirDlg = new QFileDialog(this, tr("Spot Dir"),
+                                     sSpotDir);
+    }
+    else {
+        pGetDirDlg = new QFileDialog(this, tr("Spot Dir"),
+                                     QStandardPaths::displayName(QStandardPaths::GenericDataLocation));
+    }
+    pGetDirDlg->setOptions(QFileDialog::ShowDirsOnly);
+    pGetDirDlg->setFileMode(QFileDialog::Directory);
+    pGetDirDlg->setViewMode(QFileDialog::List);
+    pGetDirDlg->setWindowFlags(Qt::Window);
+    if(pGetDirDlg->exec() == QDialog::Accepted)
+        sSpotDir = pGetDirDlg->directory().absolutePath();
+    pGetDirDlg->deleteLater();
+    if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
+    spotsDirEdit.setText(sSpotDir);
+    spotDir.setPath(sSpotDir);
+    if(spotDir.exists()) {
+        spotsDirEdit.setStyleSheet(styleSheet());
+    }
+    else {
+        spotsDirEdit.setStyleSheet("background:red;color:white;");
+    }
 }
