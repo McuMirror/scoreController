@@ -54,6 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ScoreController::ScoreController(int _panelType, QWidget *parent)
     : QWidget(parent)
     , pSettings(Q_NULLPTR)
+    , pGeneralSetupDialog(Q_NULLPTR)
     , panelType(_panelType)
     , pClientListDialog(new ClientListDialog(this))
     , connectionList(QList<connection>())
