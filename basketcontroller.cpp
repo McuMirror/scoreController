@@ -232,10 +232,10 @@ BasketController::buildFontSizes() {
     // Teams
     font = teamName[0]->font();
     margins = teamName[0]->contentsMargins();
-    hMargin = margins.bottom() + margins.top();
-    vMargin = margins.left() + margins.right();
+    vMargin = margins.bottom() + margins.top();
+    hMargin = margins.left() + margins.right();
     font.setCapitalization(QFont::Capitalize);
-    iFontSize = qMin((teamName[0]->width()/teamName[0]->maxLength())-2*hMargin,
+    iFontSize = qMin((teamName[0]->width()/teamName[0]->maxLength())-hMargin,
                      teamName[0]->height()-vMargin);
     font.setPixelSize(iFontSize);
     teamName[0]->setFont(font);
@@ -243,9 +243,9 @@ BasketController::buildFontSizes() {
     // Timeout
     font = timeoutEdit[0]->font();
     margins = timeoutEdit[0]->contentsMargins();
-    hMargin = margins.bottom() + margins.top();
-    vMargin = margins.left() + margins.right();
-    iFontSize = qMin((timeoutEdit[0]->width()/timeoutEdit[0]->maxLength())-2*hMargin,
+    vMargin = margins.bottom() + margins.top();
+    hMargin = margins.left() + margins.right();
+    iFontSize = qMin((timeoutEdit[0]->width()/timeoutEdit[0]->maxLength())-hMargin,
                      timeoutEdit[0]->height()-vMargin);
     font.setPixelSize(iFontSize);
     timeoutEdit[0]->setFont(font);
@@ -253,9 +253,9 @@ BasketController::buildFontSizes() {
     // Fauls
     font = faulsEdit[0]->font();
     margins = faulsEdit[0]->contentsMargins();
-    hMargin = margins.bottom() + margins.top();
-    vMargin = margins.left() + margins.right();
-    iFontSize = qMin((faulsEdit[0]->width()/faulsEdit[0]->maxLength())-2*hMargin,
+    vMargin = margins.bottom() + margins.top();
+    hMargin = margins.left() + margins.right();
+    iFontSize = qMin((faulsEdit[0]->width()/faulsEdit[0]->maxLength())-hMargin,
                      faulsEdit[0]->height()-vMargin);
     font.setPixelSize(iFontSize);
     faulsEdit[0]->setFont(font);
@@ -263,9 +263,9 @@ BasketController::buildFontSizes() {
     // Bonus
     font = bonusEdit[0]->font();
     margins = bonusEdit[0]->contentsMargins();
-    hMargin = margins.bottom() + margins.top();
-    vMargin = margins.left() + margins.right();
-    iFontSize = qMin((bonusEdit[0]->width()/bonusEdit[0]->maxLength())-2*hMargin,
+    vMargin = margins.bottom() + margins.top();
+    hMargin = margins.left() + margins.right();
+    iFontSize = qMin((bonusEdit[0]->width()/bonusEdit[0]->maxLength())-hMargin,
                      bonusEdit[0]->height()-vMargin);
     font.setPixelSize(iFontSize);
     bonusEdit[0]->setFont(font);
@@ -273,19 +273,19 @@ BasketController::buildFontSizes() {
     // Period
     font = periodEdit->font();
     margins = periodEdit->contentsMargins();
-    hMargin = margins.bottom() + margins.top();
-    vMargin = margins.left() + margins.right();
-    iFontSize = qMin((periodEdit->width()/periodEdit->maxLength())-2*hMargin,
+    vMargin = margins.bottom() + margins.top();
+    hMargin = margins.left() + margins.right();
+    iFontSize = qMin((periodEdit->width()/periodEdit->maxLength())-hMargin,
                      periodEdit->height()-vMargin);
     font.setPixelSize(iFontSize);
     periodEdit->setFont(font);
     // Score
     font = scoreEdit[0]->font();
     margins = scoreEdit[0]->contentsMargins();
-    hMargin = margins.bottom() + margins.top();
-    vMargin = margins.left() + margins.right();
+    vMargin = margins.bottom() + margins.top();
+    hMargin = margins.left() + margins.right();
     font.setWeight(QFont::Black);
-    iFontSize = qMin((scoreEdit[0]->width()/scoreEdit[0]->maxLength())-2*hMargin,
+    iFontSize = qMin((scoreEdit[0]->width()/scoreEdit[0]->maxLength())-hMargin,
                      scoreEdit[0]->height()-vMargin);
     font.setPixelSize(iFontSize);
     scoreEdit[0]->setFont(font);

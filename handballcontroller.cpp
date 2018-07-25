@@ -188,8 +188,8 @@ HandballController::buildFontSizes() {
     // Teams
     font = teamName[0]->font();
     margins = teamName[0]->contentsMargins();
-    hMargin = margins.bottom() + margins.top();
-    vMargin = margins.left() + margins.right();
+    vMargin = margins.bottom() + margins.top();
+    hMargin = margins.left() + margins.right();
     font.setCapitalization(QFont::Capitalize);
     iFontSize = qMin((teamName[0]->width()/teamName[0]->maxLength())-2*hMargin,
                      teamName[0]->height()-vMargin);
@@ -199,8 +199,8 @@ HandballController::buildFontSizes() {
     // Timeout
     font = timeoutEdit[0]->font();
     margins = timeoutEdit[0]->contentsMargins();
-    hMargin = margins.bottom() + margins.top();
-    vMargin = margins.left() + margins.right();
+    vMargin = margins.bottom() + margins.top();
+    hMargin = margins.left() + margins.right();
     iFontSize = qMin((timeoutEdit[0]->width()/timeoutEdit[0]->maxLength())-2*hMargin,
                      timeoutEdit[0]->height()-vMargin);
     font.setPixelSize(iFontSize);
@@ -209,8 +209,8 @@ HandballController::buildFontSizes() {
     // Period
     font = periodEdit->font();
     margins = periodEdit->contentsMargins();
-    hMargin = margins.bottom() + margins.top();
-    vMargin = margins.left() + margins.right();
+    vMargin = margins.bottom() + margins.top();
+    hMargin = margins.left() + margins.right();
     iFontSize = qMin((periodEdit->width()/periodEdit->maxLength())-2*hMargin,
                      periodEdit->height()-vMargin);
     font.setPixelSize(iFontSize);
@@ -220,8 +220,8 @@ HandballController::buildFontSizes() {
     // Score
     font = scoreEdit[0]->font();
     margins = scoreEdit[0]->contentsMargins();
-    hMargin = margins.bottom() + margins.top();
-    vMargin = margins.left() + margins.right();
+    vMargin = margins.bottom() + margins.top();
+    hMargin = margins.left() + margins.right();
     font.setWeight(QFont::Black);
     iFontSize = qMin((scoreEdit[0]->width()/scoreEdit[0]->maxLength())-2*hMargin,
                      scoreEdit[0]->height()-vMargin);

@@ -193,8 +193,8 @@ VolleyController::buildFontSizes() {
 
     font = teamName[0]->font();
     margins = teamName[0]->contentsMargins();
-    hMargin = margins.bottom() + margins.top();
-    vMargin = margins.left() + margins.right();
+    vMargin = margins.bottom() + margins.top();
+    hMargin = margins.left() + margins.right();
     font.setCapitalization(QFont::Capitalize);
     iFontSize = qMin((teamName[0]->width()/teamName[0]->maxLength())-2*hMargin,
                      teamName[0]->height()-vMargin);
@@ -204,8 +204,8 @@ VolleyController::buildFontSizes() {
 
     font = setsEdit[0]->font();
     margins = setsEdit[0]->contentsMargins();
-    hMargin = margins.bottom() + margins.top();
-    vMargin = margins.left() + margins.right();
+    vMargin = margins.bottom() + margins.top();
+    hMargin = margins.left() + margins.right();
     iFontSize = qMin((setsEdit[0]->width()/setsEdit[0]->maxLength())-2*hMargin,
                      setsEdit[0]->height()-vMargin);
     font.setPixelSize(iFontSize);
@@ -214,8 +214,8 @@ VolleyController::buildFontSizes() {
 
     font = timeoutEdit[0]->font();
     margins = timeoutEdit[0]->contentsMargins();
-    hMargin = margins.bottom() + margins.top();
-    vMargin = margins.left() + margins.right();
+    vMargin = margins.bottom() + margins.top();
+    hMargin = margins.left() + margins.right();
     iFontSize = qMin((timeoutEdit[0]->width()/timeoutEdit[0]->maxLength())-2*hMargin,
                      timeoutEdit[0]->height()-vMargin);
     font.setPixelSize(iFontSize);
@@ -224,8 +224,8 @@ VolleyController::buildFontSizes() {
 
     font = scoreEdit[0]->font();
     margins = scoreEdit[0]->contentsMargins();
-    hMargin = margins.bottom() + margins.top();
-    vMargin = margins.left() + margins.right();
+    vMargin = margins.bottom() + margins.top();
+    hMargin = margins.left() + margins.right();
     font.setWeight(QFont::Black);
     iFontSize = qMin((scoreEdit[0]->width()/scoreEdit[0]->maxLength())-2*hMargin,
                      scoreEdit[0]->height()-vMargin);
@@ -235,8 +235,8 @@ VolleyController::buildFontSizes() {
 
     font = timeoutLabel->font();
     margins = timeoutLabel->contentsMargins();
-    hMargin = margins.bottom() + margins.top();
-    vMargin = margins.left() + margins.right();
+    vMargin = margins.bottom() + margins.top();
+    hMargin = margins.left() + margins.right();
     iFontSize = qMin((timeoutLabel->width()/timeoutLabel->text().length())-2*hMargin,
                      timeoutLabel->height()-vMargin);
     font.setPixelSize(iFontSize);
