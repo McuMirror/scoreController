@@ -43,6 +43,7 @@ QT_FORWARD_DECLARE_CLASS(FileServer)
 QT_FORWARD_DECLARE_CLASS(QGroupBox)
 QT_FORWARD_DECLARE_CLASS(QGridLayout)
 QT_FORWARD_DECLARE_CLASS(QHBoxLayout)
+QT_FORWARD_DECLARE_CLASS(GeneralSetupDialog)
 
 
 
@@ -112,7 +113,9 @@ protected:
     virtual void    SaveStatus();
 
 protected:
-    QSettings    *pSettings;
+    QSettings            *pSettings;
+    GeneralSetupDialog   *pGeneralSetupDialog;
+
     struct connection{
       QWebSocket*     pClientSocket;
       QHostAddress    clientAddress;

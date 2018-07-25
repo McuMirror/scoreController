@@ -40,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "utility.h"
 #include "netServer.h"
 #include "fileserver.h"
+#include "generalsetupdialog.h"
 
 
 #define DISCOVERY_PORT      45453
@@ -65,6 +66,9 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
 {
     QString sFunctionName = QString(" ScoreController::ScoreController ");
     Q_UNUSED(sFunctionName)
+
+    pGeneralSetupDialog = new GeneralSetupDialog(this);
+    pGeneralSetupDialog->setWindowFlags(Qt::Window);
 
     // The click sound for button press so to have an acoustic feedback
     // on touch screen tablets.
@@ -1106,6 +1110,10 @@ ScoreController::onButtonSetupClicked() {
     QString sBaseDir;
     sBaseDir = QStandardPaths::displayName(QStandardPaths::GenericDataLocation);
     if(!sBaseDir.endsWith(QString("/"))) sBaseDir+= QString("/");
+
+    pGeneralSetupDialog->setSlideDir(sSlideDir);
+    pGeneralSetupDialog->setSpotDir(sSpotDir);
+    pGeneralSetupDialog->exec();
 
     QDir slideDir(sSlideDir);
     QFileDialog* pGetDirDlg;

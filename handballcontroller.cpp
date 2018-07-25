@@ -492,7 +492,7 @@ HandballController::onTimeOutDecrement(int iTeam) {
     if(iTimeout[iTeam] == 0) {
         timeoutDecrement[iTeam]->setEnabled(false);
     }
-    timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
+    timeoutEdit[iTeam]->setStyleSheet(styleSheet());
     timeoutIncrement[iTeam]->setEnabled(true);
     sMessage.sprintf("<timeout%1d>%d</timeout%1d>", iTeam, iTimeout[iTeam], iTeam);
     SendToAll(sMessage);
@@ -646,7 +646,7 @@ HandballController::onButtonNewPeriodClicked() {
         timeoutEdit[iTeam]->setText(sText);
         timeoutIncrement[iTeam]->setEnabled(true);
         timeoutDecrement[iTeam]->setEnabled(true);
-        timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
+        timeoutEdit[iTeam]->setStyleSheet(styleSheet());
         if(iTimeout[iTeam] >= maxTimeouts) {
             timeoutIncrement[iTeam]->setEnabled(false);
             timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
@@ -680,7 +680,7 @@ HandballController::onButtonNewGameClicked() {
         iTimeout[iTeam] = 0;
         sText.sprintf("%1d", iTimeout[iTeam]);
         timeoutEdit[iTeam]->setText(sText);
-        timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
+        timeoutEdit[iTeam]->setStyleSheet(styleSheet());
         timeoutDecrement[iTeam]->setEnabled(false);
         timeoutIncrement[iTeam]->setEnabled(true);
         iScore[iTeam]   = 0;
@@ -732,7 +732,7 @@ HandballController::onButtonChangeFieldClicked() {
         timeoutEdit[iTeam]->setText(sText);
         timeoutIncrement[iTeam]->setEnabled(true);
         timeoutDecrement[iTeam]->setEnabled(true);
-        timeoutEdit[iTeam]->setStyleSheet("background:white;color:black;");
+        timeoutEdit[iTeam]->setStyleSheet(styleSheet());
         if(iTimeout[iTeam] >= maxTimeouts) {
             timeoutIncrement[iTeam]->setEnabled(false);
             timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
