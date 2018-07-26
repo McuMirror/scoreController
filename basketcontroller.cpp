@@ -151,6 +151,7 @@ BasketController::buildControls() {
         possess[iTeam] = new RadioButton(tr(" "), iTeam);
         // Bonus
         bonusEdit[iTeam] = new Edit(QString(tr("Bonus")));
+        bonusEdit[iTeam]->setMaxLength(QString(tr("Bonus")).length());
         bonusEdit[iTeam]->setFrame(false);
         bonusEdit[iTeam]->setAlignment(Qt::AlignHCenter);
         bonusEdit[iTeam]->setReadOnly(true);

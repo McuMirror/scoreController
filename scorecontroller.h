@@ -108,8 +108,8 @@ protected:
     bool            isConnectedToNetwork();
     bool            PrepareLogFile();
     bool            prepareDiscovery();
-    virtual QString FormatStatusMsg();
     void            UpdateUI();
+    virtual QString FormatStatusMsg();
     virtual void    SaveStatus();
 
 protected:
