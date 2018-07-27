@@ -36,7 +36,6 @@ NetServer::NetServer(QString _serverName, QFile* _logFile, QObject *parent)
 
 bool
 NetServer::prepareServer(quint16 serverPort) {
-    QString sFunctionName = " NetServer::prepareServer ";
     pServerSocket = new QWebSocketServer(QStringLiteral("Server"),
                                          QWebSocketServer::NonSecureMode,
                                          this);
@@ -46,14 +45,14 @@ NetServer::prepareServer(quint16 serverPort) {
             this, SLOT(onServerError(QWebSocketProtocol::CloseCode)));
     if (!pServerSocket->listen(QHostAddress::Any, serverPort)) {
         logMessage(logFile,
-                   sFunctionName,
+                   Q_FUNC_INFO,
                    QString("%1 - Impossibile to listen port %2 !")
                    .arg(sServerName)
                    .arg(serverPort));
         return false;
     }
     logMessage(logFile,
-               sFunctionName,
+               Q_FUNC_INFO,
                QString("%1 - listening on port:%2")
                .arg(sServerName)
                .arg(serverPort));
@@ -64,9 +63,8 @@ NetServer::prepareServer(quint16 serverPort) {
 
 void
 NetServer::onServerError(QWebSocketProtocol::CloseCode closeCode){
-    QString sFunctionName = " NetServer::onServerError ";
     logMessage(logFile,
-               sFunctionName,
+               Q_FUNC_INFO,
                QString("%1 - %2 Close code: %3")
                .arg(sServerName)
                .arg(pServerSocket->serverAddress().toString())
@@ -77,12 +75,10 @@ NetServer::onServerError(QWebSocketProtocol::CloseCode closeCode){
 
 void
 NetServer::onNewServerConnection() {
-    QString sFunctionName = " NetServer::onNewServerConnection ";
-    Q_UNUSED(sFunctionName)
 
     QWebSocket *pClient = pServerSocket->nextPendingConnection();
     logMessage(logFile,
-               sFunctionName,
+               Q_FUNC_INFO,
                QString("%1 - Client %2 connected")
                .arg(sServerName)
                .arg(pClient->peerAddress().toString()));

@@ -65,9 +65,6 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     , spotUpdaterPort(SPOT_UPDATER_PORT)
     , pButtonClick(Q_NULLPTR)
 {
-    QString sFunctionName = QString(" ScoreController::ScoreController ");
-    Q_UNUSED(sFunctionName)
-
     pGeneralSetupDialog = new GeneralSetupDialog(this);
     pGeneralSetupDialog->setWindowFlags(Qt::Window);
 
@@ -96,7 +93,7 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
 
     if((panelType < FIRST_PANEL) || (panelType > LAST_PANEL)) {
         logMessage(logFile,
-                   sFunctionName,
+                   Q_FUNC_INFO,
                    QString("Panel Type set to FIRST_PANEL"));
         panelType = FIRST_PANEL;
     }
@@ -134,12 +131,10 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
 
 void
 ScoreController::prepareServices() {
-    QString sFunctionName = QString(" ScoreController::prepareServices ");
-    Q_UNUSED(sFunctionName)
     // Start listening to the discovery port
     if(!prepareDiscovery()) {
         logMessage(logFile,
-                   sFunctionName,
+                   Q_FUNC_INFO,
                    QString("!prepareDiscovery()"));
         exitTimer.start(1000);
         QCursor waitCursor;
@@ -162,7 +157,6 @@ ScoreController::prepareServices() {
 
 void
 ScoreController::PrepareDirectories() {
-    QString sFunctionName = QString(" ScoreController::PrepareDirectories ");
     QDir slideDir(sSlideDir);
     QDir spotDir(sSpotDir);
 
@@ -184,7 +178,7 @@ ScoreController::PrepareDirectories() {
         slideDir.setNameFilters(filter);
         slideList = slideDir.entryInfoList();
         logMessage(logFile,
-                   sFunctionName,
+                   Q_FUNC_INFO,
                    QString("Slides directory: %1 Found %2 Slides")
                    .arg(sSlideDir)
                    .arg(slideList.count()));
@@ -193,7 +187,7 @@ ScoreController::PrepareDirectories() {
         spotDir.setFilter(QDir::Files);
         spotList = spotDir.entryInfoList();
         logMessage(logFile,
-                   sFunctionName,
+                   Q_FUNC_INFO,
                    QString("Spot directory: %1 Found %2 Spots")
                    .arg(sSpotDir)
                    .arg(spotList.count()));
@@ -259,22 +253,19 @@ ScoreController::WaitForNetworkReady() {
 
 ScoreController::~ScoreController() {
     // All the housekeeping is done in "closeEvent()" manager
-    QString sFunctionName = QString("ScoreController::~ScoreController");
-    Q_UNUSED(sFunctionName)
 }
 
 
 void
 ScoreController::onSlideServerDone(bool bError) {
-    QString sFunctionName = QString(" ScoreController::onSlideServerDone ");
     if(bError) {
         logMessage(logFile,
-                   sFunctionName,
+                   Q_FUNC_INFO,
                    QString("Slide server stopped with errors"));
     }
     else {
         logMessage(logFile,
-                   sFunctionName,
+                   Q_FUNC_INFO,
                    QString("Slide server stopped without errors"));
     }
 }
@@ -282,15 +273,14 @@ ScoreController::onSlideServerDone(bool bError) {
 
 void
 ScoreController::onSpotServerDone(bool bError) {
-    QString sFunctionName = QString(" ScoreController::onSpotServerDone ");
     if(bError) {
         logMessage(logFile,
-                   sFunctionName,
+                   Q_FUNC_INFO,
                    QString("Spot server stopped with errors"));
     }
     else {
         logMessage(logFile,
-                   sFunctionName,
+                   Q_FUNC_INFO,
                    QString("Spot server stopped without errors"));
     }
 }
@@ -301,7 +291,6 @@ ScoreController::onSpotServerDone(bool bError) {
 // It listen for a short message from clients and send an appropriate answer.
 bool
 ScoreController::prepareDiscovery() {
-    QString sFunctionName = QString(" ScoreController::prepareDiscovery ");
     bool bSuccess = false;
     sIpAddresses = QStringList();
     QList<QNetworkInterface> interfaceList = QNetworkInterface::allInterfaces();
@@ -327,7 +316,7 @@ ScoreController::prepareDiscovery() {
                         bSuccess = true;
 #ifdef LOG_VERBOSE
                         logMessage(logFile,
-                                   sFunctionName,
+                                   Q_FUNC_INFO,
                                    QString("Listening for connections at address: %1 port:%2")
                                    .arg(discoveryAddress.toString())
                                    .arg(discoveryPort));
@@ -335,7 +324,7 @@ ScoreController::prepareDiscovery() {
                     }
                     else {
                         logMessage(logFile,
-                                   sFunctionName,
+                                   Q_FUNC_INFO,
                                    QString("Unable to bound %1")
                                    .arg(discoveryAddress.toString()));
                     }
@@ -434,8 +423,6 @@ ScoreController::PrepareLogFile() {
 
 bool
 ScoreController::isConnectedToNetwork() {
-    QString sFunctionName = " ScoreController::isConnectedToNetwork ";
-    Q_UNUSED(sFunctionName)
     QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
     bool result = false;
 
@@ -453,7 +440,7 @@ ScoreController::isConnectedToNetwork() {
     }
 #ifdef LOG_VERBOSE
     logMessage(logFile,
-               sFunctionName,
+               Q_FUNC_INFO,
                result ? QString("true") : QString("false"));
 #endif
     return result;
@@ -462,7 +449,6 @@ ScoreController::isConnectedToNetwork() {
 
 void
 ScoreController::onProcessConnectionRequest() {
-    QString sFunctionName = " ScoreController::onProcessConnectionRequest ";
     QByteArray datagram, request;
     QString sToken;
     QUdpSocket* pDiscoverySocket = qobject_cast<QUdpSocket*>(sender());
@@ -481,7 +467,7 @@ ScoreController::onProcessConnectionRequest() {
     if(sToken != sNoData) {
         sendAcceptConnection(pDiscoverySocket, hostAddress, port);
         logMessage(logFile,
-                   sFunctionName,
+                   Q_FUNC_INFO,
                    QString("Connection request from: %1 at Address %2:%3")
                    .arg(sToken)
                    .arg(hostAddress.toString())
@@ -489,7 +475,7 @@ ScoreController::onProcessConnectionRequest() {
         RemoveClient(hostAddress);
 #ifdef LOG_VERBOSE
         logMessage(logFile,
-                   sFunctionName,
+                   Q_FUNC_INFO,
                    QString("Sent: %1")
                    .arg(sMessage));
 #endif
@@ -500,8 +486,6 @@ ScoreController::onProcessConnectionRequest() {
 
 int
 ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, QHostAddress hostAddress, quint16 port) {
-    QString sFunctionName = " ScoreController::sendAcceptConnection ";
-    Q_UNUSED(sFunctionName)
     QString sString = QString("%1,%2").arg(sIpAddresses.at(0)).arg(panelType);
     for(int i=1; i<sIpAddresses.count(); i++) {
         sString += QString(";%1,%2").arg(sIpAddresses.at(i)).arg(panelType);
@@ -510,7 +494,7 @@ ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, QHostAddress
     QByteArray datagram = sMessage.toUtf8();
     if(!pDiscoverySocket->isValid()) {
         logMessage(logFile,
-                   sFunctionName,
+                   Q_FUNC_INFO,
                    QString("Discovery Socket Invalid !"));
         return -1;
     }
@@ -518,7 +502,7 @@ ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, QHostAddress
     Q_UNUSED(bytesWritten)
     if(bytesWritten != datagram.size()) {
       logMessage(logFile,
-                 sFunctionName,
+                 Q_FUNC_INFO,
                  QString("Unable to send data !"));
     }
     return 0;
@@ -527,11 +511,9 @@ ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, QHostAddress
 
 void
 ScoreController::closeEvent(QCloseEvent *event) {
-    QString sFunctionName = " ScoreController::closeEvent ";
-    Q_UNUSED(sFunctionName)
     QString sMessage;
     logMessage(logFile,
-               sFunctionName,
+               Q_FUNC_INFO,
                QString("Closing"));
     if(pButtonClick != Q_NULLPTR)
         delete pButtonClick;
@@ -554,7 +536,7 @@ ScoreController::closeEvent(QCloseEvent *event) {
 
     if(connectionList.count() > 0) {
         int answer = QMessageBox::question(this,
-                                           sFunctionName,
+                                           Q_FUNC_INFO,
                                            tr("Vuoi spegnere anche i pannelli ?"),
                                            QMessageBox::Yes,
                                            QMessageBox::No,
@@ -597,9 +579,6 @@ ScoreController::closeEvent(QCloseEvent *event) {
 
 bool
 ScoreController::prepareServer() {
-    QString sFunctionName = " ScoreController::prepareServer ";
-    Q_UNUSED(sFunctionName)
-
     pPanelServer = new NetServer(QString("PanelServer"), logFile, this);
     if(!pPanelServer->prepareServer(serverPort))
         return false;
@@ -611,7 +590,6 @@ ScoreController::prepareServer() {
 
 void
 ScoreController::onProcessTextMessage(QString sMessage) {
-    QString sFunctionName = " ScoreController::onProcessTextMessage ";
     QString sToken;
     QString sNoData = QString("NoData");
 
@@ -663,7 +641,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         int iOrientation = sToken.toInt(&ok);
         if(!ok) {
             logMessage(logFile,
-                       sFunctionName,
+                       Q_FUNC_INFO,
                        QString("Illegal orientation received: %1")
                        .arg(sToken));
             return;
@@ -678,7 +656,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         bool isScoreOnly = bool(sToken.toInt(&ok));
         if(!ok) {
             logMessage(logFile,
-                       sFunctionName,
+                       Q_FUNC_INFO,
                        QString("Illegal orientation received: %1")
                        .arg(sToken));
             return;
@@ -690,11 +668,9 @@ ScoreController::onProcessTextMessage(QString sMessage) {
 
 int
 ScoreController::SendToAll(QString sMessage) {
-    QString sFunctionName = " ScoreController::SendToAll ";
-    Q_UNUSED(sFunctionName)
 #ifdef LOG_VERBOSE
     logMessage(logFile,
-               sFunctionName,
+               Q_FUNC_INFO,
                sMessage);
 #endif
     for(int i=0; i< connectionList.count(); i++) {
@@ -706,7 +682,6 @@ ScoreController::SendToAll(QString sMessage) {
 
 int
 ScoreController::SendToOne(QWebSocket* pClient, QString sMessage) {
-    QString sFunctionName = " ScoreController::SendToOne ";
     if (pClient->isValid()) {
         for(int i=0; i< connectionList.count(); i++) {
            if(connectionList.at(i).clientAddress.toIPv4Address() == pClient->peerAddress().toIPv4Address()) {
@@ -714,13 +689,13 @@ ScoreController::SendToOne(QWebSocket* pClient, QString sMessage) {
                 Q_UNUSED(written)
                 if(written != sMessage.length()) {
                     logMessage(logFile,
-                               sFunctionName,
+                               Q_FUNC_INFO,
                                QString("Error writing %1").arg(sMessage));
                 }
 #ifdef LOG_VERBOSE
                 else {
                     logMessage(logFile,
-                               sFunctionName,
+                               Q_FUNC_INFO,
                                QString("Sent %1 to: %2")
                                .arg(sMessage)
                                .arg(pClient->peerAddress().toString()));
@@ -732,7 +707,7 @@ ScoreController::SendToOne(QWebSocket* pClient, QString sMessage) {
     }
     else {
         logMessage(logFile,
-                   sFunctionName,
+                   Q_FUNC_INFO,
                    QString("Client socket is invalid !"));
         RemoveClient(pClient->peerAddress());
         UpdateUI();
@@ -743,8 +718,6 @@ ScoreController::SendToOne(QWebSocket* pClient, QString sMessage) {
 
 void
 ScoreController::RemoveClient(QHostAddress hAddress) {
-    QString sFunctionName = " ScoreController::RemoveClient ";
-    Q_UNUSED(sFunctionName)
     QString sFound = QString(" Not present");
     Q_UNUSED(sFound)
     QWebSocket *pClientToClose = Q_NULLPTR;
@@ -763,7 +736,7 @@ ScoreController::RemoveClient(QHostAddress hAddress) {
 #ifdef LOG_VERBOSE
             sFound = " Removed !";
             logMessage(logFile,
-                       sFunctionName,
+                       Q_FUNC_INFO,
                        QString("%1 %2")
                        .arg(hAddress.toString())
                        .arg(sFound));
@@ -777,8 +750,6 @@ ScoreController::RemoveClient(QHostAddress hAddress) {
 
 void
 ScoreController::UpdateUI() {
-    QString sFunctionName = " ScoreController::UpdateUI ";
-    Q_UNUSED(sFunctionName)
     if(connectionList.count() == 1) {
         startStopLoopSpotButton->setEnabled(true);
         startStopSlideShowButton->setEnabled(true);
@@ -816,8 +787,6 @@ ScoreController::UpdateUI() {
 
 void
 ScoreController::onNewConnection(QWebSocket *pClient) {
-    QString sFunctionName = " ScoreController::onNewConnection ";
-
     QHostAddress address = pClient->peerAddress();
     QString sAddress = address.toString();
 
@@ -837,7 +806,7 @@ ScoreController::onNewConnection(QWebSocket *pClient) {
     pClientListDialog->addItem(sAddress);
     UpdateUI();
     logMessage(logFile,
-               sFunctionName,
+               Q_FUNC_INFO,
                QString("Client connected: %1")
                .arg(sAddress));
 }
@@ -845,11 +814,10 @@ ScoreController::onNewConnection(QWebSocket *pClient) {
 
 void
 ScoreController::onClientDisconnected() {
-    QString sFunctionName = " ScoreController::onClientDisconnected ";
     QWebSocket* pClient = qobject_cast<QWebSocket *>(sender());
     QString sDiconnectedAddress = pClient->peerAddress().toString();
     logMessage(logFile,
-               sFunctionName,
+               Q_FUNC_INFO,
                QString("%1 disconnected because %2. Close code: %3")
                .arg(sDiconnectedAddress)
                .arg(pClient->closeReason())
@@ -861,10 +829,9 @@ ScoreController::onClientDisconnected() {
 
 void
 ScoreController::onProcessBinaryMessage(QByteArray message) {
-    QString sFunctionName = " ScoreController::onProcessBinaryMessage ";
     Q_UNUSED(message)
     logMessage(logFile,
-               sFunctionName,
+               Q_FUNC_INFO,
                QString("Unexpected binary message received !"));
 }
 
@@ -1106,8 +1073,6 @@ ScoreController::onButtonPanelControlClicked() {
 // one, the other or both the directories...
 void
 ScoreController::onButtonSetupClicked() {
-    QString sFunctionName = QString(" ScoreController::onButtonSetupClicked ");
-
     pGeneralSetupDialog->setSlideDir(sSlideDir);
     pGeneralSetupDialog->setSpotDir(sSpotDir);
     if(pGeneralSetupDialog->exec() == QDialog::Accepted) {
@@ -1124,7 +1089,7 @@ ScoreController::onButtonSetupClicked() {
             slideList = QFileInfoList();
         }
         logMessage(logFile,
-                   sFunctionName,
+                   Q_FUNC_INFO,
                    QString("Found %1 slides").arg(slideList.count()));
 
         sSpotDir = pGeneralSetupDialog->getSpotDir();
@@ -1141,7 +1106,7 @@ ScoreController::onButtonSetupClicked() {
             spotList = QFileInfoList();
         }
         logMessage(logFile,
-                   sFunctionName,
+                   Q_FUNC_INFO,
                    QString("Found %1 spots")
                    .arg(spotList.count()));
         SaveStatus();
@@ -1156,8 +1121,6 @@ ScoreController::SaveStatus() {
 
 QString
 ScoreController::FormatStatusMsg() {
-    QString sFunctionName = " ScoreController::FormatStatusMsg ";
-    Q_UNUSED(sFunctionName)
     QString sMessage = QString();
     return sMessage;
 }

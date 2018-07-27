@@ -49,9 +49,6 @@ BasketController::BasketController()
     : ScoreController(BASKET_PANEL, Q_NULLPTR)
     , bFontBuilt(false)
 {
-    QString sFunctionName = QString(" BasketController::BasketController ");
-    Q_UNUSED(sFunctionName)
-
     GetSettings();
     PrepareDirectories();
 
@@ -372,8 +369,6 @@ BasketController::setEventHandlers() {
 
 void
 BasketController::GetSettings() {
-    QString sFunctionName = QString(" BasketController::GetSettings ");
-    Q_UNUSED(sFunctionName)
     pSettings = new QSettings("Gabriele Salvato", "Basket Controller");
 
     sTeam[0]    = pSettings->value("team1/name", QString(tr("Locali"))).toString();
@@ -404,8 +399,6 @@ BasketController::GetSettings() {
 
 void
 BasketController::closeEvent(QCloseEvent *event) {
-    QString sFunctionName = " BasketController::closeEvent ";
-    Q_UNUSED(sFunctionName)
     SaveStatus();
     ScoreController::closeEvent(event);// Propagate the event
 }
@@ -508,8 +501,6 @@ BasketController::CreateGamePanel() {
 
 QString
 BasketController::FormatStatusMsg() {
-    QString sFunctionName = " BasketController::FormatStatusMsg ";
-    Q_UNUSED(sFunctionName)
     QString sMessage = QString();
     QString sTemp;
     for(int i=0; i<2; i++) {
