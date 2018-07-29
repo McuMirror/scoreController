@@ -42,7 +42,7 @@ ChooseDiscipline::ChooseDiscipline(QWidget *parent)
 
 ChooseDiscipline::~ChooseDiscipline() {
     if(pController != Q_NULLPTR) {
-        disconnect(pController, 0, 0, 0);
+        pController->disconnect(pController);
         delete pController;
     }
     pController = Q_NULLPTR;
