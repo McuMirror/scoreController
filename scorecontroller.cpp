@@ -456,10 +456,10 @@ ScoreController::onProcessConnectionRequest() {
     QString sMessage;
     Q_UNUSED(sMessage)
     QHostAddress hostAddress;
-    quint16 port;
+    quint16 port=0;
 
     while(pDiscoverySocket->hasPendingDatagrams()) {
-        datagram.resize(pDiscoverySocket->pendingDatagramSize());
+        datagram.resize(int(pDiscoverySocket->pendingDatagramSize()));
         pDiscoverySocket->readDatagram(datagram.data(), datagram.size(), &hostAddress, &port);
         request.append(datagram.data());
     }

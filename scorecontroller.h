@@ -52,7 +52,7 @@ class ScoreController : public QWidget
     Q_OBJECT
 
 public:
-    ScoreController(int _panelType, QWidget *parent = 0);
+    ScoreController(int _panelType, QWidget *parent=Q_NULLPTR);
     ~ScoreController();
     void closeEvent(QCloseEvent *event);
 
@@ -116,9 +116,10 @@ protected:
     QSettings            *pSettings;
     GeneralSetupDialog   *pGeneralSetupDialog;
 
-    struct connection{
+    struct connection {
       QWebSocket*     pClientSocket;
       QHostAddress    clientAddress;
+      QString         sHostName = QString("NoName");
     };
 
     int                   panelType;
