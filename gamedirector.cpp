@@ -41,6 +41,7 @@ int
 GameDirector::exec() {
     int iResult = 0;
     pChooser = new ChooseDiscipline();
+    pChooser->setWindowFlags(Qt::Window);
     while(pChooser->exec() != QDialog::Rejected) {
         int iDiscipline = pChooser->getDiscipline();
         if(iDiscipline == VOLLEY_PANEL)
