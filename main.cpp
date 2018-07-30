@@ -18,21 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gamedirector.h"
-//#include <QRect>
-//#include <QDebug>
-//#include <QScreen>
 
 
 int
 main(int argc, char *argv[]) {
     int iresult = 0;
     GameDirector* pApp = new GameDirector(argc, argv);
-//    QList<QScreen *> screenList = QGuiApplication::screens();
-//    QRect screenRect;
-//    for(int i=0; i<screenList.count(); i++) {
-//        screenRect = screenList.at(i)->availableGeometry();
-//        qDebug() << "Width:" << screenRect.width() << "Height:" << screenRect.height();
-//    }
     // Start the event loop and waits unil exit() is called
     iresult = pApp->exec();
     return iresult;
