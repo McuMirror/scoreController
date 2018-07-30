@@ -26,5 +26,6 @@ main(int argc, char *argv[]) {
     GameDirector* pApp = new GameDirector(argc, argv);
     // Start the event loop and waits unil exit() is called
     iresult = pApp->exec();
+    delete pApp;
     return iresult;
 }

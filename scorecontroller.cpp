@@ -156,7 +156,7 @@ ScoreController::prepareServices() {
 
 
 void
-ScoreController::PrepareDirectories() {
+ScoreController::prepareDirectories() {
     QDir slideDir(sSlideDir);
     QDir spotDir(sSpotDir);
 
@@ -400,7 +400,7 @@ ScoreController::onSetScoreOnly(QString sClientIp, bool bScoreOnly) {
 
 
 bool
-ScoreController::PrepareLogFile() {
+ScoreController::prepareLogFile() {
 #if defined(LOG_MESG) || defined(LOG_VERBOSE)
     QFileInfo checkFile(logFileName);
     if(checkFile.exists() && checkFile.isFile()) {

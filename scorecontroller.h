@@ -92,7 +92,7 @@ protected slots:
     void onSpotServerDone(bool bError);
 
 protected:
-    void            PrepareDirectories();
+    void            prepareDirectories();
     void            prepareServices();
     void            prepareSpotUpdateService();
     void            prepareSlideUpdateService();
@@ -105,7 +105,7 @@ protected:
     int             sendAcceptConnection(QUdpSocket *pDiscoverySocket, QHostAddress hostAddress, quint16 port);
     void            RemoveClient(QHostAddress hAddress);
     bool            isConnectedToNetwork();
-    bool            PrepareLogFile();
+    bool            prepareLogFile();
     bool            prepareDiscovery();
     void            UpdateUI();
     virtual QString FormatStatusMsg();

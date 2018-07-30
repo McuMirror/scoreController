@@ -46,10 +46,10 @@ HandballController::HandballController()
 
 {
     GetSettings();
-    PrepareDirectories();
+    prepareDirectories();
 
     logFileName = QString("%1score_controller.txt").arg(sLogDir);
-    PrepareLogFile();
+    prepareLogFile();
     prepareServices();
 
     pSlideUpdaterServer->setDir(sSlideDir, "*.jpg *.jpeg *.png *.JPG *.JPEG *.PNG");
@@ -373,7 +373,7 @@ QGridLayout*
 HandballController::CreateGamePanel() {
     QGridLayout* gamePanel = new QGridLayout();
     //
-    int iRow;
+    int iRow = 0;
     for(int iTeam=0; iTeam<2; iTeam++) {
         // Matrice x righe e 8 colonne
         iRow = 0;

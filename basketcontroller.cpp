@@ -50,10 +50,10 @@ BasketController::BasketController()
     , bFontBuilt(false)
 {
     GetSettings();
-    PrepareDirectories();
+    prepareDirectories();
 
     logFileName = QString("%1score_controller.txt").arg(sLogDir);
-    PrepareLogFile();
+    prepareLogFile();
     prepareServices();
 
     pSlideUpdaterServer->setDir(sSlideDir,"*.jpg *.jpeg *.png *.JPG *.JPEG *.PNG");
