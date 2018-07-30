@@ -573,7 +573,6 @@ ScoreController::closeEvent(QCloseEvent *event) {
         pClientListDialog->deleteLater();
         pClientListDialog = Q_NULLPTR;
     }
-    emit panelDone();
 }
 
 

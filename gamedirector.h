@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QApplication>
 
 QT_FORWARD_DECLARE_CLASS(ChooseDiscipline)
+QT_FORWARD_DECLARE_CLASS(ScoreController)
+
 
 
 class GameDirector : public QApplication
@@ -34,6 +36,7 @@ public:
 
 private:
     ChooseDiscipline *pChooser;
+    ScoreController* pController;
 };
 
 #endif // GAMEDIRECTOR_H

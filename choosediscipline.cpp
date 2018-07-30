@@ -18,15 +18,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "choosediscipline.h"
 #include "ui_choosediscipline.h"
-#include "volleycontroller.h"
-#include "basketcontroller.h"
-#include "handballcontroller.h"
 
 
 ChooseDiscipline::ChooseDiscipline(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::ChooseDiscipline)
-    , pController(Q_NULLPTR)
     , pSettings(Q_NULLPTR)
 {
     pSettings = new QSettings("Gabriele Salvato", "Choose Discipline");
@@ -41,11 +37,6 @@ ChooseDiscipline::ChooseDiscipline(QWidget *parent)
 
 
 ChooseDiscipline::~ChooseDiscipline() {
-    if(pController != Q_NULLPTR) {
-        pController->disconnect(pController);
-        delete pController;
-    }
-    pController = Q_NULLPTR;
     if(pSettings != Q_NULLPTR)
         delete pSettings;
     pSettings = Q_NULLPTR;
@@ -73,24 +64,7 @@ ChooseDiscipline::on_handballRadioButton_clicked() {
 
 void
 ChooseDiscipline::on_goPushButton_clicked() {
-    int iDiscipline = getDiscipline();
-    if(iDiscipline == VOLLEY_PANEL)
-        pController = new VolleyController();
-    else if(iDiscipline == BASKET_PANEL)
-        pController = new BasketController();
-    else if(iDiscipline == HANDBALL_PANEL)
-        pController = new HandballController();
-    else
-        pController = new VolleyController();
-
-    connect(pController, SIGNAL(panelDone()),
-            this, SLOT(onPanelDone()));
-    hide();
-#ifdef Q_OS_ANDROID
-    pController->showFullScreen();
-#else
-    pController->show();
-#endif
+    done(QDialog::Accepted);
 }
 
 
@@ -102,23 +76,7 @@ ChooseDiscipline::getDiscipline() {
 
 void
 ChooseDiscipline::on_closePushButton_clicked() {
-    if(pController != Q_NULLPTR) {
-        pController->disconnect();
-        pController->deleteLater();
-    }
-    pController = Q_NULLPTR;
-    done(QDialog::Accepted);
-}
-
-
-void
-ChooseDiscipline::onPanelDone() {
-    if(pController != Q_NULLPTR) {
-        pController->disconnect();
-        pController->deleteLater();
-    }
-    pController = Q_NULLPTR;
-    show();
+    done(QDialog::Rejected);
 }
 
 
