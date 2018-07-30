@@ -29,19 +29,23 @@ GameDirector::GameDirector(int &argc, char **argv)
     , pChooser(Q_NULLPTR)
     , pController(Q_NULLPTR)
 {
+    pChooser = new ChooseDiscipline();
+    pChooser->setWindowFlags(Qt::Window);
 }
 
 
-
 GameDirector::~GameDirector() {
+    if(pChooser != Q_NULLPTR) {
+        pChooser->disconnect();
+        delete pChooser;
+        pChooser = Q_NULLPTR;
+    }
 }
 
 
 int
 GameDirector::exec() {
     int iResult = 0;
-    pChooser = new ChooseDiscipline();
-    pChooser->setWindowFlags(Qt::Window);
     while(pChooser->exec() != QDialog::Rejected) {
         int iDiscipline = pChooser->getDiscipline();
         if(iDiscipline == VOLLEY_PANEL)
@@ -65,11 +69,6 @@ GameDirector::exec() {
             delete pController;
             pController = Q_NULLPTR;
         }
-    }
-    if(pChooser != Q_NULLPTR) {
-        pChooser->disconnect();
-        delete pChooser;
-        pChooser = Q_NULLPTR;
     }
     return iResult;
 }

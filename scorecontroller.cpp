@@ -65,6 +65,12 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     , spotUpdaterPort(SPOT_UPDATER_PORT)
     , pButtonClick(Q_NULLPTR)
 {
+    // Blocks until a network connection is available
+    if(WaitForNetworkReady() != QMessageBox::Ok) {
+        exit(0);
+    }
+    pClientListDialog = new ClientListDialog(this);
+
     pGeneralSetupDialog = new GeneralSetupDialog(this);
     pGeneralSetupDialog->setWindowFlags(Qt::Window);
 
@@ -73,7 +79,7 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     pButtonClick = new QSoundEffect(this);
     pButtonClick->setSource(QUrl::fromLocalFile(":/key.wav"));
 
-    // An IP Addresses list of connected Score Panels
+    // A List of IP Addresses of the connected Score Panels
     sIpAddresses = QStringList();
 
     // Logged messages (if enabled) will be written in the following folder
@@ -100,9 +106,6 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
 
     connect(&exitTimer, SIGNAL(timeout()),
             this, SLOT(close()));
-
-    // Blocks until a network connection is available
-    WaitForNetworkReady();
 
     // Pan-Tilt Camera management
     connect(pClientListDialog, SIGNAL(disableVideo()),
@@ -141,17 +144,17 @@ ScoreController::prepareServices() {
         waitCursor.setShape(Qt::WaitCursor);
         setCursor(waitCursor);
     }
-
     // Prepare the server port for the panels to connect
-    if(!prepareServer()) {
+    else if(!prepareServer()) {
         exitTimer.start(1000);
         QCursor waitCursor;
         waitCursor.setShape(Qt::WaitCursor);
         setCursor(waitCursor);
     }
-
-    prepareSpotUpdateService();
-    prepareSlideUpdateService();
+    else {
+        prepareSpotUpdateService();
+        prepareSlideUpdateService();
+    }
 }
 
 
@@ -229,7 +232,7 @@ ScoreController::prepareSlideUpdateService() {
 }
 
 
-void
+int
 ScoreController::WaitForNetworkReady() {
     int iResponse;
     while(!isConnectedToNetwork()) {
@@ -244,10 +247,11 @@ ScoreController::WaitForNetworkReady() {
             QCursor waitCursor;
             waitCursor.setShape(Qt::WaitCursor);
             setCursor(waitCursor);
-            break;
+            return iResponse;
         }
         QThread::sleep(1);
     }
+    return QMessageBox::Ok;
 }
 
 

@@ -98,7 +98,7 @@ protected:
     void            prepareSlideUpdateService();
     QGroupBox      *CreateClientListBox();
     QHBoxLayout    *CreateSpotButtons();
-    void            WaitForNetworkReady();
+    int             WaitForNetworkReady();
     int             SendToAll(QString sMessage);
     int             SendToOne(QWebSocket* pSocket, QString sMessage);
     bool            prepareServer();

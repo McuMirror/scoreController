@@ -180,7 +180,7 @@ FileServer::onClientSocketError(QAbstractSocket::SocketError error) {
                .arg(pClient->peerAddress().toString())
                .arg(error)
                .arg(pClient->errorString()));
-    if(!disconnect(pClient, 0, 0, 0)) {
+    if(!pClient->disconnect(pClient)) {
         logMessage(logFile,
                    Q_FUNC_INFO,
                    serverName +
@@ -260,7 +260,7 @@ FileServer::onProcessTextMessage(QString sMessage) {
                         return;
                     }
                     if(pClient->isValid()) {
-                        int bytesSent = pClient->sendBinaryMessage(ba);
+                        int bytesSent = int(pClient->sendBinaryMessage(ba));
                         if(bytesSent != ba.count()) {
                             logMessage(logFile,
                                        Q_FUNC_INFO,
@@ -424,7 +424,7 @@ FileServer::onClientDisconnected() {
 void
 FileServer::onCloseServer() {
     for(int i=0; i<connections.count(); i++) {
-        disconnect(connections.at(i), 0, 0, 0);
+        connections.at(i)->disconnect();
         if(connections.at(i)->isValid())
             connections.at(i)->close();
         connections.at(i)->deleteLater();
