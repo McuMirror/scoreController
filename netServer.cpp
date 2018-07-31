@@ -77,7 +77,6 @@ NetServer::onServerError(QWebSocketProtocol::CloseCode closeCode){
 
 void
 NetServer::onNewServerConnection() {
-
     QWebSocket *pClient = pServerSocket->nextPendingConnection();
     logMessage(logFile,
                Q_FUNC_INFO,
@@ -96,4 +95,5 @@ NetServer::closeServer() {
         pServerSocket->close();
     pServerSocket->deleteLater();
     pServerSocket = Q_NULLPTR;
+    thread()->quit();
 }
