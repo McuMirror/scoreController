@@ -54,7 +54,7 @@ VolleyController::VolleyController()
     emit startSpotServer();
 
     buildControls();
-    QGridLayout *mainLayout = new QGridLayout();
+    auto *mainLayout = new QGridLayout();
 
     int gamePanelWidth  = 15;
     int gamePanelHeigth =  8;
@@ -292,7 +292,7 @@ VolleyController::SaveStatus() {
 
 QHBoxLayout*
 VolleyController::CreateGameButtons() {
-    QHBoxLayout* gameButtonLayout = new QHBoxLayout();
+    auto* gameButtonLayout = new QHBoxLayout();
     QPixmap pixmap(":/buttonIcons/ExchangeVolleyField.png");
     QIcon ButtonIcon(pixmap);
 
@@ -321,7 +321,7 @@ VolleyController::CreateGameButtons() {
 
 QGridLayout*
 VolleyController::CreateGamePanel() {
-    QGridLayout* gamePanel = new QGridLayout();
+    auto* gamePanel = new QGridLayout();
     // Team
     int iRow;
     for(int iTeam=0; iTeam<2; iTeam++) {
@@ -432,8 +432,8 @@ VolleyController::onTimeOutDecrement(int iTeam) {
 void
 VolleyController::setEventHandlers() {
     for(int iTeam=0; iTeam <2; iTeam++) {
-        connect(teamName[iTeam], SIGNAL(textChanged(QString, int)),
-                this, SLOT(onTeamTextChanged(QString, int)));
+        connect(teamName[iTeam], SIGNAL(textChanged(QString,int)),
+                this, SLOT(onTeamTextChanged(QString,int)));
         connect(timeoutIncrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onTimeOutIncrement(int)));
         connect(timeoutIncrement[iTeam], SIGNAL(clicked()),
@@ -450,8 +450,8 @@ VolleyController::setEventHandlers() {
                 this, SLOT(onSetDecrement(int)));
         connect(setsDecrement[iTeam], SIGNAL(clicked()),
                 pButtonClick, SLOT(play()));
-        connect(service[iTeam], SIGNAL(buttonClicked(int, bool)),
-                this, SLOT(onServiceClicked(int, bool)));
+        connect(service[iTeam], SIGNAL(buttonClicked(int,bool)),
+                this, SLOT(onServiceClicked(int,bool)));
         connect(service[iTeam], SIGNAL(clicked()),
                 pButtonClick, SLOT(play()));
         connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),

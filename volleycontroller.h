@@ -54,31 +54,31 @@ private:
 private:
     bool          bFontBuilt;
     QString       sTeam[2];
-    int           iTimeout[2];
-    int           iSet[2];
-    int           iScore[2];
-    int           iServizio;
-    int           lastService;
+    int           iTimeout[2]{};
+    int           iSet[2]{};
+    int           iScore[2]{};
+    int           iServizio{};
+    int           lastService{};
 
-    Edit         *teamName[2];
-    Edit         *timeoutEdit[2];
-    Edit         *setsEdit[2];
-    Edit         *scoreEdit[2];
-    Button       *timeoutIncrement[2];
-    Button       *timeoutDecrement[2];
-    Button       *setsIncrement[2];
-    Button       *setsDecrement[2];
-    Button       *scoreIncrement[2];
-    Button       *scoreDecrement[2];
-    QRadioButton *service[2];
-    QLabel       *timeoutLabel;
-    QLabel       *setsLabel;
-    QLabel       *serviceLabel;
-    QLabel       *scoreLabel;
+    Edit         *teamName[2]{};
+    Edit         *timeoutEdit[2]{};
+    Edit         *setsEdit[2]{};
+    Edit         *scoreEdit[2]{};
+    Button       *timeoutIncrement[2]{};
+    Button       *timeoutDecrement[2]{};
+    Button       *setsIncrement[2]{};
+    Button       *setsDecrement[2]{};
+    Button       *scoreIncrement[2]{};
+    Button       *scoreDecrement[2]{};
+    QRadioButton *service[2]{};
+    QLabel       *timeoutLabel{};
+    QLabel       *setsLabel{};
+    QLabel       *serviceLabel{};
+    QLabel       *scoreLabel{};
 
-    QPushButton  *newSetButton;
-    QPushButton  *newGameButton;
-    QPushButton  *changeFieldButton;
+    QPushButton  *newSetButton{};
+    QPushButton  *newGameButton{};
+    QPushButton  *changeFieldButton{};
 };
 
 #endif // VOLLEYCONTROLLER_H
