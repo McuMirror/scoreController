@@ -338,18 +338,6 @@ FileServer::onProcessTextMessage(QString sMessage) {
 
 
 void
-FileServer::senderThreadFinished() {
-    auto *pThread = qobject_cast<QThread *>(sender());
-    logMessage(logFile,
-               Q_FUNC_INFO,
-               serverName +
-               QString(" Sender Thread terminated"));
-    senderThreads.removeOne(pThread);
-    delete pThread;
-}
-
-
-void
 FileServer::onFileTransferDone(bool bSuccess) {
     logMessage(logFile,
                Q_FUNC_INFO,

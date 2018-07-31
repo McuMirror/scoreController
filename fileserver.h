@@ -50,7 +50,6 @@ signals:
 public slots:
     void onStartServer();
     void onCloseServer();
-    void senderThreadFinished();
     void onFileTransferDone(bool bSuccess);
 
 private slots:
