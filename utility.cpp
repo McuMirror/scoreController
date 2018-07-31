@@ -47,6 +47,7 @@ XML_Parse(QString input_string, QString token) {
     return result;
 }
 
+
 void
  logMessage(QFile *logFile, QString sFunctionName, QString sMessage) {
     Q_UNUSED(sFunctionName)
