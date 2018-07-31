@@ -118,9 +118,9 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     connect(pClientListDialog, SIGNAL(enableVideo(QString)),
             this, SLOT(onStartCamera(QString)));
     connect(pClientListDialog, SIGNAL(newPanValue(QString,int)),
-            this, SLOT(onSetNewPanValue(QString, int)));
+            this, SLOT(onSetNewPanValue(QString,int)));
     connect(pClientListDialog, SIGNAL(newTiltValue(QString,int)),
-            this, SLOT(onSetNewTiltValue(QString, int)));
+            this, SLOT(onSetNewTiltValue(QString,int)));
     // Panel orientation management
     connect(pClientListDialog, SIGNAL(getOrientation(QString)),
             this, SLOT(onGetPanelOrientation(QString)));
@@ -129,8 +129,8 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     // Panel Score Only
     connect(pClientListDialog, SIGNAL(getScoreOnly(QString)),
             this, SLOT(onGetIsPanelScoreOnly(QString)));
-    connect(pClientListDialog, SIGNAL(changeScoreOnly(QString, bool)),
-            this, SLOT(onSetScoreOnly(QString, bool)));
+    connect(pClientListDialog, SIGNAL(changeScoreOnly(QString,bool)),
+            this, SLOT(onSetScoreOnly(QString,bool)));
 
     myStatus = showPanel;
 }
@@ -312,7 +312,7 @@ ScoreController::prepareDiscovery() {
     QList<QNetworkInterface> interfaceList = QNetworkInterface::allInterfaces();
     for(int i=0; i<interfaceList.count(); i++)
     {
-        QNetworkInterface interface = interfaceList.at(i);
+        const QNetworkInterface& interface = interfaceList.at(i);
         if(interface.flags().testFlag(QNetworkInterface::IsUp) &&
            interface.flags().testFlag(QNetworkInterface::IsRunning) &&
            interface.flags().testFlag(QNetworkInterface::CanMulticast) &&
@@ -451,7 +451,7 @@ ScoreController::isConnectedToNetwork() {
     bool result = false;
 
     for(int i=0; i<ifaces.count(); i++) {
-        QNetworkInterface iface = ifaces.at(i);
+        const QNetworkInterface& iface = ifaces.at(i);
         if(iface.flags().testFlag(QNetworkInterface::IsUp) &&
            iface.flags().testFlag(QNetworkInterface::IsRunning) &&
            iface.flags().testFlag(QNetworkInterface::CanBroadcast) &&
@@ -476,7 +476,7 @@ void
 ScoreController::onProcessConnectionRequest() {
     QByteArray datagram, request;
     QString sToken;
-    QUdpSocket* pDiscoverySocket = qobject_cast<QUdpSocket*>(sender());
+    auto* pDiscoverySocket = qobject_cast<QUdpSocket*>(sender());
     QString sNoData = QString("NoData");
     QString sMessage;
     Q_UNUSED(sMessage)
@@ -513,7 +513,7 @@ ScoreController::onProcessConnectionRequest() {
 // It send to the client the IP addresses that this server
 // listen for connections and the panel type to show.
 int
-ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, QHostAddress hostAddress, quint16 port) {
+ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, const QHostAddress& hostAddress, quint16 port) {
     QString sString = QString("%1,%2").arg(sIpAddresses.at(0)).arg(panelType);
     for(int i=1; i<sIpAddresses.count(); i++) {
         sString += QString(";%1,%2").arg(sIpAddresses.at(i)).arg(panelType);
@@ -624,8 +624,8 @@ ScoreController::prepareServer() {
         pPanelServer = Q_NULLPTR;
         return false;
     }
-    connect(pPanelServer, SIGNAL(newConnection(QWebSocket *)),
-            this, SLOT(onNewConnection(QWebSocket *)));
+    connect(pPanelServer, SIGNAL(newConnection(QWebSocket*)),
+            this, SLOT(onNewConnection(QWebSocket*)));
     return true;
 }
 
@@ -709,7 +709,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
 
 
 int
-ScoreController::SendToAll(QString sMessage) {
+ScoreController::SendToAll(const QString& sMessage) {
 #ifdef LOG_VERBOSE
     logMessage(logFile,
                Q_FUNC_INFO,
@@ -759,7 +759,7 @@ ScoreController::SendToOne(QWebSocket* pClient, QString sMessage) {
 
 
 void
-ScoreController::RemoveClient(QHostAddress hAddress) {
+ScoreController::RemoveClient(const QHostAddress& hAddress) {
     QString sFound = QString(" Not present");
     Q_UNUSED(sFound)
     QWebSocket *pClientToClose = Q_NULLPTR;
@@ -856,7 +856,7 @@ ScoreController::onNewConnection(QWebSocket *pClient) {
 
 void
 ScoreController::onClientDisconnected() {
-    QWebSocket* pClient = qobject_cast<QWebSocket *>(sender());
+    auto* pClient = qobject_cast<QWebSocket *>(sender());
     QString sDiconnectedAddress = pClient->peerAddress().toString();
     logMessage(logFile,
                Q_FUNC_INFO,
@@ -880,7 +880,7 @@ ScoreController::onProcessBinaryMessage(QByteArray message) {
 
 QHBoxLayout*
 ScoreController::CreateSpotButtons() {
-    QHBoxLayout* spotButtonLayout = new QHBoxLayout();
+    auto* spotButtonLayout = new QHBoxLayout();
 
     QPixmap pixmap(":/buttonIcons/PlaySpots.png");
     QIcon ButtonIcon(pixmap);
@@ -1169,7 +1169,7 @@ ScoreController::FormatStatusMsg() {
 
 
 void
-ScoreController::onGetPanelOrientation(QString sClientIp) {
+ScoreController::onGetPanelOrientation(const QString& sClientIp) {
     QHostAddress hostAddress(sClientIp);
     for(int i=0; i<connectionList.count(); i++) {
         if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
@@ -1182,7 +1182,7 @@ ScoreController::onGetPanelOrientation(QString sClientIp) {
 
 
 void
-ScoreController::onGetIsPanelScoreOnly(QString sClientIp) {
+ScoreController::onGetIsPanelScoreOnly(const QString& sClientIp) {
     QHostAddress hostAddress(sClientIp);
     for(int i=0; i<connectionList.count(); i++) {
         if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {

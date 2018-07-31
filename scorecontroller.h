@@ -82,10 +82,10 @@ protected slots:
     void onSetNewPanValue(const QString& sClientIp, int newPan);
     void onSetNewTiltValue(const QString& sClientIp, int newTilt);
 
-    void onGetPanelOrientation(QString sClientIp);
+    void onGetPanelOrientation(const QString& sClientIp);
     void onChangePanelOrientation(QString sClientIp, PanelOrientation orientation);
 
-    void onGetIsPanelScoreOnly(QString sClientIp);
+    void onGetIsPanelScoreOnly(const QString& sClientIp);
     void onSetScoreOnly(const QString& sClientIp, bool bScoreOnly);
 
     void onSlideServerDone(bool bError);
@@ -99,11 +99,11 @@ protected:
     QGroupBox      *CreateClientListBox();
     QHBoxLayout    *CreateSpotButtons();
     int             WaitForNetworkReady();
-    int             SendToAll(QString sMessage);
+    int             SendToAll(const QString& sMessage);
     int             SendToOne(QWebSocket* pSocket, QString sMessage);
     bool            prepareServer();
-    int             sendAcceptConnection(QUdpSocket *pDiscoverySocket, QHostAddress hostAddress, quint16 port);
-    void            RemoveClient(QHostAddress hAddress);
+    int             sendAcceptConnection(QUdpSocket *pDiscoverySocket, const QHostAddress& hostAddress, quint16 port);
+    void            RemoveClient(const QHostAddress& hAddress);
     bool            isConnectedToNetwork();
     bool            prepareLogFile();
     bool            prepareDiscovery();
