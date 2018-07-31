@@ -37,8 +37,7 @@ ChooseDiscipline::ChooseDiscipline(QWidget *parent)
 
 
 ChooseDiscipline::~ChooseDiscipline() {
-    if(pSettings != Q_NULLPTR)
-        delete pSettings;
+    delete pSettings;
     pSettings = Q_NULLPTR;
     delete ui;
 }

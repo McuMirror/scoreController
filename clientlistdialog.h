@@ -75,13 +75,13 @@ private:
 private:
     QWidget           *pMyParent;
     QListWidget       clientListWidget;
-    QPushButton       *closeButton;
+    QPushButton       *closeButton{};
     QString            sSelectedClient;
     PanelConfigurator *pConfigurator;
 
 public:
     void clear();
-    void addItem(QString sAddress);
+    void addItem(const QString& sAddress);
 };
 
 #endif // CLIENTLISTDIALOG_H

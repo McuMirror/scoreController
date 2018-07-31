@@ -22,12 +22,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtNetwork>
 #include <QWebSocket>
+#include <utility>
+#include <utility>
 
 #define LOG_MESG
 
 NetServer::NetServer(QString _serverName, QFile* _logFile, QObject *parent)
     : QObject(parent)
-    , sServerName(_serverName)
+    , sServerName(std::move(_serverName))
     , logFile(_logFile)
 {
     pServerSocket = Q_NULLPTR;

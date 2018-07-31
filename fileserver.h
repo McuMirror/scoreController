@@ -34,13 +34,13 @@ class FileServer : public NetServer
 {
     Q_OBJECT
 public:
-    explicit FileServer(QString sName, QFile *_logFile = Q_NULLPTR, QObject *parent = 0);
+    explicit FileServer(const QString& sName, QFile *_logFile = Q_NULLPTR, QObject *parent = 0);
     void setServerPort(quint16 _port);
-    bool setDir(QString sDirectory, QString sExtensions);
+    bool setDir(QString sDirectory, const QString& sExtensions);
     void closeServer();
 
 private:
-    int SendToOne(QWebSocket* pSocket, QString sMessage);
+    int SendToOne(QWebSocket* pSocket, const QString& sMessage);
 
 signals:
     void fileServerDone(bool);

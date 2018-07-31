@@ -59,7 +59,7 @@ HandballController::HandballController()
     emit startSpotServer();
 
     buildControls();
-    QGridLayout *mainLayout = new QGridLayout();
+    auto *mainLayout = new QGridLayout();
 
     int gamePanelWidth   = 15;
     int gamePanelHeight  = 8;
@@ -244,8 +244,8 @@ void
 HandballController::setEventHandlers() {
     for(int iTeam=0; iTeam <2; iTeam++) {
         // Teams
-        connect(teamName[iTeam], SIGNAL(textChanged(QString, int)),
-                this, SLOT(onTeamTextChanged(QString, int)));
+        connect(teamName[iTeam], SIGNAL(textChanged(QString,int)),
+                this, SLOT(onTeamTextChanged(QString,int)));
         // Timeouts
         connect(timeoutIncrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onTimeOutIncrement(int)));
@@ -343,7 +343,7 @@ HandballController::closeEvent(QCloseEvent *event) {
 
 QHBoxLayout*
 HandballController::CreateGameButtons() {
-    QHBoxLayout* gameButtonLayout = new QHBoxLayout();
+    auto* gameButtonLayout = new QHBoxLayout();
     QPixmap pixmap(":/buttonIcons/ExchangeBasketField.png");
     QIcon ButtonIcon(pixmap);
     changeFieldButton = new QPushButton(ButtonIcon, "");
@@ -371,7 +371,7 @@ HandballController::CreateGameButtons() {
 
 QGridLayout*
 HandballController::CreateGamePanel() {
-    QGridLayout* gamePanel = new QGridLayout();
+    auto* gamePanel = new QGridLayout();
     //
     int iRow = 0;
     for(int iTeam=0; iTeam<2; iTeam++) {

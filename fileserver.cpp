@@ -27,10 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QWebSocket>
 #include <QImage>
 #include <QBuffer>
+#include <utility>
 
 
 
-FileServer::FileServer(QString sName, QFile* _logFile, QObject *parent)
+FileServer::FileServer(const QString& sName, QFile* _logFile, QObject *parent)
     : NetServer(sName, _logFile, parent)
     , serverName(sName)
 {
@@ -48,8 +49,8 @@ FileServer::setServerPort(quint16 _port) {
 
 
 bool
-FileServer::setDir(QString sDirectory, QString sExtensions) {
-    sFileDir = sDirectory;
+FileServer::setDir(QString sDirectory, const QString& sExtensions) {
+    sFileDir = std::move(sDirectory);
     if(!sFileDir.endsWith(QString("/")))  sFileDir+= QString("/");
 
     QDir sDir(sFileDir);
@@ -127,26 +128,24 @@ FileServer::onNewConnection(QWebSocket *pClient) {
                 delete connections.at(i);
                 break;
             }
+            if(pClient->isValid()) {
+                logMessage(logFile,
+                           Q_FUNC_INFO,
+                           serverName +
+                           QString(" Only present socket is valid. Removing the old one"));
+                connections.at(i)->close(QWebSocketProtocol::CloseCodeNormal,
+                                         QString("Duplicated request"));
+                delete connections.at(i);
+            }
             else {
-                if(pClient->isValid()) {
-                    logMessage(logFile,
-                               Q_FUNC_INFO,
-                               serverName +
-                               QString(" Only present socket is valid. Removing the old one"));
-                    connections.at(i)->close(QWebSocketProtocol::CloseCodeNormal,
-                                             QString("Duplicated request"));
-                    delete connections.at(i);
-                }
-                else {
-                    logMessage(logFile,
-                               Q_FUNC_INFO,
-                               serverName +
-                               QString(" Present socket is not valid."));
-                    pClient->close(QWebSocketProtocol::CloseCodeNormal,
-                                   QString("Duplicated request"));
-                    delete pClient;
-                    return;
-                }
+                logMessage(logFile,
+                           Q_FUNC_INFO,
+                           serverName +
+                           QString(" Present socket is not valid."));
+                pClient->close(QWebSocketProtocol::CloseCodeNormal,
+                               QString("Duplicated request"));
+                delete pClient;
+                return;
             }
             break;
         }
@@ -172,7 +171,7 @@ FileServer::onNewConnection(QWebSocket *pClient) {
 void
 FileServer::onClientSocketError(QAbstractSocket::SocketError error) {
     Q_UNUSED(error)
-    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
+    auto *pClient = qobject_cast<QWebSocket *>(sender());
     logMessage(logFile,
                Q_FUNC_INFO,
                serverName +
@@ -205,7 +204,7 @@ FileServer::onProcessTextMessage(QString sMessage) {
 
     // The pointer is valid only during the execution of the slot
     // that calls this function from this object's thread context.
-    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
+    auto *pClient = qobject_cast<QWebSocket *>(sender());
 
     sToken = XML_Parse(sMessage, "get");
     if(sToken != sNoData) {
@@ -260,7 +259,7 @@ FileServer::onProcessTextMessage(QString sMessage) {
                         return;
                     }
                     if(pClient->isValid()) {
-                        int bytesSent = int(pClient->sendBinaryMessage(ba));
+                        auto bytesSent = int(pClient->sendBinaryMessage(ba));
                         if(bytesSent != ba.count()) {
                             logMessage(logFile,
                                        Q_FUNC_INFO,
@@ -286,7 +285,7 @@ FileServer::onProcessTextMessage(QString sMessage) {
                     }
                     return;
                 }
-                else {// Unsuccesful seek
+                // Unsuccesful seek
                     file.close();
                     logMessage(logFile,
                                Q_FUNC_INFO,
@@ -294,7 +293,7 @@ FileServer::onProcessTextMessage(QString sMessage) {
                                .arg(sFileName)
                                .arg(startPos));
                     return;
-                }
+                
             }
             else {// file.open failed !
                 logMessage(logFile,
@@ -340,7 +339,7 @@ FileServer::onProcessTextMessage(QString sMessage) {
 
 void
 FileServer::senderThreadFinished() {
-    QThread *pThread = qobject_cast<QThread *>(sender());
+    auto *pThread = qobject_cast<QThread *>(sender());
     logMessage(logFile,
                Q_FUNC_INFO,
                serverName +
@@ -361,7 +360,7 @@ FileServer::onFileTransferDone(bool bSuccess) {
 
 
 int
-FileServer::SendToOne(QWebSocket* pClient, QString sMessage) {
+FileServer::SendToOne(QWebSocket* pClient, const QString& sMessage) {
     if (pClient->isValid()) {
         qint64 written = pClient->sendTextMessage(sMessage);
         if(written != sMessage.length()) {
@@ -402,7 +401,7 @@ FileServer::onProcessBinaryMessage(QByteArray message) {
 
 void
 FileServer::onClientDisconnected() {
-    QWebSocket* pClient = qobject_cast<QWebSocket *>(sender());
+    auto* pClient = qobject_cast<QWebSocket *>(sender());
     QString sDiconnectedAddress = pClient->peerAddress().toString();
     logMessage(logFile,
                Q_FUNC_INFO,

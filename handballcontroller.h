@@ -47,31 +47,31 @@ private:
 private:
     bool          bFontBuilt;
     QString       sTeam[2];
-    int           iTimeout[2];
-    int           iScore[2];
-    int           iPeriod;
+    int           iTimeout[2]{};
+    int           iScore[2]{};
+    int           iPeriod{};
 
-    Edit         *teamName[2];
-    Edit         *timeoutEdit[2];
-    Edit         *scoreEdit[2];
-    Edit         *periodEdit;
-    Button       *timeoutIncrement[2];
-    Button       *timeoutDecrement[2];
-    Button       *scoreIncrement[2];
-    Button       *scoreDecrement[2];
-    QPushButton  *periodIncrement;
-    QPushButton  *periodDecrement;
-    QLabel       *timeoutLabel;
-    QLabel       *scoreLabel;
-    QLabel       *periodLabel;
+    Edit         *teamName[2]{};
+    Edit         *timeoutEdit[2]{};
+    Edit         *scoreEdit[2]{};
+    Edit         *periodEdit{};
+    Button       *timeoutIncrement[2]{};
+    Button       *timeoutDecrement[2]{};
+    Button       *scoreIncrement[2]{};
+    Button       *scoreDecrement[2]{};
+    QPushButton  *periodIncrement{};
+    QPushButton  *periodDecrement{};
+    QLabel       *timeoutLabel{};
+    QLabel       *scoreLabel{};
+    QLabel       *periodLabel{};
 
     int           maxTimeouts;
     int           maxPeriods;
     int           periodTime;
 
-    QPushButton  *newPeriodButton;
-    QPushButton  *newGameButton;
-    QPushButton  *changeFieldButton;
+    QPushButton  *newPeriodButton{};
+    QPushButton  *newGameButton{};
+    QPushButton  *changeFieldButton{};
 };
 
 #endif // HANDBALLCONTROLLER_H

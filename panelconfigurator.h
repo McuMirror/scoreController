@@ -14,7 +14,7 @@ class PanelConfigurator : public QDialog
     Q_OBJECT
 
 public:
-    explicit PanelConfigurator(QWidget *parent = 0);
+    explicit PanelConfigurator(QWidget *parent = Q_NULLPTR);
     ~PanelConfigurator();
     int exec();
     void show();
@@ -46,8 +46,8 @@ private slots:
 
 private:
     Ui::PanelConfigurator *ui;
-    int                    iPan;
-    int                    iTilt;
+    int                    iPan{};
+    int                    iTilt{};
     int                    panMin;
     int                    panMax;
     int                    tiltMin;

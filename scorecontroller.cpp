@@ -48,7 +48,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SPOT_UPDATER_PORT   45455
 #define SLIDE_UPDATER_PORT  45456
 
-
 // This is the base class of all the game controllers
 
 ScoreController::ScoreController(int _panelType, QWidget *parent)
@@ -57,50 +56,56 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
     , pGeneralSetupDialog(Q_NULLPTR)
     , panelType(_panelType)
     , pClientListDialog(Q_NULLPTR)
-    , connectionList(QList<connection>())
     , discoveryPort(DISCOVERY_PORT)
     , serverPort(SERVER_SOCKET_PORT)
     , discoveryAddress(QHostAddress("224.0.0.1"))
+    , pSlideServerThread(Q_NULLPTR)
+    , pSlideUpdaterServer(Q_NULLPTR)
     , slideUpdaterPort(SLIDE_UPDATER_PORT)
+    , pSpotServerThread(Q_NULLPTR)
+    , pSpotUpdaterServer(Q_NULLPTR)
     , spotUpdaterPort(SPOT_UPDATER_PORT)
     , pButtonClick(Q_NULLPTR)
 {
-    // Blocks until a network connection is available
+    // Block until a network connection is available
     if(WaitForNetworkReady() != QMessageBox::Ok) {
         exit(0);
     }
     pClientListDialog = new ClientListDialog(this);
+    pClientListDialog->setWindowFlags(Qt::Window);
 
     pGeneralSetupDialog = new GeneralSetupDialog(this);
     pGeneralSetupDialog->setWindowFlags(Qt::Window);
 
-    // The click sound for button press so to have an acoustic feedback
-    // on touch screen tablets.
+    // The click sound for button press.
+    // To have an acoustic feedback on touch screen tablets.
     pButtonClick = new QSoundEffect(this);
     pButtonClick->setSource(QUrl::fromLocalFile(":/key.wav"));
 
     // A List of IP Addresses of the connected Score Panels
     sIpAddresses = QStringList();
 
+    // Message Logging...
+    logFile = Q_NULLPTR;
     // Logged messages (if enabled) will be written in the following folder
     sLogDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
     if(!sLogDir.endsWith(QString("/"))) sLogDir+= QString("/");
 
-    // The directories in which to look for the slides and spots
+    // The Directories to look for the slides and spots
     sSlideDir   = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
     if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
     sSpotDir    = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
     if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
 
-    logFile       = Q_NULLPTR;
     slideList     = QFileInfoList();
+    spotList      = QFileInfoList();
     iCurrentSlide = 0;
     iCurrentSpot  = 0;
 
     if((panelType < FIRST_PANEL) || (panelType > LAST_PANEL)) {
         logMessage(logFile,
                    Q_FUNC_INFO,
-                   QString("Panel Type set to FIRST_PANEL"));
+                   QString("Panel Type forced to FIRST_PANEL"));
         panelType = FIRST_PANEL;
     }
 
@@ -116,7 +121,6 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
             this, SLOT(onSetNewPanValue(QString, int)));
     connect(pClientListDialog, SIGNAL(newTiltValue(QString,int)),
             this, SLOT(onSetNewTiltValue(QString, int)));
-
     // Panel orientation management
     connect(pClientListDialog, SIGNAL(getOrientation(QString)),
             this, SLOT(onGetPanelOrientation(QString)));
@@ -198,9 +202,9 @@ ScoreController::prepareDirectories() {
 }
 
 
+// Create a Spot Update Service
 void
 ScoreController::prepareSpotUpdateService() {
-    // Creating a Spot Update Service
     pSpotUpdaterServer = new FileServer(QString("SpotUpdater"), logFile, Q_NULLPTR);
     connect(pSpotUpdaterServer, SIGNAL(fileServerDone(bool)),
             this, SLOT(onSpotServerDone(bool)));
@@ -215,9 +219,9 @@ ScoreController::prepareSpotUpdateService() {
 }
 
 
+// Create a Slide Update Service
 void
 ScoreController::prepareSlideUpdateService() {
-    // Creating a Slide Update Service
     pSlideUpdaterServer = new FileServer(QString("SlideUpdater"), logFile, Q_NULLPTR);
     connect(pSlideUpdaterServer, SIGNAL(fileServerDone(bool)),
             this, SLOT(onSlideServerDone(bool)));
@@ -232,6 +236,7 @@ ScoreController::prepareSlideUpdateService() {
 }
 
 
+// Wait For Network Ready
 int
 ScoreController::WaitForNetworkReady() {
     int iResponse;
@@ -255,13 +260,15 @@ ScoreController::WaitForNetworkReady() {
 }
 
 
-ScoreController::~ScoreController() {
-    // All the housekeeping is done in "closeEvent()" manager
-}
+// Do nothing. All the housekeeping is done in "closeEvent()" manager
+ScoreController::~ScoreController() = default;
 
 
+// Called from the Slide Updater Server when a
+// transfer with a client has completed
 void
 ScoreController::onSlideServerDone(bool bError) {
+    // Log a Message just to inform
     if(bError) {
         logMessage(logFile,
                    Q_FUNC_INFO,
@@ -275,8 +282,11 @@ ScoreController::onSlideServerDone(bool bError) {
 }
 
 
+// Called from the Spot Updater Server when  a
+// transfer with a client has completed
 void
 ScoreController::onSpotServerDone(bool bError) {
+    // Log a Message just to inform
     if(bError) {
         logMessage(logFile,
                    Q_FUNC_INFO,
@@ -289,10 +299,12 @@ ScoreController::onSpotServerDone(bool bError) {
     }
 }
 
+
 // Create a "Discovery Service" that make possible to clients to discover
 // the presence of this Score Controller, independently from its network
 // address.
-// It listen for a short message from clients and send an appropriate answer.
+// It listen for a short message from clients and then
+// send back an appropriate answer.
 bool
 ScoreController::prepareDiscovery() {
     bool bSuccess = false;
@@ -309,7 +321,7 @@ ScoreController::prepareDiscovery() {
             QList<QNetworkAddressEntry> list = interface.addressEntries();
             for(int j=0; j<list.count(); j++)
             {
-                QUdpSocket* pDiscoverySocket = new QUdpSocket(this);
+                auto* pDiscoverySocket = new QUdpSocket(this);
                 if(list[j].ip().protocol() == QAbstractSocket::IPv4Protocol) {
                     if(pDiscoverySocket->bind(QHostAddress::AnyIPv4, discoveryPort, QUdpSocket::ShareAddress)) {
                         pDiscoverySocket->joinMulticastGroup(discoveryAddress);
@@ -340,8 +352,9 @@ ScoreController::prepareDiscovery() {
 }
 
 
+// Called when the user asked to start the live camera
 void
-ScoreController::onStartCamera(QString sClientIp) {
+ScoreController::onStartCamera(const QString& sClientIp) {
     QHostAddress hostAddress(sClientIp);
     for(int i=0; i<connectionList.count(); i++) {
         if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
@@ -356,6 +369,7 @@ ScoreController::onStartCamera(QString sClientIp) {
 }
 
 
+// Called when the user asked to stop the live camera
 void
 ScoreController::onStopCamera() {
     QString sMessage = QString("<endlive>1</endlive>");
@@ -364,8 +378,9 @@ ScoreController::onStopCamera() {
 }
 
 
+// Called when the user asked to pan the live camera
 void
-ScoreController::onSetNewPanValue(QString sClientIp, int newPan) {
+ScoreController::onSetNewPanValue(const QString& sClientIp, int newPan) {
   QHostAddress hostAddress(sClientIp);
   for(int i=0; i<connectionList.count(); i++) {
       if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
@@ -377,8 +392,9 @@ ScoreController::onSetNewPanValue(QString sClientIp, int newPan) {
 }
 
 
+// Called when the user asked to tilt the live camera
 void
-ScoreController::onSetNewTiltValue(QString sClientIp, int newTilt) {
+ScoreController::onSetNewTiltValue(const QString& sClientIp, int newTilt) {
   QHostAddress hostAddress(sClientIp);
   for(int i=0; i<connectionList.count(); i++) {
       if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
@@ -390,8 +406,10 @@ ScoreController::onSetNewTiltValue(QString sClientIp, int newTilt) {
 }
 
 
+// Called when the user asked to set the panel to show only the score
+// Not slides, spots or camera
 void
-ScoreController::onSetScoreOnly(QString sClientIp, bool bScoreOnly) {
+ScoreController::onSetScoreOnly(const QString& sClientIp, bool bScoreOnly) {
     QHostAddress hostAddress(sClientIp);
     for(int i=0; i<connectionList.count(); i++) {
         if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
@@ -403,6 +421,7 @@ ScoreController::onSetScoreOnly(QString sClientIp, bool bScoreOnly) {
 }
 
 
+// Prepare the file for logging (if enabled in compilation)
 bool
 ScoreController::prepareLogFile() {
 #if defined(LOG_MESG) || defined(LOG_VERBOSE)
@@ -425,6 +444,7 @@ ScoreController::prepareLogFile() {
 }
 
 
+// Chech if the computer is connected to a network
 bool
 ScoreController::isConnectedToNetwork() {
     QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
@@ -451,6 +471,7 @@ ScoreController::isConnectedToNetwork() {
 }
 
 
+// Called when a new client ask to be connected
 void
 ScoreController::onProcessConnectionRequest() {
     QByteArray datagram, request;
@@ -488,6 +509,9 @@ ScoreController::onProcessConnectionRequest() {
 }
 
 
+// Support function to accept a request connection
+// It send to the client the IP addresses that this server
+// listen for connections and the panel type to show.
 int
 ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, QHostAddress hostAddress, quint16 port) {
     QString sString = QString("%1,%2").arg(sIpAddresses.at(0)).arg(panelType);
@@ -513,6 +537,7 @@ ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, QHostAddress
 }
 
 
+// Manage the termination of this server
 void
 ScoreController::closeEvent(QCloseEvent *event) {
     QString sMessage;
@@ -526,7 +551,7 @@ ScoreController::closeEvent(QCloseEvent *event) {
     // Close all the discovery sockets
     for(int i=0; i<discoverySocketArray.count(); i++) {
         QUdpSocket* pSocket = discoverySocketArray.at(i);
-        if(pSocket) {
+        if(pSocket != Q_NULLPTR) {
             pSocket->disconnect();
             if(pSocket->isValid())
                 pSocket->close();
@@ -563,19 +588,30 @@ ScoreController::closeEvent(QCloseEvent *event) {
             SendToAll(sMessage);
         }
     }
-    pPanelServer->closeServer();
+    if(pPanelServer != Q_NULLPTR) {
+        pPanelServer->closeServer();
+        delete pPanelServer;
+        pPanelServer = Q_NULLPTR;
+    }
+    if(pSettings != Q_NULLPTR) {
+        delete pSettings;
+        pSettings = Q_NULLPTR;
+    }
+    if(pClientListDialog != Q_NULLPTR) {
+        pClientListDialog->disconnect();
+        delete pClientListDialog;
+        pClientListDialog = Q_NULLPTR;
+    }
+    if(pGeneralSetupDialog != Q_NULLPTR) {
+        pGeneralSetupDialog->disconnect();
+        delete pGeneralSetupDialog;
+        pGeneralSetupDialog = Q_NULLPTR;
+    }
     if(logFile) {
         logFile->flush();
         logFile->close();
         delete logFile;
         logFile = Q_NULLPTR;
-    }
-    if(pSettings != Q_NULLPTR) delete pSettings;
-    pSettings = Q_NULLPTR;
-    if(pClientListDialog != Q_NULLPTR) {
-        pClientListDialog->disconnect();
-        pClientListDialog->deleteLater();
-        pClientListDialog = Q_NULLPTR;
     }
 }
 
@@ -583,8 +619,11 @@ ScoreController::closeEvent(QCloseEvent *event) {
 bool
 ScoreController::prepareServer() {
     pPanelServer = new NetServer(QString("PanelServer"), logFile, this);
-    if(!pPanelServer->prepareServer(serverPort))
+    if(!pPanelServer->prepareServer(serverPort)) {
+        delete pPanelServer;
+        pPanelServer = Q_NULLPTR;
         return false;
+    }
     connect(pPanelServer, SIGNAL(newConnection(QWebSocket *)),
             this, SLOT(onNewConnection(QWebSocket *)));
     return true;

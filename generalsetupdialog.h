@@ -14,9 +14,9 @@ class DirectoryTab : public QWidget
     Q_OBJECT
 
 public:
-    explicit DirectoryTab(QWidget *parent = 0);
-    void setSlideDir(QString sDir);
-    void setSpotDir(QString sDir);
+    explicit DirectoryTab(QWidget *parent = Q_NULLPTR);
+    void setSlideDir(const QString& sDir);
+    void setSpotDir(const QString& sDir);
     QString getSlideDir();
     QString getSpotDir();
 

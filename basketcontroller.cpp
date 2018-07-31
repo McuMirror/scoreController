@@ -63,7 +63,7 @@ BasketController::BasketController()
     emit startSlideServer();
 
     buildControls();
-    QGridLayout *mainLayout = new QGridLayout();
+    auto *mainLayout = new QGridLayout();
 
     int gamePanelWidth   = 15;
     int gamePanelHeight  = 8;
@@ -309,8 +309,8 @@ void
 BasketController::setEventHandlers() {
     for(int iTeam=0; iTeam<2; iTeam++) {
         // Team
-        connect(teamName[iTeam], SIGNAL(textChanged(QString, int)),
-                this, SLOT(onTeamTextChanged(QString, int)));
+        connect(teamName[iTeam], SIGNAL(textChanged(QString,int)),
+                this, SLOT(onTeamTextChanged(QString,int)));
         // Timeout
         connect(timeoutIncrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onTimeOutIncrement(int)));
@@ -330,8 +330,8 @@ BasketController::setEventHandlers() {
         connect(faulsDecrement[iTeam], SIGNAL(clicked()),
                 pButtonClick, SLOT(play()));
         // Possess
-        connect(possess[iTeam], SIGNAL(buttonClicked(int, bool)),
-                this, SLOT(onPossessClicked(int, bool)));
+        connect(possess[iTeam], SIGNAL(buttonClicked(int,bool)),
+                this, SLOT(onPossessClicked(int,bool)));
         // Score
         connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onScoreIncrement(int)));
@@ -425,7 +425,7 @@ BasketController::SaveStatus() {
 
 QHBoxLayout*
 BasketController::CreateGameButtonBox() {
-    QHBoxLayout* gameButtonLayout = new QHBoxLayout();
+    auto *gameButtonLayout = new QHBoxLayout();
     QPixmap pixmap(":/buttonIcons/ExchangeBasketField.png");
     QIcon ButtonIcon(pixmap);
 
@@ -455,7 +455,7 @@ BasketController::CreateGameButtonBox() {
 
 QGridLayout*
 BasketController::CreateGamePanel() {
-    QGridLayout* gamePanel = new QGridLayout();
+    auto *gamePanel = new QGridLayout();
     //
     int iRow;
     for(int iTeam=0; iTeam<2; iTeam++) {

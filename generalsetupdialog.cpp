@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QStandardPaths>
+#include <utility>
 
 
 GeneralSetupDialog::GeneralSetupDialog(QWidget *parent)
@@ -21,7 +22,7 @@ GeneralSetupDialog::GeneralSetupDialog(QWidget *parent)
     connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
+    auto *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(tabWidget);
     mainLayout->addWidget(buttonBox);
     setLayout(mainLayout);
@@ -30,13 +31,13 @@ GeneralSetupDialog::GeneralSetupDialog(QWidget *parent)
 
 void
 GeneralSetupDialog::setSlideDir(QString sDir) {
-    pDirectoryTab->setSlideDir(sDir);
+    pDirectoryTab->setSlideDir(std::move(sDir));
 }
 
 
 void
 GeneralSetupDialog::setSpotDir(QString sDir){
-    pDirectoryTab->setSpotDir(sDir);
+    pDirectoryTab->setSpotDir(std::move(sDir));
 }
 
 
@@ -79,7 +80,7 @@ DirectoryTab::DirectoryTab(QWidget *parent)
     QLabel *slidesPathLabel = new QLabel(tr("Slides folder:"));
     QLabel *spotsPathLabel = new QLabel(tr("Spots folder:"));
 
-    QGridLayout *mainLayout = new QGridLayout;
+    auto *mainLayout = new QGridLayout;
     mainLayout->addWidget(slidesPathLabel,        0, 0, 1, 1);
     mainLayout->addWidget(&slidesDirEdit,         0, 1, 1, 3);
     mainLayout->addWidget(&buttonSelectSlidesDir, 0, 4, 1, 1);
@@ -93,7 +94,7 @@ DirectoryTab::DirectoryTab(QWidget *parent)
 
 
 void
-DirectoryTab::setSlideDir(QString sDir) {
+DirectoryTab::setSlideDir(const QString& sDir) {
     slidesDirEdit.setText(sDir);
     QDir slideDir(sDir);
     if(slideDir.exists()) {
@@ -106,7 +107,7 @@ DirectoryTab::setSlideDir(QString sDir) {
 
 
 void
-DirectoryTab::setSpotDir(QString sDir){
+DirectoryTab::setSpotDir(const QString& sDir){
     spotsDirEdit.setText(sDir);
     QDir spotDir(sDir);
     if(spotDir.exists()) {

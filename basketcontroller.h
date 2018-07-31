@@ -55,38 +55,38 @@ private:
 private:
     bool          bFontBuilt;
     QString       sTeam[2];
-    int           iTimeout[2];
-    int           iScore[2];
-    int           iFauls[2];
-    int           iBonus[2];
-    int           iPeriod;
-    int           iPossess;
+    int           iTimeout[2]{};
+    int           iScore[2]{};
+    int           iFauls[2]{};
+    int           iBonus[2]{};
+    int           iPeriod{};
+    int           iPossess{};
 
-    Edit         *teamName[2];
-    Edit         *timeoutEdit[2];
-    Edit         *scoreEdit[2];
-    Edit         *faulsEdit[2];
-    Edit         *periodEdit;
-    Edit         *bonusEdit[2];
-    Button       *timeoutIncrement[2];
-    Button       *timeoutDecrement[2];
-    Button       *scoreIncrement[2];
-    Button       *scoreDecrement[2];
-    Button       *faulsIncrement[2];
-    Button       *faulsDecrement[2];
-    QPushButton  *periodIncrement;
-    QPushButton  *periodDecrement;
-    QRadioButton *possess[2];
+    Edit         *teamName[2]{};
+    Edit         *timeoutEdit[2]{};
+    Edit         *scoreEdit[2]{};
+    Edit         *faulsEdit[2]{};
+    Edit         *periodEdit{};
+    Edit         *bonusEdit[2]{};
+    Button       *timeoutIncrement[2]{};
+    Button       *timeoutDecrement[2]{};
+    Button       *scoreIncrement[2]{};
+    Button       *scoreDecrement[2]{};
+    Button       *faulsIncrement[2]{};
+    Button       *faulsDecrement[2]{};
+    QPushButton  *periodIncrement{};
+    QPushButton  *periodDecrement{};
+    QRadioButton *possess[2]{};
 
-    QLabel       *timeoutLabel;
-    QLabel       *faulsLabel;
-    QLabel       *scoreLabel;
-    QLabel       *periodLabel;
-    QLabel       *possessLabel;
+    QLabel       *timeoutLabel{};
+    QLabel       *faulsLabel{};
+    QLabel       *scoreLabel{};
+    QLabel       *periodLabel{};
+    QLabel       *possessLabel{};
 
-    QPushButton  *newPeriodButton;
-    QPushButton  *newGameButton;
-    QPushButton  *changeFieldButton;
+    QPushButton  *newPeriodButton{};
+    QPushButton  *newGameButton{};
+    QPushButton  *changeFieldButton{};
 };
 
 #endif // BASKETCONTROLLER_H

@@ -1,5 +1,6 @@
 #include <QtWidgets>
 #include <QDesktopWidget>
+#include <utility>
 #include "edit.h"
 
 
@@ -37,6 +38,6 @@ Edit::sizeHint() const
 
 void
 Edit::onTextChanged(QString sText) {
-    emit textChanged(sText, myTeam);
+    emit textChanged(std::move(sText), myTeam);
 }
 

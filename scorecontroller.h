@@ -77,16 +77,16 @@ protected slots:
     void onProcessBinaryMessage(QByteArray message);
     void onProcessConnectionRequest();
 
-    void onStartCamera(QString sClientIp);
+    void onStartCamera(const QString& sClientIp);
     void onStopCamera();
-    void onSetNewPanValue(QString sClientIp, int newPan);
-    void onSetNewTiltValue(QString sClientIp, int newTilt);
+    void onSetNewPanValue(const QString& sClientIp, int newPan);
+    void onSetNewTiltValue(const QString& sClientIp, int newTilt);
 
     void onGetPanelOrientation(QString sClientIp);
     void onChangePanelOrientation(QString sClientIp, PanelOrientation orientation);
 
     void onGetIsPanelScoreOnly(QString sClientIp);
-    void onSetScoreOnly(QString sClientIp, bool bScoreOnly);
+    void onSetScoreOnly(const QString& sClientIp, bool bScoreOnly);
 
     void onSlideServerDone(bool bError);
     void onSpotServerDone(bool bError);
@@ -122,7 +122,7 @@ protected:
     };
 
     int                   panelType;
-    NetServer            *pPanelServer;
+    NetServer            *pPanelServer{};
 
     QString               sLogDir;
     QString               logFileName;
@@ -155,12 +155,12 @@ protected:
     QSoundEffect*         pButtonClick;
     QTimer                exitTimer;
 
-    QPushButton*          startStopLoopSpotButton;
-    QPushButton*          startStopSlideShowButton;
-    QPushButton*          startStopLiveCameraButton;
-    QPushButton*          panelControlButton;
-    QPushButton*          generalSetupButton;
-    QPushButton*          shutdownButton;
+    QPushButton*          startStopLoopSpotButton{};
+    QPushButton*          startStopSlideShowButton{};
+    QPushButton*          startStopLiveCameraButton{};
+    QPushButton*          panelControlButton{};
+    QPushButton*          generalSetupButton{};
+    QPushButton*          shutdownButton{};
     enum status {
         showPanel,
         showSpots,

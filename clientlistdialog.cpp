@@ -32,7 +32,7 @@ ClientListDialog::ClientListDialog(QWidget* parent)
     : QDialog(parent)
     , pMyParent(parent)
 {
-    QGridLayout*  mainLayout = new QGridLayout();
+    auto*  mainLayout = new QGridLayout();
     mainLayout->addWidget(createClientListBox(),  0,  0, 10, 10);
     setLayout(mainLayout);
     connect(this, SIGNAL(finished(int)),
@@ -56,14 +56,13 @@ ClientListDialog::ClientListDialog(QWidget* parent)
 }
 
 
-ClientListDialog::~ClientListDialog() {
-}
+ClientListDialog::~ClientListDialog() = default;
 
 
 QGroupBox*
 ClientListDialog::createClientListBox() {
-    QGroupBox* clientListBox = new QGroupBox();
-    QGridLayout* clientListLayout = new QGridLayout();
+    auto* clientListBox = new QGroupBox();
+    auto* clientListLayout = new QGridLayout();
     closeButton = new QPushButton(tr("Chiudi"));
     connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(accept()));
 
@@ -85,7 +84,7 @@ ClientListDialog::clear() {
 
 
 void
-ClientListDialog::addItem(QString sAddress) {
+ClientListDialog::addItem(const QString& sAddress) {
     clientListWidget.addItem(sAddress);
 }
 
@@ -139,7 +138,7 @@ ClientListDialog::remotePanTiltReceived(int newPan, int newTilt) {
 
 void
 ClientListDialog::remoteOrientationReceived(PanelOrientation currentOrientation) {
-    int index = static_cast<int>(currentOrientation);
+    auto index = static_cast<int>(currentOrientation);
     pConfigurator->SetCurrrentOrientaton(index);
 }
 
