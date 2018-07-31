@@ -436,4 +436,5 @@ FileServer::onCloseServer() {
         }
     }
     NetServer::closeServer();
+    thread()->quit();
 }

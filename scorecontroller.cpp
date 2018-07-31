@@ -612,6 +612,7 @@ ScoreController::closeEvent(QCloseEvent *event) {
         delete logFile;
         logFile = Q_NULLPTR;
     }
+    thread()->quit();
 }
 
 

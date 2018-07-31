@@ -35,11 +35,7 @@ GameDirector::GameDirector(int &argc, char **argv)
 
 
 GameDirector::~GameDirector() {
-    if(pChooser != Q_NULLPTR) {
-        pChooser->disconnect();
-        delete pChooser;
-        pChooser = Q_NULLPTR;
-    }
+    delete pChooser;
 }
 
 
@@ -56,7 +52,9 @@ GameDirector::exec() {
             pController = new HandballController();
         else
             pController = new VolleyController();
-
+        // To automagically delete the pController Object
+        // after it has been closed
+        pController->setAttribute(Qt::WA_DeleteOnClose);
     #ifdef Q_OS_ANDROID
         pController->showFullScreen();
     #else
@@ -64,11 +62,7 @@ GameDirector::exec() {
     #endif
         // Enters the main event loop and waits until exit() is called
         iResult = QApplication::exec();
-        if(pController != Q_NULLPTR) {
-            pController->disconnect();
-            delete pController;
-            pController = Q_NULLPTR;
-        }
+        pController = Q_NULLPTR;
     }
     return iResult;
 }
