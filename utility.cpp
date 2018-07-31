@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "utility.h"
 
 QString
-XML_Parse(QString input_string, QString token) {
+XML_Parse(const QString& input_string, const QString& token) {
     // simple XML parser
     //   XML_Parse("<score1>10</score1>","beam")   will return "10"
     // returns "" on error

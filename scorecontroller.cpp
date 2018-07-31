@@ -544,8 +544,7 @@ ScoreController::closeEvent(QCloseEvent *event) {
     logMessage(logFile,
                Q_FUNC_INFO,
                QString("Closing"));
-    if(pButtonClick != Q_NULLPTR)
-        delete pButtonClick;
+    delete pButtonClick;
     pButtonClick = Q_NULLPTR;
 
     // Close all the discovery sockets
@@ -573,7 +572,7 @@ ScoreController::closeEvent(QCloseEvent *event) {
         if(answer == QMessageBox::Cancel) {
             event->ignore();
             return;
-        } else
+        }
         if(answer == QMessageBox::No) {
             for(int i=0; i<connectionList.count(); i++) {
                 connectionList.at(i).pClientSocket->disconnect();
@@ -637,7 +636,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
 
     sToken = XML_Parse(sMessage, "getStatus");
     if(sToken != sNoData) {
-        QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
+        auto *pClient = qobject_cast<QWebSocket *>(sender());
         SendToOne(pClient, FormatStatusMsg());
     }// getStatus
 
@@ -662,7 +661,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
     if(sToken != sNoData) {
         if(spotList.isEmpty())
             return;
-        QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
+        auto *pClient = qobject_cast<QWebSocket *>(sender());
         if(pClient->isValid()) {
 
         }
@@ -670,13 +669,13 @@ ScoreController::onProcessTextMessage(QString sMessage) {
 
     sToken = XML_Parse(sMessage, "getConf");
     if(sToken != sNoData) {
-        QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
+        auto *pClient = qobject_cast<QWebSocket *>(sender());
         if(pClient->isValid()) {
             sMessage = QString("<setConf>%1</setConf>").arg(panelType);
             SendToOne(pClient, sMessage);
         }
     }// getConf
-    
+
     sToken = XML_Parse(sMessage, "orientation");
     if(sToken != sNoData) {
         bool ok;
@@ -688,14 +687,14 @@ ScoreController::onProcessTextMessage(QString sMessage) {
                        .arg(sToken));
             return;
         }
-        PanelOrientation orientation = static_cast<PanelOrientation>(iOrientation);
+        auto orientation = static_cast<PanelOrientation>(iOrientation);
         pClientListDialog->remoteOrientationReceived(orientation);
     }// orientation
 
     sToken = XML_Parse(sMessage, "isScoreOnly");
     if(sToken != sNoData) {
         bool ok;
-        bool isScoreOnly = bool(sToken.toInt(&ok));
+        auto isScoreOnly = bool(sToken.toInt(&ok));
         if(!ok) {
             logMessage(logFile,
                        Q_FUNC_INFO,
@@ -723,7 +722,7 @@ ScoreController::SendToAll(const QString& sMessage) {
 
 
 int
-ScoreController::SendToOne(QWebSocket* pClient, QString sMessage) {
+ScoreController::SendToOne(QWebSocket* pClient, const QString& sMessage) {
     if (pClient->isValid()) {
         for(int i=0; i< connectionList.count(); i++) {
            if(connectionList.at(i).clientAddress.toIPv4Address() == pClient->peerAddress().toIPv4Address()) {
@@ -1195,7 +1194,7 @@ ScoreController::onGetIsPanelScoreOnly(const QString& sClientIp) {
 
 
 void
-ScoreController::onChangePanelOrientation(QString sClientIp, PanelOrientation orientation) {
+ScoreController::onChangePanelOrientation(const QString& sClientIp, PanelOrientation orientation) {
     QHostAddress hostAddress(sClientIp);
     for(int i=0; i<connectionList.count(); i++) {
         if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {

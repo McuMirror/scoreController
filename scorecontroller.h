@@ -83,7 +83,7 @@ protected slots:
     void onSetNewTiltValue(const QString& sClientIp, int newTilt);
 
     void onGetPanelOrientation(const QString& sClientIp);
-    void onChangePanelOrientation(QString sClientIp, PanelOrientation orientation);
+    void onChangePanelOrientation(const QString& sClientIp, PanelOrientation orientation);
 
     void onGetIsPanelScoreOnly(const QString& sClientIp);
     void onSetScoreOnly(const QString& sClientIp, bool bScoreOnly);
@@ -100,7 +100,7 @@ protected:
     QHBoxLayout    *CreateSpotButtons();
     int             WaitForNetworkReady();
     int             SendToAll(const QString& sMessage);
-    int             SendToOne(QWebSocket* pSocket, QString sMessage);
+    int             SendToOne(QWebSocket* pSocket, const QString& sMessage);
     bool            prepareServer();
     int             sendAcceptConnection(QUdpSocket *pDiscoverySocket, const QHostAddress& hostAddress, quint16 port);
     void            RemoveClient(const QHostAddress& hAddress);

@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define HANDBALL_PANEL 2
 #define LAST_PANEL   HANDBALL_PANEL
 
-QString XML_Parse(QString input_string, QString token);
+QString XML_Parse(const QString& input_string, const QString& token);
 void logMessage(QFile *logFile, QString sFunctionName, QString sMessage);
 
 #endif // UTILITY_H
