@@ -101,7 +101,7 @@ VolleyController::buildControls() {
         teamName[iTeam]->setAlignment(Qt::AlignHCenter);
         teamName[iTeam]->setMaxLength(15);
         // Timeout
-        sString.sprintf("%1d", iTimeout[iTeam]);
+        sString = QString("%1").arg(iTimeout[iTeam], 1);
         timeoutEdit[iTeam] = new Edit(sString);
         timeoutEdit[iTeam]->setMaxLength(1);
         timeoutEdit[iTeam]->setAlignment(Qt::AlignHCenter);
@@ -120,7 +120,7 @@ VolleyController::buildControls() {
             timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
         // Sets
-        sString.sprintf("%1d", iSet[iTeam]);
+        sString = QString("%1").arg(iSet[iTeam], 1);
         setsEdit[iTeam] = new Edit(sString);
         setsEdit[iTeam]->setMaxLength(1);
         setsEdit[iTeam]->setAlignment(Qt::AlignHCenter);
@@ -141,7 +141,7 @@ VolleyController::buildControls() {
         // Score
         scoreLabel = new QLabel(tr("Punti"));
         scoreLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
-        sString.sprintf("%2d", iScore[iTeam]);
+        sString = QString("%1").arg(iScore[iTeam], 2);
         scoreEdit[iTeam] = new Edit(sString);
         scoreEdit[iTeam]->setMaxLength(2);
         scoreEdit[iTeam]->setReadOnly(true);
@@ -360,19 +360,19 @@ VolleyController::FormatStatusMsg() {
     QString sMessage = tr("");
     QString sTemp;
     for(int i=0; i<2; i++) {
-        sTemp.sprintf("<team%1d>%s</team%1d>", i, sTeam[i].toLocal8Bit().data(), i);
+        sTemp = QString("<team%1>%2</team%3>").arg(i,1).arg(sTeam[i].toLocal8Bit().data()).arg(i,1);
         sMessage += sTemp;
-        sTemp.sprintf("<timeout%1d>%d</timeout%1d>", i, iTimeout[i], i);
+        sTemp = QString("<timeout%1>%2</timeout%3>").arg(i,1).arg(iTimeout[i]).arg(i,1);
         sMessage += sTemp;
-        sTemp.sprintf("<set%1d>%d</set%1d>", i, iSet[i], i);
+        sTemp = QString("<set%1>%2</set%3>").arg(i,1).arg(iSet[i]).arg(i,1);
         sMessage += sTemp;
-        sTemp.sprintf("<score%1d>%d</score%1d>", i, iScore[i], i);
+        sTemp = QString("<score%1>%2</score%3>").arg(i,1).arg(iScore[i], 2).arg(i,1);
         sMessage += sTemp;
     }
-    sTemp.sprintf("<servizio>%d</servizio>", iServizio);
+    sTemp = QString("<servizio>%1</servizio>").arg(iServizio, 1);
     sMessage += sTemp;
     if(myStatus == showSlides)
-        sMessage += "<slideshow>1</slideshow>";
+        sMessage += QString("<slideshow>1</slideshow>");
     else if(myStatus == showCamera)
         sMessage += QString("<live>1</live>");
     else if(myStatus == showSpots)
@@ -396,14 +396,14 @@ VolleyController::onTimeOutIncrement(int iTeam) {
         timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
     timeoutDecrement[iTeam]->setEnabled(true);
-    sMessage.sprintf("<timeout%1d>%d</timeout%1d>", iTeam, iTimeout[iTeam], iTeam);
+    sMessage = QString("<timeout%1>%2</timeout%3>").arg(iTeam, 1).arg(iTimeout[iTeam]).arg(iTeam, 1);
     SendToAll(sMessage);
-    sMessage.sprintf("<startTimeout>%d</startTimeout>", 30);
+    sMessage = QString("<startTimeout>%1</startTimeout>").arg(30);
     SendToAll(sMessage);
     QString sText;
-    sText.sprintf("%1d", iTimeout[iTeam]);
+    sText = QString("%1").arg(iTimeout[iTeam]);
     timeoutEdit[iTeam]->setText(sText);
-    sText.sprintf("team%1d/timeouts", iTeam+1);
+    sText = QString("team%1/timeouts").arg(iTeam+1, 1);
     pSettings->setValue(sText, iTimeout[iTeam]);
 }
 
@@ -417,14 +417,14 @@ VolleyController::onTimeOutDecrement(int iTeam) {
     }
     timeoutEdit[iTeam]->setStyleSheet(styleSheet());
     timeoutIncrement[iTeam]->setEnabled(true);
-    sMessage.sprintf("<timeout%1d>%d</timeout%1d>", iTeam, iTimeout[iTeam], iTeam);
+    sMessage = QString("<timeout%1>%2</timeout%3>").arg(iTeam, 1).arg(iTimeout[iTeam]).arg(iTeam, 1);
     SendToAll(sMessage);
-    sMessage.sprintf("<stopTimeout>1</stopTimeout>");
+    sMessage = QString("<stopTimeout>1</stopTimeout>");
     SendToAll(sMessage);
     QString sText;
-    sText.sprintf("%1d", iTimeout[iTeam]);
+    sText = QString("%1").arg(iTimeout[iTeam], 1);
     timeoutEdit[iTeam]->setText(sText);
-    sText.sprintf("team%1d/timeouts", iTeam+1);
+    sText = QString("team%1/timeouts").arg(iTeam+1, 1);
     pSettings->setValue(sText, iTimeout[iTeam]);
 }
 
@@ -489,12 +489,12 @@ VolleyController::onSetIncrement(int iTeam) {
     if(iSet[iTeam] == MAX_SETS) {
         setsIncrement[iTeam]->setEnabled(false);
     }
-    sMessage.sprintf("<set%1d>%d</set%1d>", iTeam, iSet[iTeam], iTeam);
+    sMessage = QString("<set%1>%2</set%3>").arg(iTeam, 1).arg(iSet[iTeam]).arg(iTeam, 1);
     SendToAll(sMessage);
     QString sText;
-    sText.sprintf("%1d", iSet[iTeam]);
+    sText = QString("%1").arg(iSet[iTeam], 1);
     setsEdit[iTeam]->setText(sText);
-    sText.sprintf("team%1d/sets", iTeam+1);
+    sText = QString("team%1/sets").arg(iTeam+1, 1);
     pSettings->setValue(sText, iSet[iTeam]);
 }
 
@@ -507,12 +507,12 @@ VolleyController::onSetDecrement(int iTeam) {
     if(iSet[iTeam] == 0) {
        setsDecrement[iTeam]->setEnabled(false);
     }
-    sMessage.sprintf("<set%1d>%d</set%1d>", iTeam, iSet[iTeam], iTeam);
+    sMessage= QString("<set%1>%2</set%3>").arg(iTeam, 1).arg(iSet[iTeam]).arg(iTeam, 1);
     SendToAll(sMessage);
     QString sText;
-    sText.sprintf("%1d", iSet[iTeam]);
+    sText = QString("%1").arg(iSet[iTeam], 1);
     setsEdit[iTeam]->setText(sText);
-    sText.sprintf("team%1d/sets", iTeam+1);
+    sText = QString("team%1/sets").arg(iTeam+1, 1);
     pSettings->setValue(sText, iSet[iTeam]);
 }
 
@@ -525,7 +525,7 @@ VolleyController::onServiceClicked(int iTeam, bool bChecked) {
     lastService = iServizio;
     service[iServizio ? 1 : 0]->setChecked(true);
     service[iServizio ? 0 : 1]->setChecked(false);
-    sMessage.sprintf("<servizio>%d</servizio>", iServizio);
+    sMessage = QString("<servizio>%1</servizio>").arg(iServizio);
     SendToAll(sMessage);
     pSettings->setValue("set/service", iServizio);
     pSettings->setValue("set/lastservice", lastService);
@@ -544,12 +544,16 @@ VolleyController::onScoreIncrement(int iTeam) {
     iServizio = iTeam;
     service[iServizio ? 1 : 0]->setChecked(true);
     service[iServizio ? 0 : 1]->setChecked(false);
-    sMessage.sprintf("<score%1d>%d</score%1d><servizio>%d</servizio>", iTeam, iScore[iTeam], iTeam, iServizio);
+    sMessage = QString("<score%1>%2</score%3><servizio>%4</servizio>")
+               .arg(iTeam, 1)
+               .arg(iScore[iTeam], 2)
+               .arg(iTeam, 1)
+               .arg(iServizio, 1);
     SendToAll(sMessage);
     QString sText;
-    sText.sprintf("%1d", iScore[iTeam]);
+    sText = QString("%1").arg(iScore[iTeam], 2);
     scoreEdit[iTeam]->setText(sText);
-    sText.sprintf("team%1d/score", iTeam+1);
+    sText = QString("team%1/score").arg(iTeam+1, 1);
     pSettings->setValue(sText, iScore[iTeam]);
 }
 
@@ -565,12 +569,16 @@ VolleyController::onScoreDecrement(int iTeam) {
     iServizio = lastService;
     service[iServizio ? 1 : 0]->setChecked(true);
     service[iServizio ? 0 : 1]->setChecked(false);
-    sMessage.sprintf("<score%1d>%d</score%1d><servizio>%d</servizio>", iTeam, iScore[iTeam], iTeam, iServizio);
+    sMessage = QString("<score%1>%2</score%3><servizio>%4</servizio>")
+               .arg(iTeam, 1)
+               .arg(iScore[iTeam], 2)
+               .arg(iTeam, 1)
+               .arg(iServizio, 1);
     SendToAll(sMessage);
     QString sText;
-    sText.sprintf("%1d", iScore[iTeam]);
+    sText = QString("%1").arg(iScore[iTeam], 2);
     scoreEdit[iTeam]->setText(sText);
-    sText.sprintf("team%1d/score", iTeam+1);
+    sText = QString("team%1/score").arg(iTeam+1, 1);
     pSettings->setValue(sText, iScore[iTeam]);
 }
 
@@ -580,11 +588,11 @@ VolleyController::onTeamTextChanged(QString sText, int iTeam) {
     QString sMessage;
     sTeam[iTeam] = sText;
     if(sText=="")// C'è un problema con la stringa vuota...
-        sMessage.sprintf("<team%1d>-</team%1d>", iTeam, iTeam);
+        sMessage = QString("<team%1>-</team%1>").arg(iTeam, 1).arg(iTeam, 1);
     else
-        sMessage.sprintf("<team%1d>%s</team%1d>", iTeam, sTeam[iTeam].toLocal8Bit().data(), iTeam);
+        sMessage = QString("<team%1>%2</team%3>").arg(iTeam, 1).arg(sTeam[iTeam].toLocal8Bit().data()).arg(iTeam, 1);
     SendToAll(sMessage);
-    sText.sprintf("team%1d/name", iTeam+1);
+    sText = QString("team%1/name").arg(iTeam+1, 1);
     pSettings->setValue(sText, sTeam[iTeam]);
 }
 
@@ -606,25 +614,25 @@ VolleyController::onButtonChangeFieldClicked() {
     int iVal = iSet[0];
     iSet[0] = iSet[1];
     iSet[1] = iVal;
-    sText.sprintf("%1d", iSet[0]);
+    sText = QString("%1").arg(iSet[0], 1);
     setsEdit[0]->setText(sText);
-    sText.sprintf("%1d", iSet[1]);
+    sText = QString("%1").arg(iSet[1], 1);
     setsEdit[1]->setText(sText);
 
     iVal = iScore[0];
     iScore[0] = iScore[1];
     iScore[1] = iVal;
-    sText.sprintf("%1d", iScore[0]);
+    sText = QString("%1").arg(iScore[0], 2);
     scoreEdit[0]->setText(sText);
-    sText.sprintf("%1d", iScore[1]);
+    sText = QString("%1").arg(iScore[1], 2);
     scoreEdit[1]->setText(sText);
 
     iVal = iTimeout[0];
     iTimeout[0] = iTimeout[1];
     iTimeout[1] = iVal;
-    sText.sprintf("%1d", iTimeout[0]);
+    sText = QString("%1").arg(iTimeout[0]);
     timeoutEdit[0]->setText(sText);
-    sText.sprintf("%1d", iTimeout[1]);
+    sText = QString("%1").arg(iTimeout[1]);
     timeoutEdit[1]->setText(sText);
 
     iServizio = 1 - iServizio;
@@ -676,7 +684,7 @@ VolleyController::onButtonNewSetClicked() {
                                      QMessageBox::No);
     if(iRes != QMessageBox::Yes) return;
 
-    // Exchange teams order in the field
+    // Exchange team's order in the field
     QString sText = sTeam[0];
     sTeam[0] = sTeam[1];
     sTeam[1] = sText;
@@ -685,17 +693,17 @@ VolleyController::onButtonNewSetClicked() {
     int iVal = iSet[0];
     iSet[0] = iSet[1];
     iSet[1] = iVal;
-    sText.sprintf("%1d", iSet[0]);
+    sText = QString("%1").arg(iSet[0], 1);
     setsEdit[0]->setText(sText);
-    sText.sprintf("%1d", iSet[1]);
+    sText = QString("%1").arg(iSet[1], 1);
     setsEdit[1]->setText(sText);
     for(int iTeam=0; iTeam<2; iTeam++) {
         iTimeout[iTeam] = 0;
-        sText.sprintf("%1d", iTimeout[iTeam]);
+        sText = QString("%1").arg(iTimeout[iTeam], 1);
         timeoutEdit[iTeam]->setText(sText);
         timeoutEdit[iTeam]->setStyleSheet(styleSheet());
         iScore[iTeam]   = 0;
-        sText.sprintf("%1d", iScore[iTeam]);
+        sText = QString("%1").arg(iScore[iTeam], 2);
         scoreEdit[iTeam]->setText(sText);
         timeoutDecrement[iTeam]->setEnabled(false);
         timeoutIncrement[iTeam]->setEnabled(true);
@@ -726,14 +734,14 @@ VolleyController::onButtonNewGameClicked() {
     for(int iTeam=0; iTeam<2; iTeam++) {
         teamName[iTeam]->setText(sTeam[iTeam]);
         iTimeout[iTeam] = 0;
-        sText.sprintf("%1d", iTimeout[iTeam]);
+        sText = QString("%1").arg(iTimeout[iTeam], 1);
         timeoutEdit[iTeam]->setText(sText);
         timeoutEdit[iTeam]->setStyleSheet(styleSheet());
         iSet[iTeam]   = 0;
-        sText.sprintf("%1d", iSet[iTeam]);
+        sText = QString("%1").arg(iSet[iTeam], 1);
         setsEdit[iTeam]->setText(sText);
         iScore[iTeam]   = 0;
-        sText.sprintf("%1d", iScore[iTeam]);
+        sText = QString("%1").arg(iScore[iTeam], 2);
         scoreEdit[iTeam]->setText(sText);
         timeoutDecrement[iTeam]->setEnabled(false);
         timeoutIncrement[iTeam]->setEnabled(true);
