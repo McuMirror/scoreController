@@ -794,7 +794,7 @@ ScoreController::UpdateUI() {
         startStopSlideShowButton->setEnabled(true);
         startStopLiveCameraButton->setEnabled(true);
         panelControlButton->setEnabled(true);
-        generalSetupButton->setDisabled(true);
+        //>>>>>>>generalSetupButton->setDisabled(true);
         shutdownButton->setEnabled(true);
     }
     else if(connectionList.count() == 0) {
@@ -1106,9 +1106,6 @@ ScoreController::onButtonPanelControlClicked() {
 }
 
 
-// ToDo:
-// To be changed... We should present a dialog allowing to change
-// one, the other or both the directories...
 void
 ScoreController::onButtonSetupClicked() {
     pGeneralSetupDialog->setSlideDir(sSlideDir);
