@@ -68,8 +68,7 @@ NetServer::onServerError(QWebSocketProtocol::CloseCode closeCode){
     logMessage(logFile,
                Q_FUNC_INFO,
                QString("%1 - %2 Close code: %3")
-               .arg(sServerName)
-               .arg(pServerSocket->serverAddress().toString())
+               .arg(sServerName, pServerSocket->serverAddress().toString())
                .arg(closeCode));
     emit netServerError(closeCode);
 }
@@ -81,8 +80,7 @@ NetServer::onNewServerConnection() {
     logMessage(logFile,
                Q_FUNC_INFO,
                QString("%1 - Client %2 connected")
-               .arg(sServerName)
-               .arg(pClient->peerAddress().toString()));
+               .arg(sServerName, pClient->peerAddress().toString()));
 
     emit newConnection(pClient);
 }

@@ -494,8 +494,7 @@ ScoreController::onProcessConnectionRequest() {
         logMessage(logFile,
                    Q_FUNC_INFO,
                    QString("Connection request from: %1 at Address %2:%3")
-                   .arg(sToken)
-                   .arg(hostAddress.toString())
+                   .arg(sToken, hostAddress.toString())
                    .arg(port));
         RemoveClient(hostAddress);
 #ifdef LOG_VERBOSE
@@ -861,8 +860,7 @@ ScoreController::onClientDisconnected() {
     logMessage(logFile,
                Q_FUNC_INFO,
                QString("%1 disconnected because %2. Close code: %3")
-               .arg(sDiconnectedAddress)
-               .arg(pClient->closeReason())
+               .arg(sDiconnectedAddress, pClient->closeReason())
                .arg(pClient->closeCode()));
     RemoveClient(pClient->peerAddress());
     UpdateUI();

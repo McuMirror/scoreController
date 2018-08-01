@@ -116,8 +116,7 @@ FileServer::onNewConnection(QWebSocket *pClient) {
                        Q_FUNC_INFO,
                        serverName +
                        QString(" %1 Duplicate requests from %2")
-                       .arg(sServerName)
-                       .arg(pClient->peerAddress().toString()));
+                       .arg(sServerName, pClient->peerAddress().toString()));
             if(connections.at(i)->isValid() && pClient->isValid()) {
                 logMessage(logFile,
                            Q_FUNC_INFO,
@@ -216,7 +215,7 @@ FileServer::onProcessTextMessage(QString sMessage) {
                        .arg(sToken));
             return;
         }
-        QString sFileName = argumentList.at(0);
+        const QString& sFileName = argumentList.at(0);
         qint64 startPos = argumentList.at(1).toInt();
         qint64 length   = argumentList.at(2).toInt();
 #ifdef LOG_VERBOSE
@@ -293,26 +292,25 @@ FileServer::onProcessTextMessage(QString sMessage) {
                                .arg(sFileName)
                                .arg(startPos));
                     return;
-                
+
             }
-            else {// file.open failed !
-                logMessage(logFile,
-                           Q_FUNC_INFO,
-                           QString("Unable to open the file %1")
-                           .arg(sFileName));
-                return;
-            }
-        }
-        else {
-            sMessage = QString("<missingFile>%1</missingFile>").arg(sToken);
-            if(pClient->isValid()) {
-                pClient->sendTextMessage(sMessage);
-            }
+            // file.open failed !
             logMessage(logFile,
                        Q_FUNC_INFO,
-                       QString("Missing File: %1")
+                       QString("Unable to open the file %1")
                        .arg(sFileName));
+            return;
+            
         }
+        sMessage = QString("<missingFile>%1</missingFile>").arg(sToken);
+        if(pClient->isValid()) {
+            pClient->sendTextMessage(sMessage);
+        }
+        logMessage(logFile,
+                   Q_FUNC_INFO,
+                   QString("Missing File: %1")
+                   .arg(sFileName));
+        
     }
 
     sToken = XML_Parse(sMessage, "send_file_list");
@@ -395,8 +393,7 @@ FileServer::onClientDisconnected() {
                Q_FUNC_INFO,
                serverName +
                QString(" %1 disconnected because %2. Close code: %3")
-               .arg(sDiconnectedAddress)
-               .arg(pClient->closeReason())
+               .arg(sDiconnectedAddress, pClient->closeReason())
                .arg(pClient->closeCode()));
     if(!connections.removeOne(pClient)) {
         logMessage(logFile,

@@ -30,14 +30,14 @@ GeneralSetupDialog::GeneralSetupDialog(QWidget *parent)
 
 
 void
-GeneralSetupDialog::setSlideDir(QString sDir) {
-    pDirectoryTab->setSlideDir(std::move(sDir));
+GeneralSetupDialog::setSlideDir(const QString& sDir) {
+    pDirectoryTab->setSlideDir(sDir);
 }
 
 
 void
-GeneralSetupDialog::setSpotDir(QString sDir){
-    pDirectoryTab->setSpotDir(std::move(sDir));
+GeneralSetupDialog::setSpotDir(const QString& sDir){
+    pDirectoryTab->setSpotDir(sDir);
 }
 
 
