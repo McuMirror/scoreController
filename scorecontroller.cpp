@@ -435,7 +435,7 @@ ScoreController::prepareLogFile() {
     if (!logFile->open(QIODevice::WriteOnly)) {
         QMessageBox::information(this, tr("Volley Controller"),
                                  tr("Impossibile aprire il file %1: %2.")
-                                 .arg(logFileName).arg(logFile->errorString()));
+                                 .arg(logFileName, logFile->errorString()));
         delete logFile;
         logFile = Q_NULLPTR;
     }
@@ -738,8 +738,7 @@ ScoreController::SendToOne(QWebSocket* pClient, const QString& sMessage) {
                     logMessage(logFile,
                                Q_FUNC_INFO,
                                QString("Sent %1 to: %2")
-                               .arg(sMessage)
-                               .arg(pClient->peerAddress().toString()));
+                               .arg(sMessage, pClient->peerAddress().toString()));
                 }
 #endif
                 break;
@@ -779,8 +778,7 @@ ScoreController::RemoveClient(const QHostAddress& hAddress) {
             logMessage(logFile,
                        Q_FUNC_INFO,
                        QString("%1 %2")
-                       .arg(hAddress.toString())
-                       .arg(sFound));
+                       .arg(hAddress.toString(), sFound));
 #endif
         } else {
             pClientListDialog->addItem(connectionList.at(i).clientAddress.toString());

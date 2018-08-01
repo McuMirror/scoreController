@@ -222,8 +222,7 @@ FileServer::onProcessTextMessage(QString sMessage) {
         logMessage(logFile,
                    Q_FUNC_INFO,
                    QString("%1 asked for: %2 %3 bytes, starting form %4 ")
-                   .arg(pClient->peerAddress().toString())
-                   .arg(sFileName)
+                   .arg(pClient->peerAddress().toString(), sFileName)
                    .arg(length)
                    .arg(startPos));
 #endif
@@ -361,8 +360,7 @@ FileServer::SendToOne(QWebSocket* pClient, const QString& sMessage) {
                        Q_FUNC_INFO,
                        serverName +
                        QString(" Sent %1 to: %2")
-                       .arg(sMessage)
-                       .arg(pClient->peerAddress().toString()));
+                       .arg(sMessage, pClient->peerAddress().toString()));
         }
 #endif
     }
@@ -432,5 +430,8 @@ FileServer::onCloseServer() {
             senderThreads.at(i)->terminate();
         }
     }
+    // NetServer::closeServer() calls
+    // thread()->quit()
+    // to quit the processing thread
     NetServer::closeServer();
 }

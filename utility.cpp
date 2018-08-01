@@ -55,8 +55,7 @@ void
     Q_UNUSED(logFile)
 
 #ifdef LOG_MESG
-    QDateTime dateTime;
-    QString sDebugMessage = dateTime.currentDateTime().toString() +
+    QString sDebugMessage = QDateTime::currentDateTime().toString() +
                             sFunctionName +
                             sMessage;
     if(logFile) {
