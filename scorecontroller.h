@@ -52,9 +52,8 @@ class ScoreController : public QWidget
     Q_OBJECT
 
 public:
-    ScoreController(int _panelType, QWidget *parent=Q_NULLPTR);
+    ScoreController(int myPanelType, QWidget *parent=Q_NULLPTR);
     ~ScoreController();
-    void closeEvent(QCloseEvent *event);
 
 signals:
     void startSpotServer();
@@ -108,6 +107,7 @@ protected:
     bool            prepareLogFile();
     bool            prepareDiscovery();
     void            UpdateUI();
+    void            closeEvent(QCloseEvent *event);
     virtual QString FormatStatusMsg();
     virtual void    SaveStatus();
 

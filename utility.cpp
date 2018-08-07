@@ -19,6 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "utility.h"
 
+/*!
+ * \brief XML_Parse
+ * \param input_string
+ * \param token
+ * \return
+ */
 QString
 XML_Parse(const QString& input_string, const QString& token) {
     // simple XML parser
@@ -48,6 +54,12 @@ XML_Parse(const QString& input_string, const QString& token) {
 }
 
 
+/*!
+ * \brief logMessage
+ * \param logFile
+ * \param sFunctionName
+ * \param sMessage
+ */
 void
  logMessage(QFile *logFile, QString sFunctionName, QString sMessage) {
     Q_UNUSED(sFunctionName)

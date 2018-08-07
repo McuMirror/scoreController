@@ -24,6 +24,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "handballcontroller.h"
 
 
+/*!
+ * \brief GameDirector::GameDirector Shows the dialog for choosing the wanted Panel and starts it
+ * \param argc Unused
+ * \param argv Unused
+ */
 GameDirector::GameDirector(int &argc, char **argv)
     : QApplication(argc, argv)
     , pChooser(Q_NULLPTR)
@@ -34,11 +39,18 @@ GameDirector::GameDirector(int &argc, char **argv)
 }
 
 
+/*!
+ * \brief GameDirector::~GameDirector
+ */
 GameDirector::~GameDirector() {
     delete pChooser;
 }
 
 
+/*!
+ * \brief GameDirector::exec
+ * \return
+ */
 int
 GameDirector::exec() {
     int iResult = 0;

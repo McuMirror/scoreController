@@ -48,13 +48,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SPOT_UPDATER_PORT   45455
 #define SLIDE_UPDATER_PORT  45456
 
-// This is the base class of all the game controllers
 
-ScoreController::ScoreController(int _panelType, QWidget *parent)
+/*!
+ * \brief ScoreController::ScoreController This is the base class of all the game controllers
+ * \param myPanelType
+ * \param parent
+ */
+ScoreController::ScoreController(int myPanelType, QWidget *parent)
     : QWidget(parent)
     , pSettings(Q_NULLPTR)
     , pGeneralSetupDialog(Q_NULLPTR)
-    , panelType(_panelType)
+    , panelType(myPanelType)
     , pClientListDialog(Q_NULLPTR)
     , discoveryPort(DISCOVERY_PORT)
     , serverPort(SERVER_SOCKET_PORT)
@@ -136,6 +140,12 @@ ScoreController::ScoreController(int _panelType, QWidget *parent)
 }
 
 
+/*!
+ * \brief ScoreController::prepareServices Prepare all the services for the Score Panels
+ *
+ * It Starts the Discovery service as well as the Slide and Spot file transfer services
+ * It start the ScorePanel Server too.
+ */
 void
 ScoreController::prepareServices() {
     // Start listening to the discovery port
@@ -162,6 +172,9 @@ ScoreController::prepareServices() {
 }
 
 
+/*!
+ * \brief ScoreController::prepareDirectories Select the directories from which the Slides and the Spots will be taken.
+ */
 void
 ScoreController::prepareDirectories() {
     QDir slideDir(sSlideDir);
@@ -202,7 +215,9 @@ ScoreController::prepareDirectories() {
 }
 
 
-// Create a Spot Update Service
+/*!
+ * \brief ScoreController::prepareSpotUpdateService Starts a "Spot Update" Service
+ */
 void
 ScoreController::prepareSpotUpdateService() {
     pSpotUpdaterServer = new FileServer(QString("SpotUpdater"), logFile, Q_NULLPTR);
@@ -219,7 +234,9 @@ ScoreController::prepareSpotUpdateService() {
 }
 
 
-// Create a Slide Update Service
+/*!
+ * \brief ScoreController::prepareSlideUpdateService Starts a "Slide Update" Service
+ */
 void
 ScoreController::prepareSlideUpdateService() {
     pSlideUpdaterServer = new FileServer(QString("SlideUpdater"), logFile, Q_NULLPTR);
@@ -236,7 +253,10 @@ ScoreController::prepareSlideUpdateService() {
 }
 
 
-// Wait For Network Ready
+/*!
+ * \brief ScoreController::WaitForNetworkReady Wait For Network Ready
+ * \return
+ */
 int
 ScoreController::WaitForNetworkReady() {
     int iResponse;
@@ -264,8 +284,11 @@ ScoreController::WaitForNetworkReady() {
 ScoreController::~ScoreController() = default;
 
 
-// Called from the Slide Updater Server when a
-// transfer with a client has completed
+/*!
+ * \brief ScoreController::onSlideServerDone Called from the Slide Updater Server when a
+ * transfer with a client has completed
+ * \param bError
+ */
 void
 ScoreController::onSlideServerDone(bool bError) {
     // Log a Message just to inform
@@ -282,8 +305,11 @@ ScoreController::onSlideServerDone(bool bError) {
 }
 
 
-// Called from the Spot Updater Server when  a
-// transfer with a client has completed
+/*!
+ * \brief ScoreController::onSpotServerDone Called from the Spot Updater Server when a
+ * transfer with a client has completed
+ * \param bError
+ */
 void
 ScoreController::onSpotServerDone(bool bError) {
     // Log a Message just to inform
@@ -300,11 +326,16 @@ ScoreController::onSpotServerDone(bool bError) {
 }
 
 
-// Create a "Discovery Service" that make possible to clients to discover
-// the presence of this Score Controller, independently from its network
-// address.
-// It listen for a short message from clients and then
-// send back an appropriate answer.
+/*!
+ * \brief ScoreController::prepareDiscover Start a "Discovery Service"y
+ * \return
+ *
+ * Start a "Discovery Service" that make possible to clients to discover
+ * the presence of this Score Controller, independently from its network
+ * address.
+ * It listen for a short message from clients and then
+ * send back an appropriate answer.
+ */
 bool
 ScoreController::prepareDiscovery() {
     bool bSuccess = false;
@@ -352,7 +383,10 @@ ScoreController::prepareDiscovery() {
 }
 
 
-// Called when the user asked to start the live camera
+/*!
+ * \brief ScoreController::onStartCamera Called when the user asked to start the live camera
+ * \param sClientIp
+ */
 void
 ScoreController::onStartCamera(const QString& sClientIp) {
     QHostAddress hostAddress(sClientIp);
@@ -369,7 +403,9 @@ ScoreController::onStartCamera(const QString& sClientIp) {
 }
 
 
-// Called when the user asked to stop the live camera
+/*!
+ * \brief ScoreController::onStopCamera Called when the user asked to stop the live camera
+ */
 void
 ScoreController::onStopCamera() {
     QString sMessage = QString("<endlive>1</endlive>");
@@ -378,7 +414,11 @@ ScoreController::onStopCamera() {
 }
 
 
-// Called when the user asked to pan the live camera
+/*!
+ * \brief ScoreController::onSetNewPanValue Called when the user asked to pan the live camera
+ * \param sClientIp
+ * \param newPan
+ */
 void
 ScoreController::onSetNewPanValue(const QString& sClientIp, int newPan) {
   QHostAddress hostAddress(sClientIp);
@@ -392,7 +432,11 @@ ScoreController::onSetNewPanValue(const QString& sClientIp, int newPan) {
 }
 
 
-// Called when the user asked to tilt the live camera
+/*!
+ * \brief ScoreController::onSetNewTiltValue Called when the user asked to tilt the live camera.
+ * \param sClientIp
+ * \param newTilt
+ */
 void
 ScoreController::onSetNewTiltValue(const QString& sClientIp, int newTilt) {
   QHostAddress hostAddress(sClientIp);
@@ -406,8 +450,14 @@ ScoreController::onSetNewTiltValue(const QString& sClientIp, int newTilt) {
 }
 
 
-// Called when the user asked to set the panel to show only the score
+//
 // Not slides, spots or camera
+/*!
+ * \brief ScoreController::onSetScoreOnly Called when the user asked to set the panel to
+ * show only the score: No slides, spots or camera.
+ * \param sClientIp
+ * \param bScoreOnly
+ */
 void
 ScoreController::onSetScoreOnly(const QString& sClientIp, bool bScoreOnly) {
     QHostAddress hostAddress(sClientIp);
@@ -421,7 +471,10 @@ ScoreController::onSetScoreOnly(const QString& sClientIp, bool bScoreOnly) {
 }
 
 
-// Prepare the file for logging (if enabled in compilation)
+/*!
+ * \brief ScoreController::prepareLogFile Prepare the file for logging (if enabled in compilation)
+ * \return
+ */
 bool
 ScoreController::prepareLogFile() {
 #if defined(LOG_MESG) || defined(LOG_VERBOSE)
@@ -444,7 +497,10 @@ ScoreController::prepareLogFile() {
 }
 
 
-// Chech if the computer is connected to a network
+/*!
+ * \brief ScoreController::isConnectedToNetwork Chech if the computer is connected to a network
+ * \return
+ */
 bool
 ScoreController::isConnectedToNetwork() {
     QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
@@ -471,7 +527,9 @@ ScoreController::isConnectedToNetwork() {
 }
 
 
-// Called when a new client ask to be connected
+/*!
+ * \brief ScoreController::onProcessConnectionRequest Called when a new client ask to be connected
+ */
 void
 ScoreController::onProcessConnectionRequest() {
     QByteArray datagram, request;
@@ -508,9 +566,16 @@ ScoreController::onProcessConnectionRequest() {
 }
 
 
-// Support function to accept a request connection
-// It send to the client the IP addresses that this server
-// listen for connections and the panel type to show.
+/*!
+ * \brief ScoreController::sendAcceptConnection Called to accept a request connection
+ * \param pDiscoverySocket
+ * \param hostAddress
+ * \param port
+ * \return
+ *
+ * It sends the IP addresses that this server listen to for connections
+ * and the panel type to show to the client.
+ */
 int
 ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, const QHostAddress& hostAddress, quint16 port) {
     QString sString = QString("%1,%2").arg(sIpAddresses.at(0)).arg(panelType);
@@ -536,7 +601,10 @@ ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, const QHostA
 }
 
 
-// Manage the termination of this server
+/*!
+ * \brief ScoreController::closeEvent Manage the termination of this server
+ * \param event
+ */
 void
 ScoreController::closeEvent(QCloseEvent *event) {
     QString sMessage;
@@ -615,6 +683,10 @@ ScoreController::closeEvent(QCloseEvent *event) {
 }
 
 
+/*!
+ * \brief ScoreController::prepareServer Prepare the Server for accepting new connections
+ * \return
+ */
 bool
 ScoreController::prepareServer() {
     pPanelServer = new NetServer(QString("PanelServer"), logFile, this);
@@ -629,6 +701,10 @@ ScoreController::prepareServer() {
 }
 
 
+/*!
+ * \brief ScoreController::onProcessTextMessage Called to process the message received by this Server
+ * \param sMessage
+ */
 void
 ScoreController::onProcessTextMessage(QString sMessage) {
     QString sToken;
@@ -707,6 +783,11 @@ ScoreController::onProcessTextMessage(QString sMessage) {
 }
 
 
+/*!
+ * \brief ScoreController::SendToAll Send the same message to all the connected clients
+ * \param sMessage The message sent
+ * \return
+ */
 int
 ScoreController::SendToAll(const QString& sMessage) {
 #ifdef LOG_VERBOSE
@@ -721,6 +802,12 @@ ScoreController::SendToAll(const QString& sMessage) {
 }
 
 
+/*!
+ * \brief ScoreController::SendToOne Send a message to a single connected client
+ * \param pClient The client
+ * \param sMessage The message
+ * \return
+ */
 int
 ScoreController::SendToOne(QWebSocket* pClient, const QString& sMessage) {
     if (pClient->isValid()) {
@@ -756,6 +843,10 @@ ScoreController::SendToOne(QWebSocket* pClient, const QString& sMessage) {
 }
 
 
+/*!
+ * \brief ScoreController::RemoveClient Remove a client from the list of connected clients
+ * \param hAddress Address of the client to remove
+ */
 void
 ScoreController::RemoveClient(const QHostAddress& hAddress) {
     QString sFound = QString(" Not present");
@@ -787,6 +878,9 @@ ScoreController::RemoveClient(const QHostAddress& hAddress) {
 }
 
 
+/*!
+ * \brief ScoreController::UpdateUI To update the buttons upon the first connection
+ */
 void
 ScoreController::UpdateUI() {
     if(connectionList.count() == 1) {
