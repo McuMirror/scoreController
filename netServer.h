@@ -29,7 +29,7 @@ class NetServer : public QObject
 {
     Q_OBJECT
 public:
-    explicit NetServer(QString _serverName, QFile* _logFile= NULL, QObject *parent = 0);
+    explicit NetServer(QString myServerName, QFile* myLogFile = Q_NULLPTR, QObject *parent = Q_NULLPTR);
 
     bool prepareServer(quint16 serverPort);
     void closeServer();

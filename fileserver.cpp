@@ -31,8 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
-FileServer::FileServer(const QString& sName, QFile* _logFile, QObject *parent)
-    : NetServer(sName, _logFile, parent)
+FileServer::FileServer(const QString& sName, QFile* myLogFile, QObject *parent)
+    : NetServer(sName, myLogFile, parent)
     , serverName(sName)
 {
     port      = 0;
@@ -74,6 +74,11 @@ FileServer::setDir(QString sDirectory, const QString& sExtensions) {
 
 void
 FileServer::onStartServer() {
+#ifdef LOG_VERBOSE
+    logMessage(logFile,
+               Q_FUNC_INFO,
+               QString("Entering"));
+#endif
     if(port == 0) {
         logMessage(logFile,
                    Q_FUNC_INFO,
@@ -94,6 +99,11 @@ FileServer::onStartServer() {
 
 void
 FileServer::onFileServerError(QWebSocketProtocol::CloseCode) {
+#ifdef LOG_VERBOSE
+    logMessage(logFile,
+               Q_FUNC_INFO,
+               QString("Entering"));
+#endif
     for(int i=0; i<connections.count(); i++) {
         if(connections.at(i)) {
             if(connections.at(i)->isValid())
@@ -110,21 +120,29 @@ FileServer::onFileServerError(QWebSocketProtocol::CloseCode) {
 void
 FileServer::onNewConnection(QWebSocket *pClient) {
     int nConnections = connections.count();
-    for(int i=0; i<nConnections; i++) {
+#ifdef LOG_VERBOSE
+    logMessage(logFile,
+               Q_FUNC_INFO,
+               serverName +
+               QString("Connection requests from %1")
+               .arg(pClient->peerAddress().toString()));
+#endif
+    for(int i=nConnections-1; i>=0; i--) {
         if(connections.at(i)->peerAddress() == pClient->peerAddress()) {
             logMessage(logFile,
                        Q_FUNC_INFO,
                        serverName +
-                       QString(" %1 Duplicate requests from %2")
-                       .arg(sServerName, pClient->peerAddress().toString()));
+                       QString("Duplicate requests from %1")
+                       .arg(pClient->peerAddress().toString()));
             if(connections.at(i)->isValid() && pClient->isValid()) {
                 logMessage(logFile,
                            Q_FUNC_INFO,
                            serverName +
                            QString(" Both sockets are valid! Removing the old connection"));
-                connections.at(i)->close(QWebSocketProtocol::CloseCodeNormal,
-                                         QString("Duplicated request"));
-                delete connections.at(i);
+                connections.at(i)->disconnect();
+                connections.at(i)->abort();
+                connections.at(i)->deleteLater();
+                connections.removeAt(i);
                 break;
             }
             if(pClient->isValid()) {
@@ -132,23 +150,25 @@ FileServer::onNewConnection(QWebSocket *pClient) {
                            Q_FUNC_INFO,
                            serverName +
                            QString(" Only present socket is valid. Removing the old one"));
-                connections.at(i)->close(QWebSocketProtocol::CloseCodeNormal,
-                                         QString("Duplicated request"));
-                delete connections.at(i);
+                connections.at(i)->disconnect();
+                connections.at(i)->abort();
+                connections.at(i)->deleteLater();
+                connections.removeAt(i);
             }
             else {
                 logMessage(logFile,
                            Q_FUNC_INFO,
                            serverName +
                            QString(" Present socket is not valid."));
+                pClient->disconnect();
                 pClient->close(QWebSocketProtocol::CloseCodeNormal,
                                QString("Duplicated request"));
-                delete pClient;
+                pClient->deleteLater();
                 return;
             }
             break;
-        }
-    }
+        }// if(connections.at(i)->peerAddress() == pClient->peerAddress())
+    }// for(int i=nConnections-1; i>=0; i--)
     logMessage(logFile,
                Q_FUNC_INFO,
                serverName +
@@ -169,6 +189,11 @@ FileServer::onNewConnection(QWebSocket *pClient) {
 
 void
 FileServer::onClientSocketError(QAbstractSocket::SocketError error) {
+#ifdef LOG_VERBOSE
+    logMessage(logFile,
+               Q_FUNC_INFO,
+               QString("Entering"));
+#endif
     Q_UNUSED(error)
     auto *pClient = qobject_cast<QWebSocket *>(sender());
     logMessage(logFile,
@@ -178,12 +203,7 @@ FileServer::onClientSocketError(QAbstractSocket::SocketError error) {
                .arg(pClient->peerAddress().toString())
                .arg(error)
                .arg(pClient->errorString()));
-    if(!pClient->disconnect(pClient)) {
-        logMessage(logFile,
-                   Q_FUNC_INFO,
-                   serverName +
-                   QString(" Unable to disconnect signals from WebSocket"));
-    }
+    pClient->disconnect();
     pClient->abort();
     if(!connections.removeOne(pClient)) {
         logMessage(logFile,
@@ -192,7 +212,7 @@ FileServer::onClientSocketError(QAbstractSocket::SocketError error) {
                    QString(" Unable to remove %1 from list !")
                    .arg(pClient->peerAddress().toString()));
     }
-    delete pClient;
+    pClient->deleteLater();
 }
 
 
@@ -385,6 +405,11 @@ FileServer::onProcessBinaryMessage(QByteArray message) {
 
 void
 FileServer::onClientDisconnected() {
+#ifdef LOG_VERBOSE
+    logMessage(logFile,
+               Q_FUNC_INFO,
+               QString("Entering"));
+#endif
     auto* pClient = qobject_cast<QWebSocket *>(sender());
     QString sDiconnectedAddress = pClient->peerAddress().toString();
     logMessage(logFile,
@@ -405,6 +430,10 @@ FileServer::onClientDisconnected() {
 
 void
 FileServer::onCloseServer() {
+    logMessage(logFile,
+               Q_FUNC_INFO,
+               serverName +
+               QString(" Entering..."));
     for(int i=0; i<connections.count(); i++) {
         connections.at(i)->disconnect();
         if(connections.at(i)->isValid())

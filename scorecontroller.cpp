@@ -71,6 +71,9 @@ ScoreController::ScoreController(int myPanelType, QWidget *parent)
     , spotUpdaterPort(SPOT_UPDATER_PORT)
     , pButtonClick(Q_NULLPTR)
 {
+    // For Message Logging...
+    logFile = Q_NULLPTR;
+
     // Block until a network connection is available
     if(WaitForNetworkReady() != QMessageBox::Ok) {
         exit(0);
@@ -89,8 +92,6 @@ ScoreController::ScoreController(int myPanelType, QWidget *parent)
     // A List of IP Addresses of the connected Score Panels
     sIpAddresses = QStringList();
 
-    // Message Logging...
-    logFile = Q_NULLPTR;
     // Logged messages (if enabled) will be written in the following folder
     sLogDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
     if(!sLogDir.endsWith(QString("/"))) sLogDir+= QString("/");
@@ -477,7 +478,7 @@ ScoreController::onSetScoreOnly(const QString& sClientIp, bool bScoreOnly) {
  */
 bool
 ScoreController::prepareLogFile() {
-#if defined(LOG_MESG) || defined(LOG_VERBOSE)
+#if defined(LOG_MESG)
     QFileInfo checkFile(logFileName);
     if(checkFile.exists() && checkFile.isFile()) {
         QDir renamed;
@@ -621,7 +622,7 @@ ScoreController::closeEvent(QCloseEvent *event) {
             pSocket->disconnect();
             if(pSocket->isValid())
                 pSocket->close();
-            delete pSocket;
+            pSocket->deleteLater();
         }
     }
     discoverySocketArray.clear();
@@ -656,7 +657,7 @@ ScoreController::closeEvent(QCloseEvent *event) {
     }
     if(pPanelServer != Q_NULLPTR) {
         pPanelServer->closeServer();
-        delete pPanelServer;
+        pPanelServer->deleteLater();
         pPanelServer = Q_NULLPTR;
     }
     if(pSettings != Q_NULLPTR) {
@@ -691,7 +692,7 @@ bool
 ScoreController::prepareServer() {
     pPanelServer = new NetServer(QString("PanelServer"), logFile, this);
     if(!pPanelServer->prepareServer(serverPort)) {
-        delete pPanelServer;
+        pPanelServer->deleteLater();
         pPanelServer = Q_NULLPTR;
         return false;
     }

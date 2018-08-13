@@ -34,6 +34,11 @@ GameDirector::GameDirector(int &argc, char **argv)
     , pChooser(Q_NULLPTR)
     , pController(Q_NULLPTR)
 {
+#ifdef LOG_VERBOSE
+    logMessage(Q_NULLPTR,
+               Q_FUNC_INFO,
+               QString(" Starting"));
+#endif
     pChooser = new ChooseDiscipline();
     pChooser->setWindowFlags(Qt::Window);
 }
@@ -67,11 +72,21 @@ GameDirector::exec() {
         // To automagically delete the pController Object
         // after it has been closed
         pController->setAttribute(Qt::WA_DeleteOnClose);
+#ifdef LOG_VERBOSE
+    logMessage(Q_NULLPTR,
+               Q_FUNC_INFO,
+               QString(" Before showing the window"));
+#endif
     #ifdef Q_OS_ANDROID
         pController->showFullScreen();
     #else
         pController->show();
     #endif
+#ifdef LOG_VERBOSE
+    logMessage(Q_NULLPTR,
+               Q_FUNC_INFO,
+               QString(" Window shown"));
+#endif
         // Enters the main event loop and waits until exit() is called
         iResult = QApplication::exec();
         pController = Q_NULLPTR;

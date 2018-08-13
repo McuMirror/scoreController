@@ -55,20 +55,18 @@ XML_Parse(const QString& input_string, const QString& token) {
 
 
 /*!
- * \brief logMessage
- * \param logFile
- * \param sFunctionName
- * \param sMessage
+ * \brief logMessage Log messages on a file (if enabled) or on stdout
+ * \param logFile The file where to write the log
+ * \param sFunctionName The Function which requested to write the message
+ * \param sMessage The informative message
  */
 void
- logMessage(QFile *logFile, QString sFunctionName, QString sMessage) {
-    Q_UNUSED(sFunctionName)
-    Q_UNUSED(sMessage)
-    Q_UNUSED(logFile)
-
-#ifdef LOG_MESG
-    QString sDebugMessage = QDateTime::currentDateTime().toString() +
+logMessage(QFile *logFile, QString sFunctionName, QString sMessage) {
+    QDateTime dateTime;
+    QString sDebugMessage = dateTime.currentDateTime().toString() +
+                            QString(" - ") +
                             sFunctionName +
+                            QString(" - ") +
                             sMessage;
     if(logFile) {
         if(logFile->isOpen()) {
@@ -76,14 +74,12 @@ void
             logFile->write("\n");
             logFile->flush();
         }
-        else {
+        else
             qDebug() << sDebugMessage;
-        }
     }
-    else {
+    else
         qDebug() << sDebugMessage;
-    }
-#endif
 }
+
 
 

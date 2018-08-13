@@ -25,7 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>
 #include <utility>
 
-#define LOG_MESG
 
 NetServer::NetServer(QString _serverName, QFile* _logFile, QObject *parent)
     : QObject(parent)
@@ -88,6 +87,11 @@ NetServer::onNewServerConnection() {
 
 void
 NetServer::closeServer() {
+#ifdef LOG_VERBOSE
+    logMessage(logFile,
+               Q_FUNC_INFO,
+               QString("Entering"));
+#endif
     pServerSocket->disconnect();
     if(pServerSocket->isListening())
         pServerSocket->close();
