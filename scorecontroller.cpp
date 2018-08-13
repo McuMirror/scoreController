@@ -198,20 +198,24 @@ ScoreController::prepareDirectories() {
         QStringList filter(QStringList() << "*.jpg" << "*.jpeg" << "*.png" << "*.JPG" << "*.JPEG" << "*.PNG");
         slideDir.setNameFilters(filter);
         slideList = slideDir.entryInfoList();
+#ifdef LOG_VERBOSE
         logMessage(logFile,
                    Q_FUNC_INFO,
                    QString("Slides directory: %1 Found %2 Slides")
                    .arg(sSlideDir)
                    .arg(slideList.count()));
+#endif
         QStringList nameFilter(QStringList() << "*.mp4"<< "*.MP4");
         spotDir.setNameFilters(nameFilter);
         spotDir.setFilter(QDir::Files);
         spotList = spotDir.entryInfoList();
+#ifdef LOG_VERBOSE
         logMessage(logFile,
                    Q_FUNC_INFO,
                    QString("Spot directory: %1 Found %2 Spots")
                    .arg(sSpotDir)
                    .arg(spotList.count()));
+#endif
     }
 }
 
@@ -550,11 +554,13 @@ ScoreController::onProcessConnectionRequest() {
     sToken = XML_Parse(request.data(), "getServer");
     if(sToken != sNoData) {
         sendAcceptConnection(pDiscoverySocket, hostAddress, port);
+#ifdef LOG_VERBOSE
         logMessage(logFile,
                    Q_FUNC_INFO,
                    QString("Connection request from: %1 at Address %2:%3")
                    .arg(sToken, hostAddress.toString())
                    .arg(port));
+#endif
         RemoveClient(hostAddress);
 #ifdef LOG_VERBOSE
         logMessage(logFile,
@@ -939,10 +945,12 @@ ScoreController::onNewConnection(QWebSocket *pClient) {
     connectionList.append(newConnection);
     pClientListDialog->addItem(sAddress);
     UpdateUI();
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                Q_FUNC_INFO,
                QString("Client connected: %1")
                .arg(sAddress));
+#endif
 }
 
 
@@ -950,11 +958,13 @@ void
 ScoreController::onClientDisconnected() {
     auto* pClient = qobject_cast<QWebSocket *>(sender());
     QString sDiconnectedAddress = pClient->peerAddress().toString();
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                Q_FUNC_INFO,
                QString("%1 disconnected because %2. Close code: %3")
                .arg(sDiconnectedAddress, pClient->closeReason())
                .arg(pClient->closeCode()));
+#endif
     RemoveClient(pClient->peerAddress());
     UpdateUI();
 }

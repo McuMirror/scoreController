@@ -169,11 +169,13 @@ FileServer::onNewConnection(QWebSocket *pClient) {
             break;
         }// if(connections.at(i)->peerAddress() == pClient->peerAddress())
     }// for(int i=nConnections-1; i>=0; i--)
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                Q_FUNC_INFO,
                serverName +
                QString(" Client connected: %1")
                .arg(pClient->peerAddress().toString()));
+#endif
     connections.append(pClient);
 
     connect(pClient, SIGNAL(textMessageReceived(QString)),
@@ -356,11 +358,14 @@ FileServer::onProcessTextMessage(QString sMessage) {
 
 void
 FileServer::onFileTransferDone(bool bSuccess) {
+    Q_UNUSED(bSuccess)
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                Q_FUNC_INFO,
                serverName +
                QString(" File Transfer terminated with code %1")
                .arg(bSuccess));
+#endif
 }
 
 
@@ -412,12 +417,14 @@ FileServer::onClientDisconnected() {
 #endif
     auto* pClient = qobject_cast<QWebSocket *>(sender());
     QString sDiconnectedAddress = pClient->peerAddress().toString();
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                Q_FUNC_INFO,
                serverName +
                QString(" %1 disconnected because %2. Close code: %3")
                .arg(sDiconnectedAddress, pClient->closeReason())
                .arg(pClient->closeCode()));
+#endif
     if(!connections.removeOne(pClient)) {
         logMessage(logFile,
                    Q_FUNC_INFO,

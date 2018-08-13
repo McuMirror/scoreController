@@ -52,12 +52,13 @@ NetServer::prepareServer(quint16 serverPort) {
                    .arg(serverPort));
         return false;
     }
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                Q_FUNC_INFO,
                QString("%1 - listening on port:%2")
                .arg(sServerName)
                .arg(serverPort));
-
+#endif
     return true;
 }
 
@@ -76,11 +77,12 @@ NetServer::onServerError(QWebSocketProtocol::CloseCode closeCode){
 void
 NetServer::onNewServerConnection() {
     QWebSocket *pClient = pServerSocket->nextPendingConnection();
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                Q_FUNC_INFO,
                QString("%1 - Client %2 connected")
                .arg(sServerName, pClient->peerAddress().toString()));
-
+#endif
     emit newConnection(pClient);
 }
 
