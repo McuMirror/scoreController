@@ -118,9 +118,6 @@ ScoreController::ScoreController(int myPanelType, QWidget *parent)
         panelType = FIRST_PANEL_TYPE;
     }
 
-    connect(&exitTimer, SIGNAL(timeout()),
-            this, SLOT(close()));
-
     // Pan-Tilt Camera management
     connect(pClientListDialog, SIGNAL(disableVideo()),
             this, SLOT(onStopCamera()));
@@ -158,17 +155,11 @@ ScoreController::prepareServices() {
         logMessage(logFile,
                    Q_FUNC_INFO,
                    QString("!prepareDiscovery()"));
-        exitTimer.start(1000);
-        QCursor waitCursor;
-        waitCursor.setShape(Qt::WaitCursor);
-        setCursor(waitCursor);
+        close();
     }
     // Prepare the Server port for the Panels to connect to
     else if(!prepareServer()) {
-        exitTimer.start(1000);
-        QCursor waitCursor;
-        waitCursor.setShape(Qt::WaitCursor);
-        setCursor(waitCursor);
+        close();
     }
     else {
         prepareSpotUpdateService();
@@ -278,10 +269,6 @@ ScoreController::WaitForNetworkReady() {
                                           QMessageBox::Abort);
 
         if(iResponse == QMessageBox::Abort) {
-            exitTimer.start(1000);
-            QCursor waitCursor;
-            waitCursor.setShape(Qt::WaitCursor);
-            setCursor(waitCursor);
             return iResponse;
         }
         QThread::sleep(1);

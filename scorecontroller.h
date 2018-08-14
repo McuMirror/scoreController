@@ -24,7 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHostAddress>
 #include <QFileInfoList>
 #include <QSoundEffect>
-#include <QTimer>
 #include <QSettings>
 
 #include "fileserver.h"
@@ -35,7 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
 QT_FORWARD_DECLARE_CLASS(QUdpSocket)
 QT_FORWARD_DECLARE_CLASS(ClientListDialog)
-QT_FORWARD_DECLARE_CLASS(QTimer)
 QT_FORWARD_DECLARE_CLASS(QPushButton)
 QT_FORWARD_DECLARE_CLASS(QThread)
 QT_FORWARD_DECLARE_CLASS(NetServer)
@@ -153,7 +151,6 @@ protected:
     int                   iCurrentSpot;
 
     QSoundEffect*         pButtonClick;
-    QTimer                exitTimer;
 
     QPushButton*          startStopLoopSpotButton{};
     QPushButton*          startStopSlideShowButton{};
