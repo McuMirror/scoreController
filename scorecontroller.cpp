@@ -552,6 +552,9 @@ ScoreController::onProcessConnectionRequest() {
         datagram.resize(int(pDiscoverySocket->pendingDatagramSize()));
         pDiscoverySocket->readDatagram(datagram.data(), datagram.size(), &hostAddress, &port);
         request.append(datagram.data());
+/*!
+ * \todo Do we have to limit the maximum amount of data that can be received ???
+ */
     }
     sToken = XML_Parse(request.data(), "getServer");
     if(sToken != sNoData) {
@@ -563,6 +566,9 @@ ScoreController::onProcessConnectionRequest() {
                    .arg(sToken, hostAddress.toString())
                    .arg(port));
 #endif
+        // If a Client with the same address asked for a Server it means that
+        // the connections has dropped (at least it think so). Then remove it
+        // from the connected clients list
         RemoveClient(hostAddress);
 #ifdef LOG_VERBOSE
         logMessage(logFile,
@@ -570,22 +576,22 @@ ScoreController::onProcessConnectionRequest() {
                    QString("Sent: %1")
                    .arg(sMessage));
 #endif
-        UpdateUI();
+        UpdateUI();// To disable some buttons if this was the last client
     }
 }
 
 
 /*!
- * \brief ScoreController::sendAcceptConnection Called to accept a request connection
+ * \brief ScoreController::sendAcceptConnection
+ * Called to accept a request connection from a Panel
  * \param pDiscoverySocket
  * \param hostAddress
  * \param port
- * \return
  *
- * It sends the IP addresses that this server listen to for connections
- * and the panel type to show to the client.
+ * It sends to the client the IP addresses that this server
+ * listen to for connections and the Panel Type to show.
  */
-int
+void
 ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, const QHostAddress& hostAddress, quint16 port) {
     QString sString = QString("%1,%2").arg(sIpAddresses.at(0)).arg(panelType);
     for(int i=1; i<sIpAddresses.count(); i++) {
@@ -593,12 +599,6 @@ ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, const QHostA
     }
     QString sMessage = "<serverIP>" + sString + "</serverIP>";
     QByteArray datagram = sMessage.toUtf8();
-    if(!pDiscoverySocket->isValid()) {
-        logMessage(logFile,
-                   Q_FUNC_INFO,
-                   QString("Discovery Socket Invalid !"));
-        return -1;
-    }
     qint64 bytesWritten = pDiscoverySocket->writeDatagram(datagram.data(), datagram.size(), hostAddress, port);
     Q_UNUSED(bytesWritten)
     if(bytesWritten != datagram.size()) {
@@ -606,20 +606,23 @@ ScoreController::sendAcceptConnection(QUdpSocket* pDiscoverySocket, const QHostA
                  Q_FUNC_INFO,
                  QString("Unable to send data !"));
     }
-    return 0;
 }
 
 
 /*!
- * \brief ScoreController::closeEvent Manage the termination of this server
+ * \brief ScoreController::closeEvent
+ * Manage the termination of this server
  * \param event
  */
 void
 ScoreController::closeEvent(QCloseEvent *event) {
+    Q_UNUSED(event)
     QString sMessage;
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                Q_FUNC_INFO,
                QString("Closing"));
+#endif
     delete pButtonClick;
     pButtonClick = Q_NULLPTR;
 
@@ -629,77 +632,92 @@ ScoreController::closeEvent(QCloseEvent *event) {
         if(pSocket != Q_NULLPTR) {
             pSocket->disconnect();
             if(pSocket->isValid())
-                pSocket->close();
+                pSocket->abort();
             pSocket->deleteLater();
         }
     }
     discoverySocketArray.clear();
 
+    //Close the file transfer servers (if active)
     emit closeSpotServer();
     emit closeSlideServer();
 
+    // If there are Panels connected would we switch they off ?
     if(connectionList.count() > 0) {
         int answer = QMessageBox::question(this,
                                            Q_FUNC_INFO,
                                            tr("Vuoi spegnere anche i pannelli ?"),
                                            QMessageBox::Yes,
-                                           QMessageBox::No,
-                                           QMessageBox::Cancel|QMessageBox::Default);
-        if(answer == QMessageBox::Cancel) {
-            event->ignore();
-            return;
-        }
+                                           QMessageBox::No|QMessageBox::Default);
         if(answer == QMessageBox::No) {
             for(int i=0; i<connectionList.count(); i++) {
                 connectionList.at(i).pClientSocket->disconnect();
                 if(connectionList.at(i).pClientSocket->isValid())
-                    connectionList.at(i).pClientSocket->close(QWebSocketProtocol::CloseCodeNormal, "Server Closed");
+                    connectionList.at(i).pClientSocket->close(QWebSocketProtocol::CloseCodeNormal,
+                                                              "Server Closed");
                 connectionList.at(i).pClientSocket->deleteLater();
             }
             connectionList.clear();
-        } else
-        if(answer == QMessageBox::Yes) {
+        }
+        else {
             sMessage = "<kill>1</kill>";
             SendToAll(sMessage);
         }
     }
+    // Close and delete the Panel Server
     if(pPanelServer != Q_NULLPTR) {
         pPanelServer->closeServer();
         pPanelServer->deleteLater();
         pPanelServer = Q_NULLPTR;
     }
+    // Close and delete the QSettings Object
     if(pSettings != Q_NULLPTR) {
         delete pSettings;
         pSettings = Q_NULLPTR;
     }
+    // Close and delete the Clients List Dialog
     if(pClientListDialog != Q_NULLPTR) {
         pClientListDialog->disconnect();
         delete pClientListDialog;
         pClientListDialog = Q_NULLPTR;
     }
+    // Close and delete the General Setup Dialog
     if(pGeneralSetupDialog != Q_NULLPTR) {
         pGeneralSetupDialog->disconnect();
         delete pGeneralSetupDialog;
         pGeneralSetupDialog = Q_NULLPTR;
     }
+    // Close the Log File (if any) and delete the Log File Object
     if(logFile) {
         logFile->flush();
         logFile->close();
         delete logFile;
         logFile = Q_NULLPTR;
     }
-    thread()->quit();
+#ifdef LOG_VERBOSE
+    logMessage(logFile,
+               Q_FUNC_INFO,
+               QString("Closed !"));
+#endif
+    // Finally Close this widget
+    close();
 }
 
 
 /*!
- * \brief ScoreController::prepareServer Prepare the Server for accepting new connections
+ * \brief ScoreController::prepareServer
+ * Prepare the Server for accepting new connections
  * \return
  */
 bool
 ScoreController::prepareServer() {
     pPanelServer = new NetServer(QString("PanelServer"), logFile, this);
     if(!pPanelServer->prepareServer(serverPort)) {
+#ifdef LOG_VERBOSE
+        logMessage(logFile,
+                   Q_FUNC_INFO,
+                   QString("prepareServer() Failed !"));
+#endif
         pPanelServer->deleteLater();
         pPanelServer = Q_NULLPTR;
         return false;
@@ -711,7 +729,8 @@ ScoreController::prepareServer() {
 
 
 /*!
- * \brief ScoreController::onProcessTextMessage Called to process the message received by this Server
+ * \brief ScoreController::onProcessTextMessage
+ * Called to process the Text messages received by this Server
  * \param sMessage
  */
 void
@@ -719,12 +738,14 @@ ScoreController::onProcessTextMessage(QString sMessage) {
     QString sToken;
     QString sNoData = QString("NoData");
 
+    // The Panel is asking for the Status
     sToken = XML_Parse(sMessage, "getStatus");
     if(sToken != sNoData) {
         auto *pClient = qobject_cast<QWebSocket *>(sender());
         SendToOne(pClient, FormatStatusMsg());
     }// getStatus
 
+    // The Panel has closed the Spot Loop
     sToken = XML_Parse(sMessage, "closed_spot_loop");
     if(sToken != sNoData) {
         myStatus = showPanel;
@@ -736,31 +757,14 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         startStopLoopSpotButton->setDisabled(false);
     }// closed_spot_loop
 
+    // The Panel communicates the local Pan and Tilt values
     sToken = XML_Parse(sMessage, "pan_tilt");
     if(sToken != sNoData) {
         QStringList values = QStringList(sToken.split(",",QString::SkipEmptyParts));
         pClientListDialog->remotePanTiltReceived(values.at(0).toInt(), values.at(1).toInt());
     }// pan_tilt
 
-    sToken = XML_Parse(sMessage, "send_spot");
-    if(sToken != sNoData) {
-        if(spotList.isEmpty())
-            return;
-        auto *pClient = qobject_cast<QWebSocket *>(sender());
-        if(pClient->isValid()) {
-
-        }
-    }// send_spot
-
-    sToken = XML_Parse(sMessage, "getConf");
-    if(sToken != sNoData) {
-        auto *pClient = qobject_cast<QWebSocket *>(sender());
-        if(pClient->isValid()) {
-            sMessage = QString("<setConf>%1</setConf>").arg(panelType);
-            SendToOne(pClient, sMessage);
-        }
-    }// getConf
-
+    // The Panel communicates its orientation
     sToken = XML_Parse(sMessage, "orientation");
     if(sToken != sNoData) {
         bool ok;
@@ -776,6 +780,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         pClientListDialog->remoteOrientationReceived(orientation);
     }// orientation
 
+    // The Panel communicates if it shows only the score
     sToken = XML_Parse(sMessage, "isScoreOnly");
     if(sToken != sNoData) {
         bool ok;
@@ -793,7 +798,8 @@ ScoreController::onProcessTextMessage(QString sMessage) {
 
 
 /*!
- * \brief ScoreController::SendToAll Send the same message to all the connected clients
+ * \brief ScoreController::SendToAll
+ * Send the same message to all the connected clients
  * \param sMessage The message sent
  * \return
  */
@@ -812,7 +818,8 @@ ScoreController::SendToAll(const QString& sMessage) {
 
 
 /*!
- * \brief ScoreController::SendToOne Send a message to a single connected client
+ * \brief ScoreController::SendToOne
+ * Send a message to a single connected client
  * \param pClient The client
  * \param sMessage The message
  * \return
@@ -821,7 +828,8 @@ int
 ScoreController::SendToOne(QWebSocket* pClient, const QString& sMessage) {
     if (pClient->isValid()) {
         for(int i=0; i< connectionList.count(); i++) {
-           if(connectionList.at(i).clientAddress.toIPv4Address() == pClient->peerAddress().toIPv4Address()) {
+           if(connectionList.at(i).clientAddress.toIPv4Address() ==
+              pClient->peerAddress().toIPv4Address()) {
                 qint64 written = pClient->sendTextMessage(sMessage);
                 Q_UNUSED(written)
                 if(written != sMessage.length()) {
@@ -853,7 +861,8 @@ ScoreController::SendToOne(QWebSocket* pClient, const QString& sMessage) {
 
 
 /*!
- * \brief ScoreController::RemoveClient Remove a client from the list of connected clients
+ * \brief ScoreController::RemoveClient
+ * Remove a client from the list of connected clients rebuilding the list itself
  * \param hAddress Address of the client to remove
  */
 void
@@ -861,15 +870,17 @@ ScoreController::RemoveClient(const QHostAddress& hAddress) {
     QString sFound = QString(" Not present");
     Q_UNUSED(sFound)
     QWebSocket *pClientToClose = Q_NULLPTR;
-    pClientListDialog->clear();
 
-    for(int i=0; i<connectionList.count(); i++) {
-        if((connectionList.at(i).clientAddress.toIPv4Address() == hAddress.toIPv4Address()))
+    pClientListDialog->clear();
+    for(int i=connectionList.count()-1; i>=0; i--) {
+        if(connectionList.at(i).clientAddress.toIPv4Address() ==
+           hAddress.toIPv4Address())
         {
             pClientToClose = connectionList.at(i).pClientSocket;
             pClientToClose->disconnect(); // No more events from this socket
             if(pClientToClose->isValid())
-                pClientToClose->close(QWebSocketProtocol::CloseCodeAbnormalDisconnection, tr("Timeout in connection"));
+                pClientToClose->close(QWebSocketProtocol::CloseCodeNormal,
+                                      tr("Socket disconnection"));
             pClientToClose->deleteLater();
             pClientToClose = Q_NULLPTR;
             connectionList.removeAt(i);
@@ -888,7 +899,8 @@ ScoreController::RemoveClient(const QHostAddress& hAddress) {
 
 
 /*!
- * \brief ScoreController::UpdateUI To update the buttons upon the first connection
+ * \brief ScoreController::UpdateUI
+ * To update the buttons upon the first connection or last disconnection
  */
 void
 ScoreController::UpdateUI() {
@@ -927,6 +939,11 @@ ScoreController::UpdateUI() {
 }
 
 
+/*!
+ * \brief ScoreController::onNewConnection
+ * Invoked when a new Panel ask to be connected
+ * \param pClient The Panel WebSocket pointer
+ */
 void
 ScoreController::onNewConnection(QWebSocket *pClient) {
     QHostAddress address = pClient->peerAddress();
@@ -956,6 +973,10 @@ ScoreController::onNewConnection(QWebSocket *pClient) {
 }
 
 
+/*!
+ * \brief ScoreController::onClientDisconnected
+ * Invoked when a Panel disconnects (Usually because a network problem)
+ */
 void
 ScoreController::onClientDisconnected() {
     auto* pClient = qobject_cast<QWebSocket *>(sender());
@@ -972,6 +993,11 @@ ScoreController::onClientDisconnected() {
 }
 
 
+/*!
+ * \brief ScoreController::onProcessBinaryMessage
+ * Should never be called !
+ * \param message
+ */
 void
 ScoreController::onProcessBinaryMessage(QByteArray message) {
     Q_UNUSED(message)
@@ -981,6 +1007,11 @@ ScoreController::onProcessBinaryMessage(QByteArray message) {
 }
 
 
+/*!
+ * \brief ScoreController::CreateSpotButtons
+ * Create the Button and they Layout
+ * \return The Buttons Layout
+ */
 QHBoxLayout*
 ScoreController::CreateSpotButtons() {
     auto* spotButtonLayout = new QHBoxLayout();
@@ -1073,6 +1104,9 @@ ScoreController::CreateSpotButtons() {
 }
 
 
+/*!
+ * \brief ScoreController::onButtonStartStopSpotLoopClicked
+ */
 void
 ScoreController::onButtonStartStopSpotLoopClicked() {
     QString sMessage;
@@ -1112,6 +1146,9 @@ ScoreController::onButtonStartStopSpotLoopClicked() {
 }
 
 
+/*!
+ * \brief ScoreController::onButtonStartStopLiveCameraClicked
+ */
 void
 ScoreController::onButtonStartStopLiveCameraClicked() {
     QString sMessage;
@@ -1151,6 +1188,9 @@ ScoreController::onButtonStartStopLiveCameraClicked() {
 }
 
 
+/*!
+ * \brief ScoreController::onButtonStartStopSlideShowClicked
+ */
 void
 ScoreController::onButtonStartStopSlideShowClicked() {
     QString sMessage;
@@ -1190,6 +1230,9 @@ ScoreController::onButtonStartStopSlideShowClicked() {
 }
 
 
+/*!
+ * \brief ScoreController::onButtonShutdownClicked
+ */
 void
 ScoreController::onButtonShutdownClicked() {
     int iRes = QMessageBox::question(this,
@@ -1204,6 +1247,9 @@ ScoreController::onButtonShutdownClicked() {
 }
 
 
+/*!
+ * \brief ScoreController::onButtonPanelControlClicked
+ */
 void
 ScoreController::onButtonPanelControlClicked() {
     hide();
@@ -1213,6 +1259,9 @@ ScoreController::onButtonPanelControlClicked() {
 }
 
 
+/*!
+ * \brief ScoreController::onButtonSetupClicked
+ */
 void
 ScoreController::onButtonSetupClicked() {
     pGeneralSetupDialog->setSlideDir(sSlideDir);
@@ -1256,11 +1305,20 @@ ScoreController::onButtonSetupClicked() {
 }
 
 
+/*!
+ * \brief ScoreController::SaveStatus
+ * Just a place holder
+ */
 void
 ScoreController::SaveStatus() {
 }
 
 
+/*!
+ * \brief ScoreController::FormatStatusMsg
+ * Just a place holder
+ * \return
+ */
 QString
 ScoreController::FormatStatusMsg() {
     QString sMessage = QString();
@@ -1268,6 +1326,10 @@ ScoreController::FormatStatusMsg() {
 }
 
 
+/*!
+ * \brief ScoreController::onGetPanelOrientation
+ * \param sClientIp
+ */
 void
 ScoreController::onGetPanelOrientation(const QString& sClientIp) {
     QHostAddress hostAddress(sClientIp);
@@ -1281,6 +1343,10 @@ ScoreController::onGetPanelOrientation(const QString& sClientIp) {
 }
 
 
+/*!
+ * \brief ScoreController::onGetIsPanelScoreOnly
+ * \param sClientIp
+ */
 void
 ScoreController::onGetIsPanelScoreOnly(const QString& sClientIp) {
     QHostAddress hostAddress(sClientIp);
@@ -1294,6 +1360,11 @@ ScoreController::onGetIsPanelScoreOnly(const QString& sClientIp) {
 }
 
 
+/*!
+ * \brief ScoreController::onChangePanelOrientation
+ * \param sClientIp
+ * \param orientation
+ */
 void
 ScoreController::onChangePanelOrientation(const QString& sClientIp, PanelOrientation orientation) {
     QHostAddress hostAddress(sClientIp);

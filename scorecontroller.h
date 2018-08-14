@@ -99,7 +99,7 @@ protected:
     int             SendToAll(const QString& sMessage);
     int             SendToOne(QWebSocket* pSocket, const QString& sMessage);
     bool            prepareServer();
-    int             sendAcceptConnection(QUdpSocket *pDiscoverySocket, const QHostAddress& hostAddress, quint16 port);
+    void            sendAcceptConnection(QUdpSocket *pDiscoverySocket, const QHostAddress& hostAddress, quint16 port);
     void            RemoveClient(const QHostAddress& hAddress);
     bool            isConnectedToNetwork();
     bool            prepareLogFile();
