@@ -29,11 +29,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#define LOG_MESG
 //#define LOG_VERBOSE
 
-#define VOLLEY_PANEL   0
-#define FIRST_PANEL  VOLLEY_PANEL
-#define BASKET_PANEL   1
-#define HANDBALL_PANEL 2
-#define LAST_PANEL   HANDBALL_PANEL
+#define VOLLEY_PANEL      0
+#define FIRST_PANEL_TYPE  VOLLEY_PANEL
+#define BASKET_PANEL      1
+#define HANDBALL_PANEL    2
+#define LAST_PANEL_TYPE   HANDBALL_PANEL
 
 QString XML_Parse(const QString& input_string, const QString& token);
 void logMessage(QFile *logFile, QString sFunctionName, QString sMessage);

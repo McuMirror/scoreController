@@ -61,6 +61,7 @@ int
 main(int argc, char *argv[]) {
     int iresult = 0;
     //QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    // Create the main application
     auto* pApp = new GameDirector(argc, argv);
     // Start the event loop and waits unil exit() is called
     iresult = pApp->exec();

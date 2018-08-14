@@ -50,7 +50,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 /*!
- * \brief ScoreController::ScoreController This is the base class of all the game controllers
+ * \brief ScoreController::ScoreController
+ * This is the base class of all the game controllers
  * \param myPanelType
  * \param parent
  */
@@ -78,6 +79,8 @@ ScoreController::ScoreController(int myPanelType, QWidget *parent)
     if(WaitForNetworkReady() != QMessageBox::Ok) {
         exit(0);
     }
+
+    // Initialize some useful dialogs...
     pClientListDialog = new ClientListDialog(this);
     pClientListDialog->setWindowFlags(Qt::Window);
 
@@ -96,7 +99,7 @@ ScoreController::ScoreController(int myPanelType, QWidget *parent)
     sLogDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
     if(!sLogDir.endsWith(QString("/"))) sLogDir+= QString("/");
 
-    // The Directories to look for the slides and spots
+    // The default Directories to look for the slides and spots
     sSlideDir   = QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
     if(!sSlideDir.endsWith(QString("/"))) sSlideDir+= QString("/");
     sSpotDir    = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation);
@@ -107,11 +110,12 @@ ScoreController::ScoreController(int myPanelType, QWidget *parent)
     iCurrentSlide = 0;
     iCurrentSpot  = 0;
 
-    if((panelType < FIRST_PANEL) || (panelType > LAST_PANEL)) {
+    if((panelType < FIRST_PANEL_TYPE) ||
+       (panelType > LAST_PANEL_TYPE)) {
         logMessage(logFile,
                    Q_FUNC_INFO,
-                   QString("Panel Type forced to FIRST_PANEL"));
-        panelType = FIRST_PANEL;
+                   QString("Panel Type forced to FIRST_PANEL_TYPE"));
+        panelType = FIRST_PANEL_TYPE;
     }
 
     connect(&exitTimer, SIGNAL(timeout()),
@@ -131,7 +135,7 @@ ScoreController::ScoreController(int myPanelType, QWidget *parent)
             this, SLOT(onGetPanelOrientation(QString)));
     connect(pClientListDialog, SIGNAL(changeOrientation(QString,PanelOrientation)),
             this, SLOT(onChangePanelOrientation(QString,PanelOrientation)));
-    // Panel Score Only
+    // Score Only Panel management
     connect(pClientListDialog, SIGNAL(getScoreOnly(QString)),
             this, SLOT(onGetIsPanelScoreOnly(QString)));
     connect(pClientListDialog, SIGNAL(changeScoreOnly(QString,bool)),
@@ -159,7 +163,7 @@ ScoreController::prepareServices() {
         waitCursor.setShape(Qt::WaitCursor);
         setCursor(waitCursor);
     }
-    // Prepare the server port for the panels to connect
+    // Prepare the Server port for the Panels to connect to
     else if(!prepareServer()) {
         exitTimer.start(1000);
         QCursor waitCursor;
@@ -174,7 +178,8 @@ ScoreController::prepareServices() {
 
 
 /*!
- * \brief ScoreController::prepareDirectories Select the directories from which the Slides and the Spots will be taken.
+ * \brief ScoreController::prepareDirectories
+ * To select the directories from which the Slides and the Spots will be taken.
  */
 void
 ScoreController::prepareDirectories() {
