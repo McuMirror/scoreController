@@ -20,6 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ui_choosediscipline.h"
 
 
+/*!
+ * \brief ChooseDiscipline::ChooseDiscipline
+ * A Dialog to select the Panel to show
+ * \param parent
+ */
 ChooseDiscipline::ChooseDiscipline(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::ChooseDiscipline)
@@ -36,6 +41,9 @@ ChooseDiscipline::ChooseDiscipline(QWidget *parent)
 }
 
 
+/*!
+ * \brief ChooseDiscipline::~ChooseDiscipline
+ */
 ChooseDiscipline::~ChooseDiscipline() {
     delete pSettings;
     pSettings = Q_NULLPTR;
@@ -43,42 +51,66 @@ ChooseDiscipline::~ChooseDiscipline() {
 }
 
 
+/*!
+ * \brief ChooseDiscipline::on_basketRadioButton_clicked
+ */
 void
 ChooseDiscipline::on_basketRadioButton_clicked() {
     discipline = BASKET_PANEL;
 }
 
 
+/*!
+ * \brief ChooseDiscipline::on_volleyRadioButton_clicked
+ */
 void
 ChooseDiscipline::on_volleyRadioButton_clicked() {
     discipline = VOLLEY_PANEL;
 }
 
 
+/*!
+ * \brief ChooseDiscipline::on_handballRadioButton_clicked
+ */
 void
 ChooseDiscipline::on_handballRadioButton_clicked() {
     discipline = HANDBALL_PANEL;
 }
 
 
+/*!
+ * \brief ChooseDiscipline::on_goPushButton_clicked
+ */
 void
 ChooseDiscipline::on_goPushButton_clicked() {
     done(QDialog::Accepted);
 }
 
 
+/*!
+ * \brief ChooseDiscipline::getDiscipline
+ * \return
+ */
 int
 ChooseDiscipline::getDiscipline() {
     return discipline;
 }
 
 
+/*!
+ * \brief ChooseDiscipline::on_closePushButton_clicked
+ */
 void
 ChooseDiscipline::on_closePushButton_clicked() {
     done(QDialog::Rejected);
 }
 
 
+/*!
+ * \brief ChooseDiscipline::on_LanguageComboBox_currentIndexChanged
+ * To select the language of the Controller Panel
+ * \param arg1
+ */
 void
 ChooseDiscipline::on_LanguageComboBox_currentIndexChanged(const QString &arg1) {
     pSettings->setValue("language", arg1);

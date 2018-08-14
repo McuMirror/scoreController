@@ -28,6 +28,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QComboBox>
 #include <QMessageBox>
 
+
+/*!
+ * \brief ClientListDialog::ClientListDialog
+ * A Dialog to handle the connected clients of this Controller
+ * \param parent
+ */
 ClientListDialog::ClientListDialog(QWidget* parent)
     : QDialog(parent)
     , pMyParent(parent)
@@ -56,9 +62,14 @@ ClientListDialog::ClientListDialog(QWidget* parent)
 }
 
 
+
 ClientListDialog::~ClientListDialog() = default;
 
 
+/*!
+ * \brief ClientListDialog::createClientListBox
+ * \return
+ */
 QGroupBox*
 ClientListDialog::createClientListBox() {
     auto* clientListBox = new QGroupBox();
@@ -77,30 +88,46 @@ ClientListDialog::createClientListBox() {
 }
 
 
+/*!
+ * \brief ClientListDialog::clear
+ */
 void
 ClientListDialog::clear() {
     clientListWidget.clear();
 }
 
 
+/*!
+ * \brief ClientListDialog::addItem
+ * \param sAddress
+ */
 void
 ClientListDialog::addItem(const QString& sAddress) {
     clientListWidget.addItem(sAddress);
 }
 
 
+/*!
+ * \brief ClientListDialog::onStartCamera
+ */
 void
 ClientListDialog::onStartCamera() {
     emit enableVideo(sSelectedClient);
 }
 
 
+/*!
+ * \brief ClientListDialog::onCloseCamera
+ */
 void
 ClientListDialog::onCloseCamera() {
     emit disableVideo();
 }
 
 
+/*!
+ * \brief ClientListDialog::onConfiguratorClosing
+ */
 void
 ClientListDialog::onConfiguratorClosing() {
     emit disableVideo();
@@ -108,6 +135,10 @@ ClientListDialog::onConfiguratorClosing() {
 }
 
 
+/*!
+ * \brief ClientListDialog::onClientSelected
+ * \param selectedClient
+ */
 void
 ClientListDialog::onClientSelected(QListWidgetItem* selectedClient) {
     emit disableVideo();
@@ -118,24 +149,41 @@ ClientListDialog::onClientSelected(QListWidgetItem* selectedClient) {
 }
 
 
+/*!
+ * \brief ClientListDialog::onSetNewPan
+ * \param newPan
+ */
 void
 ClientListDialog::onSetNewPan(int newPan) {
     emit newPanValue(sSelectedClient, newPan);
 }
 
 
+/*!
+ * \brief ClientListDialog::onSetNewTilt
+ * \param newTilt
+ */
 void
 ClientListDialog::onSetNewTilt(int newTilt) {
     emit newTiltValue(sSelectedClient, newTilt);
 }
 
 
+/*!
+ * \brief ClientListDialog::remotePanTiltReceived
+ * \param newPan
+ * \param newTilt
+ */
 void
 ClientListDialog::remotePanTiltReceived(int newPan, int newTilt) {
     pConfigurator->SetCurrentPanTilt(newPan, newTilt);
 }
 
 
+/*!
+ * \brief ClientListDialog::remoteOrientationReceived
+ * \param currentOrientation
+ */
 void
 ClientListDialog::remoteOrientationReceived(PanelOrientation currentOrientation) {
     auto index = static_cast<int>(currentOrientation);
@@ -143,24 +191,40 @@ ClientListDialog::remoteOrientationReceived(PanelOrientation currentOrientation)
 }
 
 
+/*!
+ * \brief ClientListDialog::onChangePanelOrientation
+ * \param newOrientation
+ */
 void
 ClientListDialog::onChangePanelOrientation(PanelOrientation newOrientation) {
     emit changeOrientation(sSelectedClient, newOrientation);
 }
 
 
+/*!
+ * \brief ClientListDialog::remoteScoreOnlyValueReceived
+ * \param bScoreOnly
+ */
 void
 ClientListDialog::remoteScoreOnlyValueReceived(bool bScoreOnly) {
     pConfigurator->SetIsScoreOnly(bScoreOnly);
 }
 
 
+/*!
+ * \brief ClientListDialog::onChangeScoreOnly
+ * \param bScoreOnly
+ */
 void
 ClientListDialog::onChangeScoreOnly(bool bScoreOnly) {
     emit changeScoreOnly(sSelectedClient, bScoreOnly);
 }
 
 
+/*!
+ * \brief ClientListDialog::exec
+ * \return
+ */
 int
 ClientListDialog::exec() {
   clientListWidget.clearSelection();

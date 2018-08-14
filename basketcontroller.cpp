@@ -45,6 +45,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define OVER_TIME       5 // 5 Minuti è a durata di ciascun overtime
 
 
+/*!
+ * \brief BasketController::BasketController
+ * The constructor of the Basket Control Panel.
+ *
+ * It is responsible to start the various services for
+ * updating Slide and Spots
+ */
 BasketController::BasketController()
     : ScoreController(BASKET_PANEL, Q_NULLPTR)
     , bFontBuilt(false)
@@ -94,6 +101,10 @@ BasketController::BasketController()
 }
 
 
+/*!
+ * \brief BasketController::buildControls
+ * Utility member to create all the controls on the Control Panel
+ */
 void
 BasketController::buildControls() {
     QString sString;
@@ -210,6 +221,11 @@ BasketController::buildControls() {
 }
 
 
+/*!
+ * \brief BasketController::resizeEvent
+ * The very first time it is called it is resposible to resize the fonts used
+ * \param event
+ */
 void
 BasketController::resizeEvent(QResizeEvent *event) {
     if(!bFontBuilt) {
@@ -220,6 +236,10 @@ BasketController::resizeEvent(QResizeEvent *event) {
 }
 
 
+/*!
+ * \brief BasketController::buildFontSizes
+ * Utility member to calculate the font sizes for the various controls
+ */
 void
 BasketController::buildFontSizes() {
     QFont font;
@@ -305,6 +325,10 @@ BasketController::buildFontSizes() {
 }
 
 
+/*!
+ * \brief BasketController::setEventHandlers
+ * Utility member to connect the various controls with their event handlers
+ */
 void
 BasketController::setEventHandlers() {
     for(int iTeam=0; iTeam<2; iTeam++) {
@@ -367,6 +391,10 @@ BasketController::setEventHandlers() {
 }
 
 
+/*!
+ * \brief BasketController::GetSettings
+ * Recall from the non volatile memory the last values of the controls
+ */
 void
 BasketController::GetSettings() {
     pSettings = new QSettings("Gabriele Salvato", "Basket Controller");
@@ -397,6 +425,11 @@ BasketController::GetSettings() {
 }
 
 
+/*!
+ * \brief BasketController::closeEvent
+ * To handle the closure of the Panel Controller
+ * \param event
+ */
 void
 BasketController::closeEvent(QCloseEvent *event) {
     SaveStatus();
@@ -404,6 +437,10 @@ BasketController::closeEvent(QCloseEvent *event) {
 }
 
 
+/*!
+ * \brief BasketController::SaveStatus
+ * Save the values of the controls into the non volatile memory
+ */
 void
 BasketController::SaveStatus() {
     pSettings->setValue("team1/name", sTeam[0]);
@@ -423,6 +460,11 @@ BasketController::SaveStatus() {
 }
 
 
+/*!
+ * \brief BasketController::CreateGameButtonBox
+ * Utility member to create the Layout of the Buttons
+ * \return the Layout
+ */
 QHBoxLayout*
 BasketController::CreateGameButtonBox() {
     auto *gameButtonLayout = new QHBoxLayout();
@@ -453,6 +495,11 @@ BasketController::CreateGameButtonBox() {
 }
 
 
+/*!
+ * \brief BasketController::CreateGamePanel
+ * Utility member to create the Layout of the Control Panel
+ * \return The Layout
+ */
 QGridLayout*
 BasketController::CreateGamePanel() {
     auto *gamePanel = new QGridLayout();
@@ -499,6 +546,11 @@ BasketController::CreateGamePanel() {
 }
 
 
+/*!
+ * \brief BasketController::FormatStatusMsg
+ * Utility function to format a String containing the current status of the controls
+ * \return The "Current Status Message"
+ */
 QString
 BasketController::FormatStatusMsg() {
     QString sMessage = QString();
@@ -537,7 +589,10 @@ BasketController::FormatStatusMsg() {
 // Event management routines
 // =========================
 
-
+/*!
+ * \brief BasketController::onTimeOutIncrement
+ * \param iTeam
+ */
 void
 BasketController::onTimeOutIncrement(int iTeam) {
     QString sMessage;
@@ -565,6 +620,10 @@ BasketController::onTimeOutIncrement(int iTeam) {
 }
 
 
+/*!
+ * \brief BasketController::onTimeOutDecrement
+ * \param iTeam
+ */
 void
 BasketController::onTimeOutDecrement(int iTeam) {
     QString sMessage;
@@ -584,6 +643,10 @@ BasketController::onTimeOutDecrement(int iTeam) {
 }
 
 
+/*!
+ * \brief BasketController::onFaulsIncrement
+ * \param iTeam
+ */
 void
 BasketController::onFaulsIncrement(int iTeam) {
     QString sMessage, sText;
@@ -613,6 +676,10 @@ BasketController::onFaulsIncrement(int iTeam) {
 }
 
 
+/*!
+ * \brief BasketController::onFaulsDecrement
+ * \param iTeam
+ */
 void
 BasketController::onFaulsDecrement(int iTeam) {
     QString sMessage, sText;
@@ -642,6 +709,10 @@ BasketController::onFaulsDecrement(int iTeam) {
 }
 
 
+/*!
+ * \brief BasketController::onScoreIncrement
+ * \param iTeam
+ */
 void
 BasketController::onScoreIncrement(int iTeam) {
     QString sMessage;
@@ -660,6 +731,10 @@ BasketController::onScoreIncrement(int iTeam) {
 }
 
 
+/*!
+ * \brief BasketController::onScoreDecrement
+ * \param iTeam
+ */
 void
 BasketController::onScoreDecrement(int iTeam) {
     QString sMessage;
@@ -678,6 +753,11 @@ BasketController::onScoreDecrement(int iTeam) {
 }
 
 
+/*!
+ * \brief BasketController::onTeamTextChanged
+ * \param sText
+ * \param iTeam
+ */
 void
 BasketController::onTeamTextChanged(QString sText, int iTeam) {
     QString sMessage;
@@ -692,6 +772,9 @@ BasketController::onTeamTextChanged(QString sText, int iTeam) {
 }
 
 
+/*!
+ * \brief BasketController::onButtonChangeFieldClicked
+ */
 void
 BasketController::onButtonChangeFieldClicked() {
     int iRes = QMessageBox::question(this, tr("BasketController"),
@@ -771,6 +854,9 @@ BasketController::onButtonChangeFieldClicked() {
 }
 
 
+/*!
+ * \brief BasketController::onButtonNewPeriodClicked
+ */
 void
 BasketController::onButtonNewPeriodClicked() {
     int iRes = QMessageBox::question(this, tr("BasketController"),
@@ -841,6 +927,9 @@ BasketController::onButtonNewPeriodClicked() {
 }
 
 
+/*!
+ * \brief BasketController::onButtonNewGameClicked
+ */
 void
 BasketController::onButtonNewGameClicked() {
     int iRes = QMessageBox::question(this, tr("BasketController"),
@@ -881,6 +970,9 @@ BasketController::onButtonNewGameClicked() {
 }
 
 
+/*!
+ * \brief BasketController::onIncrementPeriod
+ */
 void
 BasketController::onIncrementPeriod() {
     if(iPeriod < MAX_PERIODS) {
@@ -903,6 +995,9 @@ BasketController::onIncrementPeriod() {
 }
 
 
+/*!
+ * \brief BasketController::onDecrementPeriod
+ */
 void
 BasketController::onDecrementPeriod() {
     if(iPeriod > 1) {
@@ -927,6 +1022,11 @@ BasketController::onDecrementPeriod() {
 }
 
 
+/*!
+ * \brief BasketController::onPossessClicked
+ * \param iTeam
+ * \param bChecked
+ */
 void
 BasketController::onPossessClicked(int iTeam, bool bChecked) {
     Q_UNUSED(bChecked)

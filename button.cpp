@@ -52,6 +52,12 @@
 
 #include "button.h"
 
+/*!
+ * \brief Button::Button
+ * \param text
+ * \param team
+ * \param parent
+ */
 Button::Button(const QString &text, int team, QWidget *parent)
     : QPushButton(text, parent)
     , myTeam(team)
@@ -66,12 +72,19 @@ Button::Button(const QString &text, int team, QWidget *parent)
 }
 
 
+/*!
+ * \brief Button::onButtonClicked
+ */
 void
 Button::onButtonClicked() {
     emit buttonClicked(myTeam);
 }
 
 
+/*!
+ * \brief Button::hasHeightForWidth
+ * \return
+ */
 bool
 Button::hasHeightForWidth() const
 {
@@ -79,6 +92,11 @@ Button::hasHeightForWidth() const
 }
 
 
+/*!
+ * \brief Button::heightForWidth
+ * \param w
+ * \return
+ */
 int
 Button::heightForWidth(int w) const
 {

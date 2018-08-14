@@ -4,6 +4,11 @@
 #include "edit.h"
 
 
+/*!
+ * \brief Edit::Edit
+ * \param iTeam
+ * \param parent
+ */
 Edit::Edit(int iTeam, QWidget *parent)
     : QLineEdit(parent)
     , myTeam(iTeam)
@@ -13,6 +18,12 @@ Edit::Edit(int iTeam, QWidget *parent)
 }
 
 
+/*!
+ * \brief Edit::Edit
+ * \param sString
+ * \param iTeam
+ * \param parent
+ */
 Edit::Edit(const QString &sString, int iTeam, QWidget *parent)
     : QLineEdit(sString, parent)
     , myTeam(iTeam)
@@ -23,6 +34,10 @@ Edit::Edit(const QString &sString, int iTeam, QWidget *parent)
 }
 
 
+/*!
+ * \brief Edit::sizeHint
+ * \return
+ */
 QSize
 Edit::sizeHint() const
 {
@@ -36,6 +51,10 @@ Edit::sizeHint() const
 }
 
 
+/*!
+ * \brief Edit::onTextChanged
+ * \param sText
+ */
 void
 Edit::onTextChanged(QString sText) {
     emit textChanged(std::move(sText), myTeam);
