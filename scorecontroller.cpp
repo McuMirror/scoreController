@@ -282,12 +282,14 @@ ScoreController::~ScoreController() = default;
 
 
 /*!
- * \brief ScoreController::onSlideServerDone Called from the Slide Updater Server when a
- * transfer with a client has completed
+ * \brief ScoreController::onSlideServerDone
+ * Called from the Slide Updater Server when a transfer with a client has completed
  * \param bError
  */
 void
 ScoreController::onSlideServerDone(bool bError) {
+    Q_UNUSED(bError)
+#ifdef LOG_VERBOSE
     // Log a Message just to inform
     if(bError) {
         logMessage(logFile,
@@ -299,6 +301,7 @@ ScoreController::onSlideServerDone(bool bError) {
                    Q_FUNC_INFO,
                    QString("Slide server stopped without errors"));
     }
+#endif
 }
 
 
@@ -309,6 +312,8 @@ ScoreController::onSlideServerDone(bool bError) {
  */
 void
 ScoreController::onSpotServerDone(bool bError) {
+    Q_UNUSED(bError)
+#ifdef LOG_VERBOSE
     // Log a Message just to inform
     if(bError) {
         logMessage(logFile,
@@ -320,6 +325,7 @@ ScoreController::onSpotServerDone(bool bError) {
                    Q_FUNC_INFO,
                    QString("Spot server stopped without errors"));
     }
+#endif
 }
 
 
@@ -328,8 +334,8 @@ ScoreController::onSpotServerDone(bool bError) {
  * \return
  *
  * Start a "Discovery Service" that make possible to clients to discover
- * the presence of this Score Controller, independently from its network
- * address.
+ * the presence of this Score Controller Server, independently from its
+ * network address.
  * It listen for a short message from clients and then
  * send back an appropriate answer.
  */
@@ -381,7 +387,8 @@ ScoreController::prepareDiscovery() {
 
 
 /*!
- * \brief ScoreController::onStartCamera Called when the user asked to start the live camera
+ * \brief ScoreController::onStartCamera
+ * Called when the user asked to start the live camera
  * \param sClientIp
  */
 void
@@ -412,7 +419,8 @@ ScoreController::onStopCamera() {
 
 
 /*!
- * \brief ScoreController::onSetNewPanValue Called when the user asked to pan the live camera
+ * \brief ScoreController::onSetNewPanValue
+ * Called when the user asked to pan the live camera on a given Panel
  * \param sClientIp
  * \param newPan
  */
@@ -430,7 +438,8 @@ ScoreController::onSetNewPanValue(const QString& sClientIp, int newPan) {
 
 
 /*!
- * \brief ScoreController::onSetNewTiltValue Called when the user asked to tilt the live camera.
+ * \brief ScoreController::onSetNewTiltValue
+ * Called when the user asked to tilt the live camera on a given Panel.
  * \param sClientIp
  * \param newTilt
  */
@@ -447,11 +456,10 @@ ScoreController::onSetNewTiltValue(const QString& sClientIp, int newTilt) {
 }
 
 
-//
-// Not slides, spots or camera
 /*!
- * \brief ScoreController::onSetScoreOnly Called when the user asked to set the panel to
- * show only the score: No slides, spots or camera.
+ * \brief ScoreController::onSetScoreOnly
+ * Called when the user asked to set the panel to show only the score:
+ * No slides, spots or camera.
  * \param sClientIp
  * \param bScoreOnly
  */
@@ -469,7 +477,8 @@ ScoreController::onSetScoreOnly(const QString& sClientIp, bool bScoreOnly) {
 
 
 /*!
- * \brief ScoreController::prepareLogFile Prepare the file for logging (if enabled in compilation)
+ * \brief ScoreController::prepareLogFile
+ * Prepare the file for logging (if enabled at compilation time)
  * \return
  */
 bool
@@ -495,8 +504,9 @@ ScoreController::prepareLogFile() {
 
 
 /*!
- * \brief ScoreController::isConnectedToNetwork Chech if the computer is connected to a network
- * \return
+ * \brief ScoreController::isConnectedToNetwork
+ * Chech if the computer is connected to a network
+ * \return true if a network connection is available
  */
 bool
 ScoreController::isConnectedToNetwork() {
