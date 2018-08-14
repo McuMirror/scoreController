@@ -437,10 +437,12 @@ FileServer::onClientDisconnected() {
 
 void
 FileServer::onCloseServer() {
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                Q_FUNC_INFO,
                serverName +
                QString(" Entering..."));
+#endif
     for(int i=0; i<connections.count(); i++) {
         connections.at(i)->disconnect();
         if(connections.at(i)->isValid())
