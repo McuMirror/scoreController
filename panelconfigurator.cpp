@@ -1,6 +1,12 @@
 #include "panelconfigurator.h"
 #include "ui_panelconfigurator.h"
 
+
+/*!
+ * \brief PanelConfigurator::PanelConfigurator
+ * A Dialog to configure some Panel behaviours
+ * \param parent
+ */
 PanelConfigurator::PanelConfigurator(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::PanelConfigurator)
@@ -17,11 +23,18 @@ PanelConfigurator::PanelConfigurator(QWidget *parent)
 }
 
 
+/*!
+ * \brief PanelConfigurator::~PanelConfigurator
+ */
 PanelConfigurator::~PanelConfigurator() {
     delete ui;
 }
 
 
+/*!
+ * \brief PanelConfigurator::exec
+ * \return
+ */
 int
 PanelConfigurator::exec() {
     ui->leftButton->setDisabled(true);
@@ -37,6 +50,9 @@ PanelConfigurator::exec() {
 }
 
 
+/*!
+ * \brief PanelConfigurator::show
+ */
 void
 PanelConfigurator::show() {
     ui->leftButton->setDisabled(true);
@@ -51,6 +67,11 @@ PanelConfigurator::show() {
 }
 
 
+/*!
+ * \brief PanelConfigurator::SetCurrentPanTilt
+ * \param newPan
+ * \param newTilt
+ */
 void
 PanelConfigurator::SetCurrentPanTilt(int newPan, int newTilt) {
     iPan  = newPan;
@@ -62,6 +83,10 @@ PanelConfigurator::SetCurrentPanTilt(int newPan, int newTilt) {
 }
 
 
+/*!
+ * \brief PanelConfigurator::SetCurrrentOrientaton
+ * \param index
+ */
 void
 PanelConfigurator::SetCurrrentOrientaton(int index) {
     ui->orientationCombo->setCurrentIndex(index);
@@ -69,6 +94,9 @@ PanelConfigurator::SetCurrrentOrientaton(int index) {
 }
 
 
+/*!
+ * \brief PanelConfigurator::SetupButtons
+ */
 void
 PanelConfigurator::SetupButtons() {
     int iDelay  = 300;
@@ -96,6 +124,9 @@ PanelConfigurator::SetupButtons() {
 }
 
 
+/*!
+ * \brief PanelConfigurator::on_upButton_pressed
+ */
 void
 PanelConfigurator::on_upButton_pressed() {
     iTilt++;
@@ -109,6 +140,9 @@ PanelConfigurator::on_upButton_pressed() {
 }
 
 
+/*!
+ * \brief PanelConfigurator::on_downButton_pressed
+ */
 void
 PanelConfigurator::on_downButton_pressed() {
     iTilt--;
@@ -122,6 +156,9 @@ PanelConfigurator::on_downButton_pressed() {
 }
 
 
+/*!
+ * \brief PanelConfigurator::on_leftButton_pressed
+ */
 void
 PanelConfigurator::on_leftButton_pressed() {
     iPan--;
@@ -135,6 +172,9 @@ PanelConfigurator::on_leftButton_pressed() {
 }
 
 
+/*!
+ * \brief PanelConfigurator::on_rightButton_pressed
+ */
 void
 PanelConfigurator::on_rightButton_pressed() {
     iPan++;
@@ -148,12 +188,20 @@ PanelConfigurator::on_rightButton_pressed() {
 }
 
 
+/*!
+ * \brief PanelConfigurator::on_orientationCombo_currentIndexChanged
+ * \param index
+ */
 void
 PanelConfigurator::on_orientationCombo_currentIndexChanged(int index) {
     emit changeOrientation(static_cast<PanelOrientation>(index));
 }
 
 
+/*!
+ * \brief PanelConfigurator::on_tabWidget_tabBarClicked
+ * \param index
+ */
 void
 PanelConfigurator::on_tabWidget_tabBarClicked(int index) {
     if(index == 0) {
@@ -165,6 +213,9 @@ PanelConfigurator::on_tabWidget_tabBarClicked(int index) {
 }
 
 
+/*!
+ * \brief PanelConfigurator::on_closeButton_clicked
+ */
 void
 PanelConfigurator::on_closeButton_clicked() {
     emit closingDialog();
@@ -172,11 +223,20 @@ PanelConfigurator::on_closeButton_clicked() {
 }
 
 
+/*!
+ * \brief PanelConfigurator::on_scoreOnlyCheckBox_clicked
+ * \param checked
+ */
 void
 PanelConfigurator::on_scoreOnlyCheckBox_clicked(bool checked) {
     emit scoreOnly(checked);
 }
 
+
+/*!
+ * \brief PanelConfigurator::SetIsScoreOnly
+ * \param bScoreOnly
+ */
 void
 PanelConfigurator::SetIsScoreOnly(bool bScoreOnly) {
     ui->scoreOnlyCheckBox->setChecked(bScoreOnly);

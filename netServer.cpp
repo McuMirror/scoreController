@@ -26,6 +26,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>
 
 
+/*!
+  \todo Could we simplify the classes by  merging this class into the FileServer one ???
+ */
+/*!
+ * \brief NetServer::NetServer The bas class for the Slides and spots File Servers
+ * \param _serverName
+ * \param _logFile
+ * \param parent
+ */
 NetServer::NetServer(QString _serverName, QFile* _logFile, QObject *parent)
     : QObject(parent)
     , sServerName(std::move(_serverName))
@@ -35,6 +44,12 @@ NetServer::NetServer(QString _serverName, QFile* _logFile, QObject *parent)
 }
 
 
+/*!
+ * \brief NetServer::prepareServer
+ * Creates the Server Socket and connects their SIGNALS to the rigth SLOTS
+ * \param serverPort
+ * \return
+ */
 bool
 NetServer::prepareServer(quint16 serverPort) {
     pServerSocket = new QWebSocketServer(QStringLiteral("Server"),
@@ -63,6 +78,10 @@ NetServer::prepareServer(quint16 serverPort) {
 }
 
 
+/*!
+ * \brief NetServer::onServerError
+ * \param closeCode
+ */
 void
 NetServer::onServerError(QWebSocketProtocol::CloseCode closeCode){
     logMessage(logFile,
@@ -74,6 +93,9 @@ NetServer::onServerError(QWebSocketProtocol::CloseCode closeCode){
 }
 
 
+/*!
+ * \brief NetServer::onNewServerConnection
+ */
 void
 NetServer::onNewServerConnection() {
     QWebSocket *pClient = pServerSocket->nextPendingConnection();
@@ -87,6 +109,9 @@ NetServer::onNewServerConnection() {
 }
 
 
+/*!
+ * \brief NetServer::closeServer
+ */
 void
 NetServer::closeServer() {
 #ifdef LOG_VERBOSE
