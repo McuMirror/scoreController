@@ -36,6 +36,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MAX_TIMEOUTS 2
 #define MAX_SETS     3
 
+
+/*!
+ * \brief VolleyController::VolleyController
+ * The constructor of the Volley Control Panel.
+ *
+ * It is responsible to start the various services for
+ * updating Slide and Spots
+ */
 VolleyController::VolleyController()
     : ScoreController(VOLLEY_PANEL, Q_NULLPTR)
     , bFontBuilt(false)
@@ -86,6 +94,10 @@ VolleyController::VolleyController()
 }
 
 
+/*!
+ * \brief VolleyController::buildControls
+ * Utility member to create all the controls on the Control Panel
+ */
 void
 VolleyController::buildControls() {
     QString sString;
@@ -171,6 +183,11 @@ VolleyController::buildControls() {
 }
 
 
+/*!
+ * \brief VolleyController::resizeEvent
+ * The very first time it is called it is resposible to resize the fonts used
+ * \param event
+ */
 void
 VolleyController::resizeEvent(QResizeEvent *event) {
     if(!bFontBuilt) {
@@ -181,6 +198,10 @@ VolleyController::resizeEvent(QResizeEvent *event) {
 }
 
 
+/*!
+ * \brief VolleyController::buildFontSizes
+ * Utility member to calculate the font sizes for the various controls
+ */
 void
 VolleyController::buildFontSizes() {
     QFont font;
@@ -246,6 +267,10 @@ VolleyController::buildFontSizes() {
 }
 
 
+/*!
+ * \brief VolleyController::GetSettings
+ * Recall from the non volatile memory the last values of the controls
+ */
 void
 VolleyController::GetSettings() {
     pSettings = new QSettings("Gabriele Salvato", "Volley Controller");
@@ -266,6 +291,11 @@ VolleyController::GetSettings() {
 }
 
 
+/*!
+ * \brief VolleyController::closeEvent
+ * To handle the closure of the Panel Controller
+ * \param event unused
+ */
 void
 VolleyController::closeEvent(QCloseEvent *event) {
     SaveStatus();
@@ -273,6 +303,10 @@ VolleyController::closeEvent(QCloseEvent *event) {
 }
 
 
+/*!
+ * \brief VolleyController::SaveStatus
+ * Save the values of the controls into the non volatile memory
+ */
 void
 VolleyController::SaveStatus() {
     pSettings->setValue("team1/name", sTeam[0]);
@@ -290,6 +324,11 @@ VolleyController::SaveStatus() {
 }
 
 
+/*!
+ * \brief VolleyController::CreateGameButtons
+ * Utility member to create the Layout of the Buttons
+ * \return the Layout
+ */
 QHBoxLayout*
 VolleyController::CreateGameButtons() {
     auto* gameButtonLayout = new QHBoxLayout();
@@ -319,6 +358,12 @@ VolleyController::CreateGameButtons() {
 }
 
 
+/*!
+ * \brief VolleyController::CreateGamePanel
+ * Utility member to create the Layout of the Control Panel
+ * \return The Layout
+ * \return
+ */
 QGridLayout*
 VolleyController::CreateGamePanel() {
     auto* gamePanel = new QGridLayout();
@@ -355,6 +400,11 @@ VolleyController::CreateGamePanel() {
 }
 
 
+/*!
+ * \brief VolleyController::FormatStatusMsg
+ * Utility function to format a String containing the current status of the controls
+ * \return The "Current Status Message"
+ */
 QString
 VolleyController::FormatStatusMsg() {
     QString sMessage = tr("");
@@ -386,7 +436,10 @@ VolleyController::FormatStatusMsg() {
 // Event management routines
 // =========================
 
-
+/*!
+ * \brief VolleyController::onTimeOutIncrement
+ * \param iTeam
+ */
 void
 VolleyController::onTimeOutIncrement(int iTeam) {
     QString sMessage;
@@ -408,6 +461,10 @@ VolleyController::onTimeOutIncrement(int iTeam) {
 }
 
 
+/*!
+ * \brief VolleyController::onTimeOutDecrement
+ * \param iTeam
+ */
 void
 VolleyController::onTimeOutDecrement(int iTeam) {
     QString sMessage;
@@ -429,6 +486,10 @@ VolleyController::onTimeOutDecrement(int iTeam) {
 }
 
 
+/*!
+ * \brief VolleyController::setEventHandlers
+ * Utility member to connect the various controls with their event handlers
+ */
 void
 VolleyController::setEventHandlers() {
     for(int iTeam=0; iTeam <2; iTeam++) {
@@ -481,6 +542,10 @@ VolleyController::setEventHandlers() {
 }
 
 
+/*!
+ * \brief VolleyController::onSetIncrement
+ * \param iTeam
+ */
 void
 VolleyController::onSetIncrement(int iTeam) {
     QString sMessage;
@@ -499,6 +564,10 @@ VolleyController::onSetIncrement(int iTeam) {
 }
 
 
+/*!
+ * \brief VolleyController::onSetDecrement
+ * \param iTeam
+ */
 void
 VolleyController::onSetDecrement(int iTeam) {
     QString sMessage;
@@ -517,6 +586,11 @@ VolleyController::onSetDecrement(int iTeam) {
 }
 
 
+/*!
+ * \brief VolleyController::onServiceClicked
+ * \param iTeam
+ * \param bChecked
+ */
 void
 VolleyController::onServiceClicked(int iTeam, bool bChecked) {
     Q_UNUSED(bChecked)
@@ -532,6 +606,10 @@ VolleyController::onServiceClicked(int iTeam, bool bChecked) {
 }
 
 
+/*!
+ * \brief VolleyController::onScoreIncrement
+ * \param iTeam
+ */
 void
 VolleyController::onScoreIncrement(int iTeam) {
     QString sMessage;
@@ -558,6 +636,10 @@ VolleyController::onScoreIncrement(int iTeam) {
 }
 
 
+/*!
+ * \brief VolleyController::onScoreDecrement
+ * \param iTeam
+ */
 void
 VolleyController::onScoreDecrement(int iTeam) {
     QString sMessage;
@@ -583,6 +665,11 @@ VolleyController::onScoreDecrement(int iTeam) {
 }
 
 
+/*!
+ * \brief VolleyController::onTeamTextChanged
+ * \param sText
+ * \param iTeam
+ */
 void
 VolleyController::onTeamTextChanged(QString sText, int iTeam) {
     QString sMessage;
@@ -597,6 +684,9 @@ VolleyController::onTeamTextChanged(QString sText, int iTeam) {
 }
 
 
+/*!
+ * \brief VolleyController::onButtonChangeFieldClicked
+ */
 void
 VolleyController::onButtonChangeFieldClicked() {
     int iRes = QMessageBox::question(this, tr("Volley_Controller"),
@@ -676,6 +766,9 @@ VolleyController::onButtonChangeFieldClicked() {
 }
 
 
+/*!
+ * \brief VolleyController::onButtonNewSetClicked
+ */
 void
 VolleyController::onButtonNewSetClicked() {
     int iRes = QMessageBox::question(this, tr("Volley_Controller"),
@@ -721,6 +814,9 @@ VolleyController::onButtonNewSetClicked() {
 }
 
 
+/*!
+ * \brief VolleyController::onButtonNewGameClicked
+ */
 void
 VolleyController::onButtonNewGameClicked() {
     int iRes = QMessageBox::question(this, tr("Volley_Controller"),

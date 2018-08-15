@@ -52,6 +52,13 @@
 
 #include "radioButton.h"
 
+
+/*!
+ * \brief RadioButton::RadioButton
+ * \param text
+ * \param team
+ * \param parent
+ */
 RadioButton::RadioButton(const QString &text, int team, QWidget *parent)
     : QRadioButton(parent)
     , myTeam(team)
@@ -62,6 +69,10 @@ RadioButton::RadioButton(const QString &text, int team, QWidget *parent)
 }
 
 
+/*!
+ * \brief RadioButton::onClicked
+ * \param bChecked
+ */
 void
 RadioButton::onClicked(bool bChecked) {
     emit buttonClicked(myTeam, bChecked);
