@@ -37,6 +37,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define REGULAR_TIME  30 // 30 Minuti è la durata di un tempo regolare
 
 
+/*!
+ * \brief HandballController::HandballController
+ * The constructor of the Handball Control Panel.
+ *
+ * It is responsible to start the various services for
+ * updating Slide and Spots
+ */
 HandballController::HandballController()
     : ScoreController(HANDBALL_PANEL, Q_NULLPTR)
     , bFontBuilt(false)
@@ -87,6 +94,10 @@ HandballController::HandballController()
 }
 
 
+/*!
+ * \brief HandballController::buildControls
+ * Utility member to create all the controls on the Control Panel
+ */
 void
 HandballController::buildControls() {
     QString sString;
@@ -166,6 +177,11 @@ HandballController::buildControls() {
 }
 
 
+/*!
+ * \brief HandballController::resizeEvent
+ * The very first time it is called it is resposible to resize the fonts used
+ * \param event unused
+ */
 void
 HandballController::resizeEvent(QResizeEvent *event) {
     if(!bFontBuilt) {
@@ -176,6 +192,10 @@ HandballController::resizeEvent(QResizeEvent *event) {
 }
 
 
+/*!
+ * \brief HandballController::buildFontSizes
+ * Utility member to calculate the font sizes for the various controls
+ */
 void
 HandballController::buildFontSizes() {
     QFont font;
@@ -240,6 +260,10 @@ HandballController::buildFontSizes() {
 }
 
 
+/*!
+ * \brief HandballController::setEventHandlers
+ * Utility member to connect the various controls with their event handlers
+ */
 void
 HandballController::setEventHandlers() {
     for(int iTeam=0; iTeam <2; iTeam++) {
@@ -292,6 +316,10 @@ HandballController::setEventHandlers() {
 }
 
 
+/*!
+ * \brief HandballController::GetSettings
+ * Recall from the non volatile memory the last values of the controls
+ */
 void
 HandballController::GetSettings() {
     pSettings = new QSettings("Gabriele Salvato", "Handball Controller");
@@ -331,6 +359,11 @@ HandballController::GetSettings() {
 }
 
 
+/*!
+ * \brief HandballController::closeEvent
+ * To handle the closure of the Panel Controller
+ * \param event
+ */
 void
 HandballController::closeEvent(QCloseEvent *event) {
     logMessage(logFile,
@@ -341,6 +374,11 @@ HandballController::closeEvent(QCloseEvent *event) {
 }
 
 
+/*!
+ * \brief HandballController::CreateGameButtons
+ * Utility member to create the Layout of the Buttons
+ * \return
+ */
 QHBoxLayout*
 HandballController::CreateGameButtons() {
     auto* gameButtonLayout = new QHBoxLayout();
@@ -369,6 +407,11 @@ HandballController::CreateGameButtons() {
 }
 
 
+/*!
+ * \brief HandballController::CreateGamePanel
+ * Utility member to create the Layout of the Control Panel
+ * \return The Layout
+ */
 QGridLayout*
 HandballController::CreateGamePanel() {
     auto* gamePanel = new QGridLayout();
@@ -402,6 +445,11 @@ HandballController::CreateGamePanel() {
 }
 
 
+/*!
+ * \brief HandballController::FormatStatusMsg
+ * Utility function to format a String containing the current status of the controls
+ * \return The "Current Status Message"
+ */
 QString
 HandballController::FormatStatusMsg() {
     QString sMessage = QString();
@@ -428,6 +476,10 @@ HandballController::FormatStatusMsg() {
 }
 
 
+/*!
+ * \brief HandballController::SaveStatus
+ * Save the values of the controls into the non volatile memory
+ */
 void
 HandballController::SaveStatus() {
     pSettings->setValue("team1/name", sTeam[0]);
@@ -455,6 +507,10 @@ HandballController::SaveStatus() {
 // =========================
 
 
+/*!
+ * \brief HandballController::onTimeOutIncrement
+ * \param iTeam
+ */
 void
 HandballController::onTimeOutIncrement(int iTeam) {
     QString sMessage;
@@ -474,6 +530,10 @@ HandballController::onTimeOutIncrement(int iTeam) {
 }
 
 
+/*!
+ * \brief HandballController::onTimeOutDecrement
+ * \param iTeam
+ */
 void
 HandballController::onTimeOutDecrement(int iTeam) {
     QString sMessage;
@@ -493,6 +553,10 @@ HandballController::onTimeOutDecrement(int iTeam) {
 }
 
 
+/*!
+ * \brief HandballController::onScoreIncrement
+ * \param iTeam
+ */
 void
 HandballController::onScoreIncrement(int iTeam) {
     QString sMessage;
@@ -512,6 +576,10 @@ HandballController::onScoreIncrement(int iTeam) {
 }
 
 
+/*!
+ * \brief HandballController::onScoreDecrement
+ * \param iTeam
+ */
 void
 HandballController::onScoreDecrement(int iTeam) {
     QString sMessage;
@@ -530,6 +598,11 @@ HandballController::onScoreDecrement(int iTeam) {
 }
 
 
+/*!
+ * \brief HandballController::onTeamTextChanged
+ * \param sText
+ * \param iTeam
+ */
 void
 HandballController::onTeamTextChanged(QString sText, int iTeam) {
     QString sMessage;
@@ -544,6 +617,9 @@ HandballController::onTeamTextChanged(QString sText, int iTeam) {
 }
 
 
+/*!
+ * \brief HandballController::onPeriodIncrement
+ */
 void
 HandballController::onPeriodIncrement() {
     if(iPeriod < maxPeriods) {
@@ -563,6 +639,9 @@ HandballController::onPeriodIncrement() {
 }
 
 
+/*!
+ * \brief HandballController::onPeriodDecrement
+ */
 void
 HandballController::onPeriodDecrement() {
     if(iPeriod > 1) {
@@ -584,6 +663,9 @@ HandballController::onPeriodDecrement() {
 }
 
 
+/*!
+ * \brief HandballController::onButtonNewPeriodClicked
+ */
 void
 HandballController::onButtonNewPeriodClicked() {
     int iRes = QMessageBox::question(this, tr("Handball Controller"),
@@ -649,6 +731,9 @@ HandballController::onButtonNewPeriodClicked() {
 }
 
 
+/*!
+ * \brief HandballController::onButtonNewGameClicked
+ */
 void
 HandballController::onButtonNewGameClicked() {
     int iRes = QMessageBox::question(this, tr("Handball Controller"),
@@ -683,6 +768,9 @@ HandballController::onButtonNewGameClicked() {
 }
 
 
+/*!
+ * \brief HandballController::onButtonChangeFieldClicked
+ */
 void
 HandballController::onButtonChangeFieldClicked() {
     int iRes = QMessageBox::question(this, tr("Handball Controller"),

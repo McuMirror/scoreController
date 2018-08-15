@@ -224,7 +224,7 @@ BasketController::buildControls() {
 /*!
  * \brief BasketController::resizeEvent
  * The very first time it is called it is resposible to resize the fonts used
- * \param event
+ * \param event  unused
  */
 void
 BasketController::resizeEvent(QResizeEvent *event) {

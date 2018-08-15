@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /*!
  * \brief GameDirector::GameDirector
- * Shows a dialog for selecting the wanted Panel type and starts it
+ * Shows a dialog for selecting the Panel type and starts it
  * \param argc Unused
  * \param argv Unused
  */

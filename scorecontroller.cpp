@@ -38,7 +38,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "scorecontroller.h"
 #include "clientlistdialog.h"
 #include "utility.h"
-#include "netServer.h"
 #include "fileserver.h"
 #include "generalsetupdialog.h"
 

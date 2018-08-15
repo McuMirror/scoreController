@@ -34,8 +34,8 @@ class FileServer : public NetServer
 {
     Q_OBJECT
 public:
-    explicit FileServer(const QString& sName, QFile *_logFile = Q_NULLPTR, QObject *parent = 0);
-    void setServerPort(quint16 _port);
+    explicit FileServer(const QString& sName, QFile *_logFile = Q_NULLPTR, QObject *parent = Q_NULLPTR);
+    void setServerPort(quint16 myPort);
     bool setDir(QString sDirectory, const QString& sExtensions);
     void closeServer();
 

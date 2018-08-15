@@ -30,7 +30,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <utility>
 
 
-
+/*!
+ * \brief FileServer::FileServer It implements a Server for Slides or Spots file transfer
+ * \param sName A string distinguishing this server (used for logging)
+ * \param myLogFile The File for message logging (if any)
+ * \param parent
+ */
 FileServer::FileServer(const QString& sName, QFile* myLogFile, QObject *parent)
     : NetServer(sName, myLogFile, parent)
     , serverName(sName)
@@ -42,12 +47,22 @@ FileServer::FileServer(const QString& sName, QFile* myLogFile, QObject *parent)
 }
 
 
+/*!
+ * \brief FileServer::setServerPort
+ * \param myPort
+ */
 void
-FileServer::setServerPort(quint16 _port) {
-    port = _port;
+FileServer::setServerPort(quint16 myPort) {
+    port = myPort;
 }
 
 
+/*!
+ * \brief FileServer::setDir To set the destination directory
+ * \param sDirectory The selected directory
+ * \param sExtensions The file extensions it manipulate
+ * \return true if the directory can be used
+ */
 bool
 FileServer::setDir(QString sDirectory, const QString& sExtensions) {
     sFileDir = std::move(sDirectory);
@@ -72,6 +87,9 @@ FileServer::setDir(QString sDirectory, const QString& sExtensions) {
 }
 
 
+/*!
+ * \brief FileServer::onStartServer Invoked to start listening for connections
+ */
 void
 FileServer::onStartServer() {
 #ifdef LOG_VERBOSE
@@ -97,6 +115,9 @@ FileServer::onStartServer() {
 }
 
 
+/*!
+ * \brief FileServer::onFileServerError
+ */
 void
 FileServer::onFileServerError(QWebSocketProtocol::CloseCode) {
 #ifdef LOG_VERBOSE
@@ -117,6 +138,11 @@ FileServer::onFileServerError(QWebSocketProtocol::CloseCode) {
 }
 
 
+/*!
+ * \brief FileServer::onNewConnection
+ * Invoked upon a new connection has been detected
+ * \param pClient The websocket of the connected client
+ */
 void
 FileServer::onNewConnection(QWebSocket *pClient) {
     int nConnections = connections.count();
@@ -189,6 +215,10 @@ FileServer::onNewConnection(QWebSocket *pClient) {
 }
 
 
+/*!
+ * \brief FileServer::onClientSocketError
+ * \param error
+ */
 void
 FileServer::onClientSocketError(QAbstractSocket::SocketError error) {
 #ifdef LOG_VERBOSE
@@ -218,6 +248,11 @@ FileServer::onClientSocketError(QAbstractSocket::SocketError error) {
 }
 
 
+/*!
+ * \brief FileServer::onProcessTextMessage
+ * Process the requests from the clients
+ * \param sMessage
+ */
 void
 FileServer::onProcessTextMessage(QString sMessage) {
     QString sNoData = QString("NoData");
@@ -356,6 +391,11 @@ FileServer::onProcessTextMessage(QString sMessage) {
 }
 
 
+/*!
+ * \brief FileServer::onFileTransferDone
+ * Invoked when a transfer is done (with or without errors)
+ * \param bSuccess
+ */
 void
 FileServer::onFileTransferDone(bool bSuccess) {
     Q_UNUSED(bSuccess)
@@ -369,6 +409,12 @@ FileServer::onFileTransferDone(bool bSuccess) {
 }
 
 
+/*!
+ * \brief FileServer::SendToOne
+ * \param pClient
+ * \param sMessage
+ * \return
+ */
 int
 FileServer::SendToOne(QWebSocket* pClient, const QString& sMessage) {
     if (pClient->isValid()) {
@@ -399,6 +445,10 @@ FileServer::SendToOne(QWebSocket* pClient, const QString& sMessage) {
 }
 
 
+/*!
+ * \brief FileServer::onProcessBinaryMessage
+ * \param message
+ */
 void
 FileServer::onProcessBinaryMessage(QByteArray message) {
     Q_UNUSED(message)
@@ -434,7 +484,9 @@ FileServer::onClientDisconnected() {
     }
 }
 
-
+/*!
+ * \brief FileServer::onCloseServer
+ */
 void
 FileServer::onCloseServer() {
 #ifdef LOG_VERBOSE

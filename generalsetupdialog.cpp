@@ -9,6 +9,10 @@
 #include <utility>
 
 
+/*!
+ * \brief GeneralSetupDialog::GeneralSetupDialog
+ * \param parent
+ */
 GeneralSetupDialog::GeneralSetupDialog(QWidget *parent)
     : QDialog(parent)
 {
@@ -29,24 +33,40 @@ GeneralSetupDialog::GeneralSetupDialog(QWidget *parent)
 }
 
 
+/*!
+ * \brief GeneralSetupDialog::setSlideDir
+ * \param sDir
+ */
 void
 GeneralSetupDialog::setSlideDir(const QString& sDir) {
     pDirectoryTab->setSlideDir(sDir);
 }
 
 
+/*!
+ * \brief GeneralSetupDialog::setSpotDir
+ * \param sDir
+ */
 void
 GeneralSetupDialog::setSpotDir(const QString& sDir){
     pDirectoryTab->setSpotDir(sDir);
 }
 
 
+/*!
+ * \brief GeneralSetupDialog::getSlideDir
+ * \return
+ */
 QString
 GeneralSetupDialog::getSlideDir() {
     return pDirectoryTab->getSlideDir();
 }
 
 
+/*!
+ * \brief GeneralSetupDialog::getSpotDir
+ * \return
+ */
 QString
 GeneralSetupDialog::getSpotDir(){
     return pDirectoryTab->getSpotDir();
