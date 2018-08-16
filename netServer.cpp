@@ -27,9 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 /*!
-  \todo Could we simplify the classes by  merging this class into the FileServer one ???
- */
-/*!
  * \brief NetServer::NetServer The bas class for the Slides and spots File Servers
  * \param _serverName
  * \param _logFile
@@ -46,8 +43,10 @@ NetServer::NetServer(QString _serverName, QFile* _logFile, QObject *parent)
 
 /*!
  * \brief NetServer::prepareServer
- * Creates the Server Socket and connects their SIGNALS to the rigth SLOTS
- * \param serverPort
+ * This is the Base Class of all running Servers
+ *
+ * It creates the Server Socket and connects its SIGNALS to the rigth SLOTS
+ * \param serverPort The port this Server listen for connections
  * \return
  */
 bool
