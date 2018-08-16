@@ -34,7 +34,11 @@ SOURCES += main.cpp\
     handballcontroller.cpp \
     choosediscipline.cpp \
     gamedirector.cpp \
-    generalsetupdialog.cpp
+    generalsetupdialog.cpp \
+    directorytab.cpp \
+    volleytab.cpp \
+    baskettab.cpp \
+    handballtab.cpp
 
 
 HEADERS  += scorecontroller.h \
@@ -52,7 +56,11 @@ HEADERS  += scorecontroller.h \
     handballcontroller.h \
     choosediscipline.h \
     gamedirector.h \
-    generalsetupdialog.h
+    generalsetupdialog.h \
+    directorytab.h \
+    volleytab.h \
+    baskettab.h \
+    handballtab.h
 
 RESOURCES += scorecontroller.qrc
 

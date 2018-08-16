@@ -6,36 +6,21 @@
 #include <QLineEdit>
 #include <QPushButton>
 
+#include "directorytab.h"
+#include "volleytab.h"
+#include "baskettab.h"
+#include "handballtab.h"
+
+
+
 QT_FORWARD_DECLARE_CLASS(QDialogButtonBox)
 QT_FORWARD_DECLARE_CLASS(QTabWidget)
-
-class DirectoryTab : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit DirectoryTab(QWidget *parent = Q_NULLPTR);
-    void setSlideDir(const QString& sDir);
-    void setSpotDir(const QString& sDir);
-    QString getSlideDir();
-    QString getSpotDir();
-
-public slots:
-    void onSelectSlideDir();
-    void onSelectSpotDir();
-
-private:
-    QLineEdit slidesDirEdit;
-    QLineEdit spotsDirEdit;
-    QPushButton buttonSelectSlidesDir;
-    QPushButton buttonSelectSpotsDir;
-};
 
 
 class GeneralSetupDialog : public QDialog
 {
 public:
-    explicit GeneralSetupDialog(QWidget *parent = 0);
+    explicit GeneralSetupDialog(QWidget *parent = nullptr);
     void setSlideDir(const QString& sDir);
     void setSpotDir(const QString& sDir);
     QString getSlideDir();
@@ -45,6 +30,9 @@ private:
     QTabWidget       *tabWidget;
     QDialogButtonBox *buttonBox;
     DirectoryTab     *pDirectoryTab;
+    VolleyTab        *pVolleyTab;
+    BasketTab        *pBasketTab;
+    HandBallTab      *pHandballTab;
 };
 
 #endif // GENERALSETUPDIALOG_H
