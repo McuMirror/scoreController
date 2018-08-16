@@ -30,7 +30,6 @@ VolleyTab::VolleyTab(QWidget *parent)
     mainLayout->addWidget(&timeoutDurationEdit, 2, 3, 1, 1);
 
     setLayout(mainLayout);
-
 }
 
 
