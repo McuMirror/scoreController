@@ -1277,10 +1277,11 @@ ScoreController::onButtonSetupClicked() {
             sSlideDir = QStandardPaths::displayName(QStandardPaths::GenericDataLocation);
             slideList = QFileInfoList();
         }
+#ifdef LOG_MESSAGE
         logMessage(logFile,
                    Q_FUNC_INFO,
                    QString("Found %1 slides").arg(slideList.count()));
-
+#endif
         sSpotDir = pGeneralSetupDialog->getSpotDir();
         if(!sSpotDir.endsWith(QString("/"))) sSpotDir+= QString("/");
         QDir spotDir(sSpotDir);
@@ -1294,10 +1295,12 @@ ScoreController::onButtonSetupClicked() {
             sSpotDir = QStandardPaths::displayName(QStandardPaths::GenericDataLocation);
             spotList = QFileInfoList();
         }
+#ifdef LOG_MESSAGE
         logMessage(logFile,
                    Q_FUNC_INFO,
                    QString("Found %1 spots")
                    .arg(spotList.count()));
+#endif
         SaveStatus();
     }
 }

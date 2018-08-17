@@ -277,15 +277,15 @@ VolleyController::GetSettings() {
     sTeam[0]    = pSettings->value("team1/name", QString(tr("Locali"))).toString();
     sTeam[1]    = pSettings->value("team2/name", QString(tr("Ospiti"))).toString();
     iTimeout[0] = pSettings->value("team1/timeouts", 0).toInt();
+    iTimeout[1] = pSettings->value("team2/timeouts", 0).toInt();
     if(iTimeout[0] > pGeneralSetupDialog->getNumTimeout())
         iTimeout[0] = pGeneralSetupDialog->getNumTimeout();
-    iTimeout[1] = pSettings->value("team2/timeouts", 0).toInt();
     if(iTimeout[1] > pGeneralSetupDialog->getNumTimeout())
         iTimeout[1] = pGeneralSetupDialog->getNumTimeout();
     iSet[0]     = pSettings->value("team1/sets", 0).toInt();
+    iSet[1]     = pSettings->value("team2/sets", 0).toInt();
     if(iSet[0] > pGeneralSetupDialog->getNumSet())
         iSet[0] = pGeneralSetupDialog->getNumSet();
-    iSet[1]     = pSettings->value("team2/sets", 0).toInt();
     if(iSet[1] > pGeneralSetupDialog->getNumSet())
         iSet[1] = pGeneralSetupDialog->getNumSet();
     iScore[0]   = pSettings->value("team1/score", 0).toInt();

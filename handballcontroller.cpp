@@ -350,12 +350,14 @@ HandballController::GetSettings() {
 
     sSlideDir   = pSettings->value("directories/slides", sSlideDir).toString();
     sSpotDir    = pSettings->value("directories/spots", sSpotDir).toString();
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                Q_FUNC_INFO,
                QString("Slide Dir: %1").arg(sSlideDir));
     logMessage(logFile,
                Q_FUNC_INFO,
                QString("Spot Dir: %1").arg(sSpotDir));
+#endif
 }
 
 
@@ -366,9 +368,11 @@ HandballController::GetSettings() {
  */
 void
 HandballController::closeEvent(QCloseEvent *event) {
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                Q_FUNC_INFO,
                QString("Closing"));
+#endif
     SaveStatus();
     ScoreController::closeEvent(event);// Propagate the event
 }
@@ -493,12 +497,14 @@ HandballController::SaveStatus() {
 
     pSettings->setValue("directories/slides", sSlideDir);
     pSettings->setValue("directories/spots", sSpotDir);
+#ifdef LOG_VERBOSE
     logMessage(logFile,
                Q_FUNC_INFO,
                QString("Slide Dir: %1").arg(sSlideDir));
     logMessage(logFile,
                Q_FUNC_INFO,
                QString("Spot Dir: %1").arg(sSpotDir));
+#endif
 }
 
 
