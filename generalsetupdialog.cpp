@@ -13,18 +13,24 @@
 GeneralSetupDialog::GeneralSetupDialog(QWidget *parent)
     : QDialog(parent)
 {
+    connect(this, SIGNAL(finished(int)),
+            this, SLOT(onFinished(int)));
+
     tabWidget = new QTabWidget;
 
     pDirectoryTab = new DirectoryTab();
     tabWidget->addTab(pDirectoryTab, tr("Directories"));
 
     pVolleyTab = new VolleyTab();
+    pVolleyTab->GetSettings();
     tabWidget->addTab(pVolleyTab, tr("Volley"));
 
     pBasketTab = new BasketTab();
+//    pBasketTab->GetSettings();
     tabWidget->addTab(pBasketTab, tr("Basket"));
 
     pHandballTab = new HandBallTab();
+//    pHandballTab->GetSettings();
     tabWidget->addTab(pHandballTab, tr("Handball"));
 
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
@@ -78,4 +84,37 @@ GeneralSetupDialog::getSpotDir(){
     return pDirectoryTab->getSpotDir();
 }
 
+
+
+int
+GeneralSetupDialog::getNumTimeout() {
+    return pVolleyTab->getNumTimeout();
+}
+
+
+int
+GeneralSetupDialog::getNumSet(){
+    return pVolleyTab->getNumSet();
+}
+
+
+int
+GeneralSetupDialog::getTimeoutDuration() {
+    return pVolleyTab->getTimeoutDuration();
+}
+
+
+void
+GeneralSetupDialog::onFinished(int iResult) {
+    if(iResult==QDialog::Accepted) {
+        pVolleyTab->StoreSettings();
+//      pBasketTab->StoreSettings();
+//      pHandballTab->StoreSettings();
+    }
+    else {
+        pVolleyTab->GetSettings();
+//      pBasketTab->GetSettings();
+//      pHandballTab->GetSettings();
+    }
+}
 

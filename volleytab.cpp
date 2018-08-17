@@ -1,11 +1,7 @@
 #include "volleytab.h"
 #include <QLabel>
 #include <QGridLayout>
-
-
-// MAX_TIMEOUTS      2
-// MAX_SETS          3
-// TIMEOUT_DURATION 30
+#include <QSettings>
 
 
 VolleyTab::VolleyTab(QWidget *parent)
@@ -33,27 +29,9 @@ VolleyTab::VolleyTab(QWidget *parent)
 }
 
 
-void
-VolleyTab::setNumTimeout(int nTimeout) {
-    numTimeoutEdit.setText(QString(nTimeout));
-}
-
-
-void
-VolleyTab::setNumSet(int nSet) {
-    maxSetEdit.setText(QString(nSet));
-}
-
-
-void
-VolleyTab::setTimeoutDuration(int iDuration) {
-    timeoutDurationEdit.setText(QString(iDuration));
-}
-
-
 int
 VolleyTab::getNumTimeout() {
-    return timeoutDurationEdit.text().toInt();
+    return numTimeoutEdit.text().toInt();
 }
 
 
@@ -67,3 +45,29 @@ int
 VolleyTab::getTimeoutDuration() {
     return timeoutDurationEdit.text().toInt();
 }
+
+void
+VolleyTab::GetSettings() {
+    pSettings = new QSettings("Gabriele Salvato", "Volley Parameters");
+    maxTimeout       = pSettings->value("volley/maxTimeout", 2).toInt();
+    maxSet           = pSettings->value("volley/maxSet", 3).toInt();
+    iTimeoutDuration = pSettings->value("volley/TimeoutDuration", 30).toInt();;
+
+    numTimeoutEdit.setText(QString("%1").arg(maxTimeout));
+    maxSetEdit.setText(QString("%1").arg(maxSet));
+    timeoutDurationEdit.setText(QString("%1").arg(iTimeoutDuration));
+}
+
+
+void
+VolleyTab::StoreSettings() {
+    if(pSettings) {
+        maxTimeout       = numTimeoutEdit.text().toInt();
+        maxSet           = maxSetEdit.text().toInt();
+        iTimeoutDuration = timeoutDurationEdit.text().toInt();
+        pSettings->setValue("volley/maxTimeout",      maxTimeout);
+        pSettings->setValue("volley/maxSet",          maxSet);
+        pSettings->setValue("volley/TimeoutDuration", iTimeoutDuration);
+    }
+}
+

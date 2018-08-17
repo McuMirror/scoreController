@@ -19,12 +19,21 @@ QT_FORWARD_DECLARE_CLASS(QTabWidget)
 
 class GeneralSetupDialog : public QDialog
 {
+    Q_OBJECT
 public:
     explicit GeneralSetupDialog(QWidget *parent = nullptr);
+
     void setSlideDir(const QString& sDir);
     void setSpotDir(const QString& sDir);
     QString getSlideDir();
     QString getSpotDir();
+
+    int getNumTimeout();
+    int getNumSet();
+    int getTimeoutDuration();
+
+public slots:
+    void onFinished(int iResult);
 
 private:
     QTabWidget       *tabWidget;

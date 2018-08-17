@@ -32,9 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "button.h"
 #include "radioButton.h"
 #include "fileserver.h"
+#include "generalsetupdialog.h"
 
-#define MAX_TIMEOUTS 2
-#define MAX_SETS     3
 
 
 /*!
@@ -127,7 +126,7 @@ VolleyController::buildControls() {
         timeoutDecrement[iTeam]->setIconSize(minusPixmap.rect().size());
         if(iTimeout[iTeam] == 0)
             timeoutDecrement[iTeam]->setEnabled(false);
-        if(iTimeout[iTeam] == MAX_TIMEOUTS) {
+        if(iTimeout[iTeam] == pGeneralSetupDialog->getNumTimeout()) {
             timeoutIncrement[iTeam]->setEnabled(false);
             timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
@@ -146,7 +145,7 @@ VolleyController::buildControls() {
         setsDecrement[iTeam]->setIconSize(minusPixmap.rect().size());
         if(iSet[iTeam] == 0)
             setsDecrement[iTeam]->setEnabled(false);
-        if(iSet[iTeam] == MAX_SETS)
+        if(iSet[iTeam] == pGeneralSetupDialog->getNumSet())
             setsIncrement[iTeam]->setEnabled(false);
         // Service
         service[iTeam] = new RadioButton(" ", iTeam);// Android requires at least one character to work
@@ -278,9 +277,17 @@ VolleyController::GetSettings() {
     sTeam[0]    = pSettings->value("team1/name", QString(tr("Locali"))).toString();
     sTeam[1]    = pSettings->value("team2/name", QString(tr("Ospiti"))).toString();
     iTimeout[0] = pSettings->value("team1/timeouts", 0).toInt();
+    if(iTimeout[0] > pGeneralSetupDialog->getNumTimeout())
+        iTimeout[0] = pGeneralSetupDialog->getNumTimeout();
     iTimeout[1] = pSettings->value("team2/timeouts", 0).toInt();
+    if(iTimeout[1] > pGeneralSetupDialog->getNumTimeout())
+        iTimeout[1] = pGeneralSetupDialog->getNumTimeout();
     iSet[0]     = pSettings->value("team1/sets", 0).toInt();
+    if(iSet[0] > pGeneralSetupDialog->getNumSet())
+        iSet[0] = pGeneralSetupDialog->getNumSet();
     iSet[1]     = pSettings->value("team2/sets", 0).toInt();
+    if(iSet[1] > pGeneralSetupDialog->getNumSet())
+        iSet[1] = pGeneralSetupDialog->getNumSet();
     iScore[0]   = pSettings->value("team1/score", 0).toInt();
     iScore[1]   = pSettings->value("team2/score", 0).toInt();
     iServizio   = pSettings->value("set/service", 0).toInt();
@@ -444,14 +451,17 @@ void
 VolleyController::onTimeOutIncrement(int iTeam) {
     QString sMessage;
     iTimeout[iTeam]++;
-    if(iTimeout[iTeam] == MAX_TIMEOUTS) {
+    if(iTimeout[iTeam] >= pGeneralSetupDialog->getNumTimeout()) {
         timeoutIncrement[iTeam]->setEnabled(false);
         timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
     timeoutDecrement[iTeam]->setEnabled(true);
-    sMessage = QString("<timeout%1>%2</timeout%3>").arg(iTeam, 1).arg(iTimeout[iTeam]).arg(iTeam, 1);
+    sMessage = QString("<timeout%1>%2</timeout%3>")
+              .arg(iTeam, 1)
+              .arg(iTimeout[iTeam]).arg(iTeam, 1);
     SendToAll(sMessage);
-    sMessage = QString("<startTimeout>%1</startTimeout>").arg(30);
+    sMessage = QString("<startTimeout>%1</startTimeout>")
+               .arg(pGeneralSetupDialog->getTimeoutDuration());
     SendToAll(sMessage);
     QString sText;
     sText = QString("%1").arg(iTimeout[iTeam]);
@@ -551,7 +561,7 @@ VolleyController::onSetIncrement(int iTeam) {
     QString sMessage;
     iSet[iTeam]++;
     setsDecrement[iTeam]->setEnabled(true);
-    if(iSet[iTeam] == MAX_SETS) {
+    if(iSet[iTeam] == pGeneralSetupDialog->getNumSet()) {
         setsIncrement[iTeam]->setEnabled(false);
     }
     sMessage = QString("<set%1>%2</set%3>").arg(iTeam, 1).arg(iSet[iTeam]).arg(iTeam, 1);
@@ -746,14 +756,14 @@ VolleyController::onButtonChangeFieldClicked() {
         if(iSet[iTeam] == 0) {
             setsDecrement[iTeam]->setEnabled(false);
         }
-        if(iSet[iTeam] == MAX_SETS) {
+        if(iSet[iTeam] == pGeneralSetupDialog->getNumSet()) {
             setsIncrement[iTeam]->setEnabled(false);
         }
 
         timeoutIncrement[iTeam]->setEnabled(true);
         timeoutDecrement[iTeam]->setEnabled(true);
         timeoutEdit[iTeam]->setStyleSheet(styleSheet());
-        if(iTimeout[iTeam] == MAX_TIMEOUTS) {
+        if(iTimeout[iTeam] == pGeneralSetupDialog->getNumTimeout()) {
             timeoutIncrement[iTeam]->setEnabled(false);
             timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
