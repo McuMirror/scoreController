@@ -4,10 +4,12 @@
 #include <QGridLayout>
 #include <QSettings>
 
+
 #define MAX_TIMEOUTS   2 // Numero massimo di sospensioni
 #define MAX_PERIODS    2 //
 #define MAX_SCORE    999 //
 #define REGULAR_TIME  30 // 30 Minuti è la durata di un tempo regolare
+
 
 HandBallTab::HandBallTab(QWidget *parent)
     : QWidget(parent)
