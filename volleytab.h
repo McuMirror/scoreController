@@ -3,7 +3,6 @@
 
 #include <QWidget>
 #include <QLineEdit>
-#include <QPushButton>
 
 QT_FORWARD_DECLARE_CLASS(QSettings)
 

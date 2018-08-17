@@ -46,6 +46,7 @@ VolleyTab::getTimeoutDuration() {
     return timeoutDurationEdit.text().toInt();
 }
 
+
 void
 VolleyTab::GetSettings() {
     pSettings = new QSettings("Gabriele Salvato", "Volley Parameters");
