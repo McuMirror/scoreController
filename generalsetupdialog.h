@@ -28,9 +28,14 @@ public:
     QString getSlideDir();
     QString getSpotDir();
 
-    int getNumTimeout();
-    int getNumSet();
-    int getTimeoutDuration();
+    int getNumTimeoutVY();
+    int getNumSetVY();
+    int getTimeoutDurationVY();
+
+    int getNumTimeoutHB();
+    int getNumPeriodHB();
+    int getRegularTimeHB();
+
 
 public slots:
     void onFinished(int iResult);

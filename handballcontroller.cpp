@@ -30,11 +30,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "fileserver.h"
 #include "edit.h"
 #include "button.h"
+#include "generalsetupdialog.h"
 
-#define MAX_TIMEOUTS   2 // Numero massimo di sospensioni
-#define MAX_PERIODS    2 //
 #define MAX_SCORE    999 //
-#define REGULAR_TIME  30 // 30 Minuti è la durata di un tempo regolare
 
 
 /*!
@@ -47,11 +45,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 HandballController::HandballController()
     : ScoreController(HANDBALL_PANEL, Q_NULLPTR)
     , bFontBuilt(false)
-    , maxTimeouts(MAX_TIMEOUTS)
-    , maxPeriods(MAX_PERIODS)
-    , periodTime(REGULAR_TIME)
 
 {
+    maxTimeouts = pGeneralSetupDialog->getNumTimeoutHB();
+    maxPeriods = pGeneralSetupDialog->getNumPeriodHB();
+    periodTime = pGeneralSetupDialog->getRegularTimeHB();
     GetSettings();
     prepareDirectories();
 
@@ -127,7 +125,7 @@ HandballController::buildControls() {
         timeoutDecrement[iTeam]->setIconSize(minusPixmap.rect().size());
         if(iTimeout[iTeam] == 0)
             timeoutDecrement[iTeam]->setEnabled(false);
-        if(iTimeout[iTeam] == MAX_TIMEOUTS) {
+        if(iTimeout[iTeam] == maxTimeouts) {
             timeoutIncrement[iTeam]->setEnabled(false);
             timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }

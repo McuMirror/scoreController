@@ -30,7 +30,7 @@ GeneralSetupDialog::GeneralSetupDialog(QWidget *parent)
     tabWidget->addTab(pBasketTab, tr("Basket"));
 
     pHandballTab = new HandBallTab();
-//    pHandballTab->GetSettings();
+    pHandballTab->GetSettings();
     tabWidget->addTab(pHandballTab, tr("Handball"));
 
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
@@ -87,20 +87,38 @@ GeneralSetupDialog::getSpotDir(){
 
 
 int
-GeneralSetupDialog::getNumTimeout() {
+GeneralSetupDialog::getNumTimeoutVY() {
     return pVolleyTab->getNumTimeout();
 }
 
 
 int
-GeneralSetupDialog::getNumSet(){
+GeneralSetupDialog::getNumSetVY(){
     return pVolleyTab->getNumSet();
 }
 
 
 int
-GeneralSetupDialog::getTimeoutDuration() {
+GeneralSetupDialog::getTimeoutDurationVY() {
     return pVolleyTab->getTimeoutDuration();
+}
+
+
+int
+GeneralSetupDialog::getNumTimeoutHB() {
+    return pHandballTab->getNumTimeout();
+}
+
+
+int
+GeneralSetupDialog::getNumPeriodHB() {
+    return pHandballTab->getNumPeriod();
+}
+
+
+int
+GeneralSetupDialog::getRegularTimeHB() {
+    return pHandballTab->getRegularTime();
 }
 
 
@@ -109,12 +127,12 @@ GeneralSetupDialog::onFinished(int iResult) {
     if(iResult==QDialog::Accepted) {
         pVolleyTab->StoreSettings();
 //      pBasketTab->StoreSettings();
-//      pHandballTab->StoreSettings();
+      pHandballTab->StoreSettings();
     }
     else {
         pVolleyTab->GetSettings();
 //      pBasketTab->GetSettings();
-//      pHandballTab->GetSettings();
+      pHandballTab->GetSettings();
     }
 }
 
