@@ -32,17 +32,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "button.h"
 #include "radioButton.h"
 #include "fileserver.h"
+#include "generalsetupdialog.h"
 
 
-#define MAX_TIMEOUTS_1  2 // Numero massimo di sospensioni nella prima metà di gara
-#define MAX_TIMEOUTS_2  3 // Numero massimo di sospensioni nella seconda metà di gara
-#define MAX_TIMEOUTS_3  1 // Numero massimo di sospensioni negli OVERTIMES
 #define MAX_FAULS      99 // Da definire il comportamento dopo il numero max di falli !
 #define MAX_PERIODS    99 // Da definire il comportamento dopo il numero max di periodi !
-#define BONUS_TARGET    4 // Dopo questo valore il Bonus per il team è finito !
-#define GAME_PERIODS    4 // Oltre questo valore ci sono gli OVERTIMES
-#define REGULAR_TIME   10 // 10 Minuti è la durata di un tempo regolare
-#define OVER_TIME       5 // 5 Minuti è a durata di ciascun overtime
 
 
 /*!
@@ -134,10 +128,6 @@ BasketController::buildControls() {
         timeoutDecrement[iTeam]->setIconSize(minusPixmap.rect().size());
         if(iTimeout[iTeam] == 0)
             timeoutDecrement[iTeam]->setEnabled(false);
-//>>>>        if(iTimeout[iTeam] == MAX_TIMEOUTS) {
-//>>>>            timeoutIncrement[iTeam]->setEnabled(false);
-//>>>>            timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
-//>>>>        }
         // Team Fauls
         sString.sprintf("%1d", iFauls[iTeam]);
         faulsEdit[iTeam] = new Edit(sString);
@@ -163,7 +153,7 @@ BasketController::buildControls() {
         bonusEdit[iTeam]->setFrame(false);
         bonusEdit[iTeam]->setAlignment(Qt::AlignHCenter);
         bonusEdit[iTeam]->setReadOnly(true);
-        if(iFauls[iTeam] < BONUS_TARGET) {
+        if(iFauls[iTeam] < pGeneralSetupDialog->getBonusTargetBB()) {
             bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
         else {
@@ -415,7 +405,7 @@ BasketController::GetSettings() {
     sSpotDir    = pSettings->value("directories/spots", sSpotDir).toString();
 
     for(int iTeam=0; iTeam<2; iTeam++) {
-        if(iFauls[iTeam] < BONUS_TARGET) {
+        if(iFauls[iTeam] < pGeneralSetupDialog->getBonusTargetBB()) {
             iBonus[iTeam] = 1;
         }
         else {
@@ -567,10 +557,10 @@ BasketController::FormatStatusMsg() {
         sTemp.sprintf("<bonus%1d>%d</bonus%1d>", i, iBonus[i], i);
         sMessage += sTemp;
     }
-    if(iPeriod > GAME_PERIODS)
-        sTemp.sprintf("<period>%d,%d</period>", iPeriod, OVER_TIME);
+    if(iPeriod > pGeneralSetupDialog->getGamePeriodsBB())
+        sTemp.sprintf("<period>%d,%d</period>", iPeriod, pGeneralSetupDialog->getOverTimeBB());
     else
-        sTemp.sprintf("<period>%d,%d</period>", iPeriod, REGULAR_TIME);
+        sTemp.sprintf("<period>%d,%d</period>", iPeriod, pGeneralSetupDialog->getRegularTimeBB());
     sMessage += sTemp;
     sTemp.sprintf("<possess>%d</possess>", iPossess);
     sMessage += sTemp;
@@ -597,15 +587,16 @@ void
 BasketController::onTimeOutIncrement(int iTeam) {
     QString sMessage;
     iTimeout[iTeam]++;
-    if((iPeriod < 3) && (iTimeout[iTeam] == MAX_TIMEOUTS_1)) {
+    if((iPeriod < 3) && (iTimeout[iTeam] == pGeneralSetupDialog->getNumTimeout1BB())) {
         timeoutIncrement[iTeam]->setEnabled(false);
         timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
-    else if((iPeriod > GAME_PERIODS) && (iTimeout[iTeam] == MAX_TIMEOUTS_3)) {
+    else if((iPeriod > pGeneralSetupDialog->getGamePeriodsBB()) &&
+            (iTimeout[iTeam] == pGeneralSetupDialog->getNumTimeout3BB())) {
         timeoutIncrement[iTeam]->setEnabled(false);
         timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
-    else if((iPeriod > 2) && (iTimeout[iTeam] == MAX_TIMEOUTS_2)) {
+    else if((iPeriod > 2) && (iTimeout[iTeam] == pGeneralSetupDialog->getNumTimeout2BB())) {
         timeoutIncrement[iTeam]->setEnabled(false);
         timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
@@ -655,7 +646,7 @@ BasketController::onFaulsIncrement(int iTeam) {
     if(iFauls[iTeam] == MAX_FAULS) {// To be changed
         faulsIncrement[iTeam]->setEnabled(false);
     }
-    if(iFauls[iTeam] < BONUS_TARGET) {
+    if(iFauls[iTeam] < pGeneralSetupDialog->getBonusTargetBB()) {
         iBonus[iTeam] = 1;
         bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
@@ -688,7 +679,7 @@ BasketController::onFaulsDecrement(int iTeam) {
     if(iFauls[iTeam] == 0) {
        faulsDecrement[iTeam]->setEnabled(false);
     }
-    if(iFauls[iTeam] < BONUS_TARGET) {
+    if(iFauls[iTeam] < pGeneralSetupDialog->getBonusTargetBB()) {
         iBonus[iTeam] = 1;
         bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
@@ -817,15 +808,16 @@ BasketController::onButtonChangeFieldClicked() {
         timeoutIncrement[iTeam]->setEnabled(true);
         timeoutDecrement[iTeam]->setEnabled(true);
         timeoutEdit[iTeam]->setStyleSheet(styleSheet());
-        if((iPeriod < 3) && (iTimeout[iTeam] == MAX_TIMEOUTS_1)) {
+        if((iPeriod < 3) && (iTimeout[iTeam] == pGeneralSetupDialog->getNumTimeout1BB())) {
             timeoutIncrement[iTeam]->setEnabled(false);
             timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
-        else if((iPeriod > GAME_PERIODS) && (iTimeout[iTeam] == MAX_TIMEOUTS_3)) {
+        else if((iPeriod > pGeneralSetupDialog->getGamePeriodsBB()) &&
+                (iTimeout[iTeam] == pGeneralSetupDialog->getNumTimeout3BB())) {
             timeoutIncrement[iTeam]->setEnabled(false);
             timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
-        else if((iPeriod > 2) && (iTimeout[iTeam] == MAX_TIMEOUTS_2)) {
+        else if((iPeriod > 2) && (iTimeout[iTeam] == pGeneralSetupDialog->getNumTimeout2BB())) {
             timeoutIncrement[iTeam]->setEnabled(false);
             timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
@@ -840,7 +832,7 @@ BasketController::onButtonChangeFieldClicked() {
         if(iFauls[iTeam] == MAX_FAULS) {// To be changed
             faulsIncrement[iTeam]->setEnabled(false);
         }
-        if(iFauls[iTeam] < BONUS_TARGET) {
+        if(iFauls[iTeam] < pGeneralSetupDialog->getBonusTargetBB()) {
             iBonus[iTeam] = 1;
             bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
@@ -885,7 +877,7 @@ BasketController::onButtonNewPeriodClicked() {
     int iVal = iScore[0];
     iScore[0] = iScore[1];
     iScore[1] = iVal;
-    if(iPeriod > GAME_PERIODS) {// Art. 41.1.3 - Tutti i falli di squadra commessi in un tempo
+    if(iPeriod > pGeneralSetupDialog->getGamePeriodsBB()) {// Art. 41.1.3 - Tutti i falli di squadra commessi in un tempo
                                 //supplementare devono essere considerati come avvenuti nel quarto periodo.
         iVal = iFauls[0];
         iFauls[0] = iFauls[1];
@@ -913,7 +905,7 @@ BasketController::onButtonNewPeriodClicked() {
         if(iFauls[iTeam] == MAX_FAULS) {// To be changed
             faulsIncrement[iTeam]->setEnabled(false);
         }
-        if(iFauls[iTeam] < BONUS_TARGET) {
+        if(iFauls[iTeam] < pGeneralSetupDialog->getBonusTargetBB()) {
             iBonus[iTeam] = 1;
             bonusEdit[iTeam]->setStyleSheet("background:red;color:white;");
         }
@@ -986,10 +978,10 @@ BasketController::onIncrementPeriod() {
     QString sString, sMessage;
     sString.sprintf("%2d", iPeriod);
     periodEdit->setText(sString);
-    if(iPeriod > GAME_PERIODS)
-        sMessage.sprintf("<period>%d,%d</period>", iPeriod, OVER_TIME);
+    if(iPeriod > pGeneralSetupDialog->getGamePeriodsBB())
+        sMessage.sprintf("<period>%d,%d</period>", iPeriod, pGeneralSetupDialog->getOverTimeBB());
     else
-        sMessage.sprintf("<period>%d,%d</period>", iPeriod, REGULAR_TIME);
+        sMessage.sprintf("<period>%d,%d</period>", iPeriod, pGeneralSetupDialog->getRegularTimeBB());
     SendToAll(sMessage);
     pSettings->setValue("game/period", iPeriod);
 }
@@ -1013,10 +1005,10 @@ BasketController::onDecrementPeriod() {
     QString sString, sMessage;
     sString.sprintf("%2d", iPeriod);
     periodEdit->setText(sString);
-    if(iPeriod > GAME_PERIODS)
-        sMessage.sprintf("<period>%d,%d</period>", iPeriod, OVER_TIME);
+    if(iPeriod > pGeneralSetupDialog->getGamePeriodsBB())
+        sMessage.sprintf("<period>%d,%d</period>", iPeriod, pGeneralSetupDialog->getOverTimeBB());
     else
-        sMessage.sprintf("<period>%d,%d</period>", iPeriod, REGULAR_TIME);
+        sMessage.sprintf("<period>%d,%d</period>", iPeriod, pGeneralSetupDialog->getRegularTimeBB());
     SendToAll(sMessage);
     pSettings->setValue("game/period", iPeriod);
 }

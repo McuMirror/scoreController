@@ -50,6 +50,7 @@ HandballController::HandballController()
     maxTimeouts = pGeneralSetupDialog->getNumTimeoutHB();
     maxPeriods = pGeneralSetupDialog->getNumPeriodHB();
     periodTime = pGeneralSetupDialog->getRegularTimeHB();
+
     GetSettings();
     prepareDirectories();
 

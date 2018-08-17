@@ -26,7 +26,7 @@ GeneralSetupDialog::GeneralSetupDialog(QWidget *parent)
     tabWidget->addTab(pVolleyTab, tr("Volley"));
 
     pBasketTab = new BasketTab();
-//    pBasketTab->GetSettings();
+    pBasketTab->GetSettings();
     tabWidget->addTab(pBasketTab, tr("Basket"));
 
     pHandballTab = new HandBallTab();
@@ -126,13 +126,56 @@ void
 GeneralSetupDialog::onFinished(int iResult) {
     if(iResult==QDialog::Accepted) {
         pVolleyTab->StoreSettings();
-//      pBasketTab->StoreSettings();
-      pHandballTab->StoreSettings();
+        pBasketTab->StoreSettings();
+        pHandballTab->StoreSettings();
     }
     else {
         pVolleyTab->GetSettings();
-//      pBasketTab->GetSettings();
-      pHandballTab->GetSettings();
+        pBasketTab->GetSettings();
+        pHandballTab->GetSettings();
     }
+}
+
+
+
+int
+GeneralSetupDialog::getNumTimeout1BB(){
+    return pBasketTab->getNumTimeout1();
+}
+
+
+int
+GeneralSetupDialog::getNumTimeout2BB(){
+    return pBasketTab->getNumTimeout2();
+}
+
+
+int
+GeneralSetupDialog::getNumTimeout3BB(){
+    return pBasketTab->getNumTimeout3();
+}
+
+
+int
+GeneralSetupDialog::getGamePeriodsBB(){
+    return pBasketTab->getGamePeriods();
+}
+
+
+int
+GeneralSetupDialog::getBonusTargetBB(){
+    return pBasketTab->getBonusTarget();
+}
+
+
+int
+GeneralSetupDialog::getRegularTimeBB(){
+    return pBasketTab->getRegularTime();
+}
+
+
+int
+GeneralSetupDialog::getOverTimeBB(){
+    return pBasketTab->getOverTime();
 }
 

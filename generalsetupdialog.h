@@ -36,6 +36,13 @@ public:
     int getNumPeriodHB();
     int getRegularTimeHB();
 
+    int getNumTimeout1BB();
+    int getNumTimeout2BB();
+    int getNumTimeout3BB();
+    int getGamePeriodsBB();
+    int getBonusTargetBB();
+    int getRegularTimeBB();
+    int getOverTimeBB();
 
 public slots:
     void onFinished(int iResult);

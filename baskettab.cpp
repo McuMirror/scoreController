@@ -4,46 +4,109 @@
 #include <QGridLayout>
 #include <QSettings>
 
-//#define MAX_TIMEOUTS_1  2 // Numero massimo di sospensioni nella prima metà di gara
-//#define MAX_TIMEOUTS_2  3 // Numero massimo di sospensioni nella seconda metà di gara
-//#define MAX_TIMEOUTS_3  1 // Numero massimo di sospensioni negli OVERTIMES
-//#define MAX_FAULS      99 // Da definire il comportamento dopo il numero max di falli !
-//#define MAX_PERIODS    99 // Da definire il comportamento dopo il numero max di periodi !
-//#define BONUS_TARGET    4 // Dopo questo valore il Bonus per il team è finito !
-//#define GAME_PERIODS    4 // Oltre questo valore ci sono gli OVERTIMES
-//#define REGULAR_TIME   10 // 10 Minuti è la durata di un tempo regolare
-//#define OVER_TIME       5 // 5 Minuti è a durata di ciascun overtime
-
 
 BasketTab::BasketTab(QWidget *parent)
     : QWidget(parent)
 {
+    QLabel *numTimeout1Label = new QLabel(tr("Timeouts on 1st Half:"));
+    QLabel *numTimeout2Label = new QLabel(tr("Timeouts on 2nd Half:"));
+    QLabel *numTimeout3Label = new QLabel(tr("Timeouts on Overtimes:"));
+    QLabel *BonusTargetLabel = new QLabel(tr("Bonus Fauls:"));
+    QLabel *GamePeriodsLabel = new QLabel(tr("Game Periods:"));
+    QLabel *regularTimeLabel = new QLabel(tr("Regular Time [min]:"));
+    QLabel *overTimeLabel    = new QLabel(tr("Over Time [min]:"));
 
+    numTimeout1Edit.setMaxLength(1);
+    numTimeout2Edit.setMaxLength(1);
+    numTimeout3Edit.setMaxLength(1);
+    BonusTargetEdit.setMaxLength(1);
+    regularTimeEdit.setMaxLength(2);
+    overTimeEdit.setMaxLength(1);
+
+    auto *mainLayout = new QGridLayout;
+    mainLayout->addWidget(numTimeout1Label,  0, 0, 1, 3);
+    mainLayout->addWidget(&numTimeout1Edit,  0, 3, 1, 1);
+    mainLayout->addWidget(numTimeout2Label,  1, 0, 1, 3);
+    mainLayout->addWidget(&numTimeout2Edit,  1, 3, 1, 1);
+    mainLayout->addWidget(numTimeout3Label,  2, 0, 1, 3);
+    mainLayout->addWidget(&numTimeout3Edit,  2, 3, 1, 1);
+
+    mainLayout->addWidget(GamePeriodsLabel,  3, 0, 1, 3);
+    mainLayout->addWidget(&GamePeriodsEdit,  3, 3, 1, 1);
+    mainLayout->addWidget(BonusTargetLabel,  4, 0, 1, 3);
+    mainLayout->addWidget(&BonusTargetEdit,  4, 3, 1, 1);
+
+    mainLayout->addWidget(regularTimeLabel, 5, 0, 1, 3);
+    mainLayout->addWidget(&regularTimeEdit, 5, 3, 1, 1);
+    mainLayout->addWidget(overTimeLabel,    6, 0, 1, 3);
+    mainLayout->addWidget(&overTimeEdit,    6, 3, 1, 1);
+
+    setLayout(mainLayout);
 }
 
 
 void
 BasketTab::GetSettings() {
     pSettings = new QSettings("Gabriele Salvato", "Basket Parameters");
-//    maxTimeout       = pSettings->value("volley/maxTimeout", 2).toInt();
-//    maxSet           = pSettings->value("volley/maxSet", 3).toInt();
-//    iTimeoutDuration = pSettings->value("volley/TimeoutDuration", 30).toInt();;
-
-//    numTimeoutEdit.setText(QString("%1").arg(maxTimeout));
-//    maxSetEdit.setText(QString("%1").arg(maxSet));
-//    timeoutDurationEdit.setText(QString("%1").arg(iTimeoutDuration));
+    numTimeout1Edit.setText(pSettings->value("basket/maxTimeout1", 2).toString());
+    numTimeout2Edit.setText(pSettings->value("basket/maxTimeout2", 3).toString());
+    numTimeout3Edit.setText(pSettings->value("basket/maxTimeout3", 1).toString());
+    GamePeriodsEdit.setText(pSettings->value("basket/gamePeriods", 4).toString());
+    BonusTargetEdit.setText(pSettings->value("basket/bonusTarget", 4).toString());
+    regularTimeEdit.setText(pSettings->value("basket/regularTime", 10).toString());
+    overTimeEdit.setText(pSettings->value("basket/overTime", 5).toString());
 }
 
 
 void
 BasketTab::StoreSettings() {
     if(pSettings) {
-//        maxTimeout       = numTimeoutEdit.text().toInt();
-//        maxSet           = maxSetEdit.text().toInt();
-//        iTimeoutDuration = timeoutDurationEdit.text().toInt();
-//        pSettings->setValue("volley/maxTimeout",      maxTimeout);
-//        pSettings->setValue("volley/maxSet",          maxSet);
-//        pSettings->setValue("volley/TimeoutDuration", iTimeoutDuration);
+        pSettings->setValue("basket/maxTimeout1", numTimeout1Edit.text().toInt());
+        pSettings->setValue("basket/maxTimeout2", numTimeout2Edit.text().toInt());
+        pSettings->setValue("basket/maxTimeout3", numTimeout3Edit.text().toInt());
+        pSettings->setValue("basket/gamePeriods", GamePeriodsEdit.text().toInt());
+        pSettings->setValue("basket/bonusTarget", BonusTargetEdit.text().toInt());
+        pSettings->setValue("basket/regularTime", regularTimeEdit.text().toInt());
+        pSettings->setValue("basket/overTime", overTimeEdit.text().toInt());
     }
 }
 
+
+int
+BasketTab::getNumTimeout1() {
+    return numTimeout1Edit.text().toInt();
+}
+
+
+int BasketTab::getNumTimeout2() {
+    return numTimeout2Edit.text().toInt();
+}
+
+
+int
+BasketTab::getNumTimeout3() {
+    return numTimeout3Edit.text().toInt();
+}
+
+
+int
+BasketTab::getGamePeriods() {
+    return GamePeriodsEdit.text().toInt();
+}
+
+
+int BasketTab::getBonusTarget() {
+    return BonusTargetEdit.text().toInt();
+}
+
+
+int
+BasketTab::getRegularTime() {
+    return regularTimeEdit.text().toInt();
+}
+
+
+int
+BasketTab::getOverTime() {
+    return overTimeEdit.text().toInt();
+}
