@@ -53,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * have to create two directories in which place the files. At present only
  * jpeg, png and mp4 formats are allowed.
  *
- * \section boh?
+ * \section Another Section
  * \subsection sub1 A subsection: How to
  *
  */

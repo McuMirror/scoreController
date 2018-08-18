@@ -3,16 +3,20 @@
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QDir>
-#include <utility>
+#include "utility.h"
 
 
 /*!
  * \brief GeneralSetupDialog::GeneralSetupDialog
  * \param parent
  */
-GeneralSetupDialog::GeneralSetupDialog(QWidget *parent)
+GeneralSetupDialog::GeneralSetupDialog(int PanelType, QWidget *parent)
     : QDialog(parent)
 {
+    pVolleyTab   = Q_NULLPTR;
+    pBasketTab   = Q_NULLPTR;
+    pHandballTab = Q_NULLPTR;
+
     connect(this, SIGNAL(finished(int)),
             this, SLOT(onFinished(int)));
 
@@ -21,18 +25,21 @@ GeneralSetupDialog::GeneralSetupDialog(QWidget *parent)
     pDirectoryTab = new DirectoryTab();
     tabWidget->addTab(pDirectoryTab, tr("Directories"));
 
-    pVolleyTab = new VolleyTab();
-    pVolleyTab->GetSettings();
-    tabWidget->addTab(pVolleyTab, tr("Volley"));
-
-    pBasketTab = new BasketTab();
-    pBasketTab->GetSettings();
-    tabWidget->addTab(pBasketTab, tr("Basket"));
-
-    pHandballTab = new HandBallTab();
-    pHandballTab->GetSettings();
-    tabWidget->addTab(pHandballTab, tr("Handball"));
-
+    if(PanelType == VOLLEY_PANEL) {
+        pVolleyTab = new VolleyTab();
+        pVolleyTab->GetSettings();
+        tabWidget->addTab(pVolleyTab, tr("Volley"));
+    }
+    else if(PanelType == BASKET_PANEL) {
+        pBasketTab = new BasketTab();
+        pBasketTab->GetSettings();
+        tabWidget->addTab(pBasketTab, tr("Basket"));
+    }
+    else if(PanelType == HANDBALL_PANEL) {
+        pHandballTab = new HandBallTab();
+        pHandballTab->GetSettings();
+        tabWidget->addTab(pHandballTab, tr("Handball"));
+    }
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
                                      QDialogButtonBox::Cancel);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
@@ -125,14 +132,14 @@ GeneralSetupDialog::getRegularTimeHB() {
 void
 GeneralSetupDialog::onFinished(int iResult) {
     if(iResult==QDialog::Accepted) {
-        pVolleyTab->StoreSettings();
-        pBasketTab->StoreSettings();
-        pHandballTab->StoreSettings();
+        if(pVolleyTab) pVolleyTab->StoreSettings();
+        if(pBasketTab) pBasketTab->StoreSettings();
+        if(pHandballTab) pHandballTab->StoreSettings();
     }
     else {
-        pVolleyTab->GetSettings();
-        pBasketTab->GetSettings();
-        pHandballTab->GetSettings();
+        if(pVolleyTab) pVolleyTab->GetSettings();
+        if(pBasketTab) pBasketTab->GetSettings();
+        if(pHandballTab) pHandballTab->GetSettings();
     }
 }
 

@@ -35,8 +35,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "generalsetupdialog.h"
 
 
-#define MAX_FAULS      99 // Da definire il comportamento dopo il numero max di falli !
-#define MAX_PERIODS    99 // Da definire il comportamento dopo il numero max di periodi !
+#define MAX_FAULS      99 // To be defined the behaviour after #fauls becomes greater then MAX_FAULS
+#define MAX_PERIODS    99 // To be defined the behaviour after #periods becomes greater then MAX_PERIODS
 
 
 /*!

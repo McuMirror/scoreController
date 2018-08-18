@@ -80,7 +80,7 @@ ScoreController::ScoreController(int myPanelType, QWidget *parent)
     }
 
     // Initialize some useful dialogs...
-    pGeneralSetupDialog = new GeneralSetupDialog(this);
+    pGeneralSetupDialog = new GeneralSetupDialog(panelType, this);
     pGeneralSetupDialog->setWindowFlags(Qt::Window);
     pClientListDialog = new ClientListDialog(this);
     pClientListDialog->setWindowFlags(Qt::Window);

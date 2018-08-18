@@ -21,7 +21,7 @@ class GeneralSetupDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit GeneralSetupDialog(QWidget *parent = nullptr);
+    explicit GeneralSetupDialog(int PanelType, QWidget *parent = nullptr);
 
     void setSlideDir(const QString& sDir);
     void setSpotDir(const QString& sDir);
