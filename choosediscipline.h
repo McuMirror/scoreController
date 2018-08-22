@@ -21,6 +21,7 @@ public:
     explicit ChooseDiscipline(QWidget *parent = Q_NULLPTR);
     ~ChooseDiscipline();
     int getDiscipline();
+    QString getLanguage();
 
 private slots:
     void on_volleyRadioButton_clicked();
@@ -33,8 +34,9 @@ private slots:
 private:
     Ui::ChooseDiscipline *ui;
     int discipline;
-    QTranslator Translator;
-    QSettings    *pSettings;
+    QTranslator  Translator;
+    QSettings   *pSettings;
+    QString      sCurrentLanguage;
 };
 
 #endif // CHOOSEDISCIPLINE_H

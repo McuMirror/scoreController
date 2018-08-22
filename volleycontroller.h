@@ -16,12 +16,13 @@ QT_FORWARD_DECLARE_CLASS(QRadioButton)
 QT_FORWARD_DECLARE_CLASS(QPushButton)
 QT_FORWARD_DECLARE_CLASS(QLabel)
 
+
 class VolleyController : public ScoreController
 {
     Q_OBJECT
 
 public:
-    VolleyController();
+    VolleyController(QString sMyLanguage);
     void closeEvent(QCloseEvent *event);
     void resizeEvent(QResizeEvent *event);
 
@@ -53,6 +54,7 @@ private:
 
 private:
     bool          bFontBuilt;
+    QString       sLanguage;
     QString       sTeam[2];
     int           iTimeout[2]{};
     int           iSet[2]{};

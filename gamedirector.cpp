@@ -62,14 +62,16 @@ GameDirector::exec() {
     int iResult = 0;
     while(pChooser->exec() != QDialog::Rejected) {
         int iDiscipline = pChooser->getDiscipline();
+        QString sLanguage = pChooser->getLanguage();
+
         if(iDiscipline == VOLLEY_PANEL)
-            pController = new VolleyController();
+            pController = new VolleyController(sLanguage);
         else if(iDiscipline == BASKET_PANEL)
-            pController = new BasketController();
+            pController = new BasketController(sLanguage);
         else if(iDiscipline == HANDBALL_PANEL)
-            pController = new HandballController();
+            pController = new HandballController(sLanguage);
         else
-            pController = new VolleyController();
+            pController = new VolleyController(sLanguage);
         // To automagically delete the pController Object
         // after it has been closed
         pController->setAttribute(Qt::WA_DeleteOnClose);

@@ -36,7 +36,7 @@ public:
 
 private:
     ChooseDiscipline *pChooser;
-    ScoreController* pController;
+    ScoreController  *pController;
 };
 
 #endif // GAMEDIRECTOR_H

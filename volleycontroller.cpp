@@ -43,10 +43,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * It is responsible to start the various services for
  * updating Slide and Spots
  */
-VolleyController::VolleyController()
+VolleyController::VolleyController(QString sMyLanguage)
     : ScoreController(VOLLEY_PANEL, Q_NULLPTR)
     , bFontBuilt(false)
 {
+    sLanguage = sMyLanguage;
     GetSettings();
     prepareDirectories();
 
@@ -435,6 +436,7 @@ VolleyController::FormatStatusMsg() {
     else if(myStatus == showSpots)
         sMessage += QString("<spotloop>1</spotloop>");
 
+    sMessage += QString("<language>%1</language>").arg(sLanguage);
     return sMessage;
 }
 

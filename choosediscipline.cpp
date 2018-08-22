@@ -31,7 +31,7 @@ ChooseDiscipline::ChooseDiscipline(QWidget *parent)
     , pSettings(Q_NULLPTR)
 {
     pSettings = new QSettings("Gabriele Salvato", "Choose Discipline");
-    QString sCurrentLanguage = pSettings->value("language", QString(tr("Italiano"))).toString();
+    sCurrentLanguage = pSettings->value("language", QString(tr("Italiano"))).toString();
     ui->setupUi(this);
     discipline = VOLLEY_PANEL;
     ui->volleyRadioButton->setChecked(true);
@@ -107,17 +107,28 @@ ChooseDiscipline::on_closePushButton_clicked() {
 
 
 /*!
+ * \brief ChooseDiscipline::getLanguage
+ * \return A QString representing the selected langage;
+ */
+QString
+ChooseDiscipline::getLanguage() {
+    return sCurrentLanguage;
+}
+
+
+/*!
  * \brief ChooseDiscipline::on_LanguageComboBox_currentIndexChanged
  * To select the language of the Controller Panel
  * \param arg1
  */
 void
 ChooseDiscipline::on_LanguageComboBox_currentIndexChanged(const QString &arg1) {
-    pSettings->setValue("language", arg1);
-    if(arg1 == QString("Italiano")) {
+    sCurrentLanguage = arg1;
+    pSettings->setValue("language", sCurrentLanguage);
+    if(sCurrentLanguage == QString("Italiano")) {
         QCoreApplication::removeTranslator(&Translator);
     }
-    else if(arg1 == QString("English")) {
+    else if(sCurrentLanguage == QString("English")) {
         Translator.load(":/scoreController_en");
         QCoreApplication::installTranslator(&Translator);
     }

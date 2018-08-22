@@ -20,7 +20,7 @@ class BasketController : public ScoreController
     Q_OBJECT
 
 public:
-    BasketController();
+    BasketController(QString sMyLanguage);
     void closeEvent(QCloseEvent *event);
     void resizeEvent(QResizeEvent *event);
 
@@ -54,6 +54,7 @@ private:
 
 private:
     bool          bFontBuilt;
+    QString       sLanguage;
     QString       sTeam[2];
     int           iTimeout[2]{};
     int           iScore[2]{};

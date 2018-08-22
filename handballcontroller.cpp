@@ -42,11 +42,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * It is responsible to start the various services for
  * updating Slide and Spots
  */
-HandballController::HandballController()
+HandballController::HandballController(QString sMyLanguage)
     : ScoreController(HANDBALL_PANEL, Q_NULLPTR)
     , bFontBuilt(false)
 
 {
+    sLanguage = sMyLanguage;
+
     maxTimeouts = pGeneralSetupDialog->getNumTimeoutHB();
     maxPeriods = pGeneralSetupDialog->getNumPeriodHB();
     periodTime = pGeneralSetupDialog->getRegularTimeHB();
@@ -475,6 +477,7 @@ HandballController::FormatStatusMsg() {
     else if(myStatus == showSpots)
         sMessage += QString("<spotloop>1</spotloop>");
 
+    sMessage += QString("<language>%1</language>").arg(sLanguage);
     return sMessage;
 }
 
