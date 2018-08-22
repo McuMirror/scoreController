@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "choosediscipline.h"
 #include "ui_choosediscipline.h"
+#include "utility.h"
 
 
 /*!
@@ -30,14 +31,23 @@ ChooseDiscipline::ChooseDiscipline(QWidget *parent)
     , ui(new Ui::ChooseDiscipline)
     , pSettings(Q_NULLPTR)
 {
-    pSettings = new QSettings("Gabriele Salvato", "Choose Discipline");
-    sCurrentLanguage = pSettings->value("language", QString(tr("Italiano"))).toString();
     ui->setupUi(this);
+
     discipline = VOLLEY_PANEL;
     ui->volleyRadioButton->setChecked(true);
-    ui->LanguageComboBox->addItem("Italiano");
-    ui->LanguageComboBox->addItem("English");
+    ui->LanguageComboBox->addItem(QString("Italiano"));
+    ui->LanguageComboBox->addItem(QString("English"));
+
+    pSettings = new QSettings("Gabriele Salvato", "Choose Discipline");
+    sCurrentLanguage = pSettings->value("language/current", QString(tr("Italiano"))).toString();
+
     ui->LanguageComboBox->setCurrentText(sCurrentLanguage);
+    QCoreApplication::removeTranslator(&Translator);
+    if(sCurrentLanguage == QString("English")) {
+        Translator.load(":/scoreController_en");
+        QCoreApplication::installTranslator(&Translator);
+    }
+    ui->retranslateUi(this);
 }
 
 
@@ -83,6 +93,7 @@ ChooseDiscipline::on_handballRadioButton_clicked() {
  */
 void
 ChooseDiscipline::on_goPushButton_clicked() {
+    pSettings->setValue("language/current", sCurrentLanguage);
     done(QDialog::Accepted);
 }
 
@@ -124,11 +135,8 @@ ChooseDiscipline::getLanguage() {
 void
 ChooseDiscipline::on_LanguageComboBox_currentIndexChanged(const QString &arg1) {
     sCurrentLanguage = arg1;
-    pSettings->setValue("language", sCurrentLanguage);
-    if(sCurrentLanguage == QString("Italiano")) {
-        QCoreApplication::removeTranslator(&Translator);
-    }
-    else if(sCurrentLanguage == QString("English")) {
+    QCoreApplication::removeTranslator(&Translator);
+    if(sCurrentLanguage == QString("English")) {
         Translator.load(":/scoreController_en");
         QCoreApplication::installTranslator(&Translator);
     }
