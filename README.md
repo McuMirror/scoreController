@@ -11,3 +11,7 @@ Here you can see the Control Panel for the Volley:
 The corresponding screen that is shown on each of the "Score Panels" is:
 
 ![Volley Score Panel](/images/ScorePanel.png)
+
+The "Score Controller" can be run on Linux computers (tested on UBUNTU 18.04 LTS) or on an Android tablet or else on a Raspberry Pi3 connected to a monitor, mouse and keyboard.
+
+The "Score Controller" and the "Score Panels" communicate via Network (either wired or wireless).
