@@ -27,3 +27,14 @@ At present there are only 3 sports that have the corresponding scoreboard:
 but the system can be easily extended to many other sports.
 
 The program is written in C++ by using the powerfull framework Qt. I have installed the version 5.11.1 on my Ubuntu laptop and version 5.7.2 on my Raspberry Pi3.
+
+## Installation
+There are already built versions for Android, Ubuntu and Raspberry Pi3 at:
+
+https://github.com/salvato/ScorePanel_executables
+
+For Ubuntu and Raspberry you can simply download the executable in a directory of your choice and the run the App provided that all the needed libraries are presents.
+
+To check if there are missing libraries you can run the following command:
+
+`ldd ./scoreController`
