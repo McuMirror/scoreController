@@ -25,3 +25,5 @@ At present there are only 3 sports that have the corresponding scoreboard:
 * Basket
 
 but the system can be easily extended to many other sports.
+
+The program is written in C++ by using the powerfull framework Qt. I have installed the version 5.11.1 on my Ubuntu laptop and version 5.7.2 on my Raspberry Pi3.
