@@ -38,5 +38,6 @@ For Ubuntu and Raspberry you can simply download the executable in a directory o
 To check if there are missing libraries you can run the following command:
 
 `ldd ./scoreController`
+
 If you want to install the APP for Android, download the `scoreController.apk` file into the uSD card of your tablet/phone,
 navigate to the folder where you have downloaded the apk file and double tap on it.
