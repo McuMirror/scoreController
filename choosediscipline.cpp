@@ -33,6 +33,9 @@ ChooseDiscipline::ChooseDiscipline(QWidget *parent)
 {
     ui->setupUi(this);
 
+    QIcon myIcon(":/android/CusTriesteH.png");
+    setWindowIcon(myIcon);
+
     discipline = VOLLEY_PANEL;
     ui->volleyRadioButton->setChecked(true);
     ui->LanguageComboBox->addItem(QString("Italiano"));
