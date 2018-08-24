@@ -19,5 +19,8 @@
         <file>buttonIcons/ExchangeBasketField.png</file>
         <file>buttonIcons/NewGameHandball.png</file>
         <file>buttonIcons/Camera.png</file>
+        <file>android/CusTriesteH.png</file>
+        <file>android/CusTriesteL.png</file>
+        <file>android/CusTriesteM.png</file>
     </qresource>
 </RCC>
