@@ -9,14 +9,9 @@ QT += gui
 QT += network
 QT += websockets
 QT += multimedia
-QT += testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-
-#To choose the Program Icon (not on Android)
-DEFINES += CUS_TS
-#DEFINES += CUS_UNIME
 
 # to Add a different Build number after a new Build
 build_nr.commands = ../scoreController/build_number.sh

@@ -26,6 +26,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDateTime>
 #include <QDebug>
 
+//--------------------------------------------------------------
+// To choose the Window's Icon (not on Android !)
+// for Android we have to place the right icons in:
+//     android/res/drawable-hdpi,
+//     android/res/drawable-mdpi,
+//     android/res/drawable-ldpi
+//                or (better!)
+// edit the AndroidManifest.xml with the Android Manifest Editor
+// and select the right files.
+//
+//#define CUS_TS
+#define CUS_UNIME
+//--------------------------------------------------------------
+
 //#define LOG_MESG
 //#define LOG_VERBOSE
 

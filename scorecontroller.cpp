@@ -73,7 +73,7 @@ ScoreController::ScoreController(int myPanelType, QWidget *parent)
 {
     // For Message Logging...
     logFile = Q_NULLPTR;
-    QIcon myIcon(":/android/CusTriesteH.png");
+    QIcon myIcon(WINDOW_ICON);
     setWindowIcon(myIcon);
 
     // Block until a network connection is available
