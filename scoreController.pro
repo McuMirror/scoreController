@@ -13,6 +13,18 @@ QT += testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+
+#To choose the Program Icon (not on Android)
+DEFINES += CUS_TS
+#DEFINES += CUS_UNIME
+
+# to Add a different Build number after a new Build
+build_nr.commands = ../scoreController/build_number.sh
+build_nr.depends = FORCE
+QMAKE_EXTRA_TARGETS += build_nr
+PRE_TARGETDEPS += build_nr
+
+
 TARGET = scoreController
 TEMPLATE = app
 
@@ -32,18 +44,13 @@ SOURCES += main.cpp\
     radioButton.cpp \
     panelconfigurator.cpp \
     handballcontroller.cpp \
-    choosediscipline.cpp \
     gamedirector.cpp \
     generalsetupdialog.cpp \
     directorytab.cpp \
     volleytab.cpp \
     baskettab.cpp \
-    handballtab.cpp
-
-build_nr.commands = ../scoreController/build_number.sh
-build_nr.depends = FORCE
-QMAKE_EXTRA_TARGETS += build_nr
-PRE_TARGETDEPS += build_nr
+    handballtab.cpp \
+    sportSelector.cpp
 
 HEADERS  += scorecontroller.h \
     clientlistdialog.h \
@@ -58,14 +65,14 @@ HEADERS  += scorecontroller.h \
     panelorientation.h \
     panelconfigurator.h \
     handballcontroller.h \
-    choosediscipline.h \
     gamedirector.h \
     generalsetupdialog.h \
     directorytab.h \
     volleytab.h \
     baskettab.h \
     handballtab.h \
-    build_number.h
+    build_number.h \
+    sportSelector.h
 
 RESOURCES += scorecontroller.qrc
 
@@ -73,8 +80,7 @@ CONFIG += mobility
 MOBILITY = 
 
 FORMS    += \
-    panelconfigurator.ui \
-    choosediscipline.ui
+    panelconfigurator.ui
 
 DISTFILES += \
     android/AndroidManifest.xml \
@@ -92,7 +98,6 @@ DISTFILES += \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat \
     scoreController_en.ts \
-    build_number.sh \
-    build_number
+    build_number.sh
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

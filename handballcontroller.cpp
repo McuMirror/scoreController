@@ -170,10 +170,10 @@ HandballController::buildControls() {
     timeoutLabel = new QLabel(tr("Timeout"));
     timeoutLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
     // Score
-    scoreLabel = new QLabel(tr("Score"));
+    scoreLabel = new QLabel(tr("Punteggio"));
     scoreLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
     // Period
-    periodLabel = new QLabel(tr("Period"));
+    periodLabel = new QLabel(tr("Periodo"));
     periodLabel->setAlignment(Qt::AlignRight|Qt::AlignHCenter);
 }
 

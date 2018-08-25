@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QApplication>
 
-QT_FORWARD_DECLARE_CLASS(ChooseDiscipline)
 QT_FORWARD_DECLARE_CLASS(ScoreController)
+QT_FORWARD_DECLARE_CLASS(SportSelector)
 
 
 
@@ -35,7 +35,7 @@ public:
     int exec();
 
 private:
-    ChooseDiscipline *pChooser;
+    SportSelector    *pSelector;
     ScoreController  *pController;
 };
 

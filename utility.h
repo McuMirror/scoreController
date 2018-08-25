@@ -29,6 +29,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#define LOG_MESG
 //#define LOG_VERBOSE
 
+#ifdef CUS_TS
+#define WINDOW_ICON ":/android/CusTriesteH.png"
+#endif
+#ifdef CUS_UNIME
+#define WINDOW_ICON ":/android/CusMessinaH.png"
+#endif
+
 #define VOLLEY_PANEL      0
 #define FIRST_PANEL_TYPE  VOLLEY_PANEL
 #define BASKET_PANEL      1

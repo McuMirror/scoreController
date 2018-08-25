@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gamedirector.h"
-#include "choosediscipline.h"
+#include "sportSelector.h"
 #include "volleycontroller.h"
 #include "basketcontroller.h"
 #include "handballcontroller.h"
@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 GameDirector::GameDirector(int &argc, char **argv)
     : QApplication(argc, argv)
-    , pChooser(Q_NULLPTR)
+    , pSelector(Q_NULLPTR)
     , pController(Q_NULLPTR)
 {
 #ifdef LOG_VERBOSE
@@ -40,8 +40,8 @@ GameDirector::GameDirector(int &argc, char **argv)
                Q_FUNC_INFO,
                QString(" Starting"));
 #endif
-    pChooser = new ChooseDiscipline();
-    pChooser->setWindowFlags(Qt::Window);
+    pSelector = new SportSelector(Q_NULLPTR);
+    pSelector->setWindowFlags(Qt::Window);
 }
 
 
@@ -49,7 +49,8 @@ GameDirector::GameDirector(int &argc, char **argv)
  * \brief GameDirector::~GameDirector
  */
 GameDirector::~GameDirector() {
-    delete pChooser;
+//    delete pChooser;
+    delete pSelector;
 }
 
 
@@ -60,9 +61,9 @@ GameDirector::~GameDirector() {
 int
 GameDirector::exec() {
     int iResult = 0;
-    while(pChooser->exec() != QDialog::Rejected) {
-        int iDiscipline = pChooser->getDiscipline();
-        QString sLanguage = pChooser->getLanguage();
+    while(pSelector->exec() != QDialog::Rejected) {
+        int iDiscipline = pSelector->getDiscipline();
+        QString sLanguage = pSelector->getLanguage();
 
         if(iDiscipline == VOLLEY_PANEL)
             pController = new VolleyController(sLanguage);

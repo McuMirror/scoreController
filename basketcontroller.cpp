@@ -147,7 +147,7 @@ BasketController::buildControls() {
         if(iFauls[iTeam] == MAX_FAULS)
             faulsIncrement[iTeam]->setEnabled(false);
         // Possess
-        possess[iTeam] = new RadioButton(tr(" "), iTeam);
+        possess[iTeam] = new RadioButton(" ", iTeam);
         // Bonus
         bonusEdit[iTeam] = new Edit(QString(tr("Bonus")));
         bonusEdit[iTeam]->setMaxLength(QString(tr("Bonus")).length());
@@ -198,16 +198,16 @@ BasketController::buildControls() {
     timeoutLabel = new QLabel(tr("Timeout"));
     timeoutLabel->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
     // Team Fauls
-    faulsLabel = new QLabel(tr("Team Fauls"));
+    faulsLabel = new QLabel(tr("Falli Squadra"));
     faulsLabel->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
     // Score
-    scoreLabel = new QLabel(tr("Score"));
+    scoreLabel = new QLabel(tr("Punteggio"));
     scoreLabel->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
     // Period
-    periodLabel = new QLabel(tr("Period"));
+    periodLabel = new QLabel(tr("Periodo"));
     periodLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     // Posses
-    possessLabel = new QLabel(tr("Possess"));
+    possessLabel = new QLabel(tr("Possesso"));
     possessLabel->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
 }
 

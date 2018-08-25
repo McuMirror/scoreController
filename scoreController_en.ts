@@ -4,208 +4,236 @@
 <context>
     <name>BasketController</name>
     <message>
-        <location filename="basketcontroller.cpp" line="410"/>
-        <location filename="basketcontroller.cpp" line="891"/>
+        <location filename="basketcontroller.cpp" line="393"/>
+        <location filename="basketcontroller.cpp" line="934"/>
         <source>Locali</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="basketcontroller.cpp" line="411"/>
-        <location filename="basketcontroller.cpp" line="892"/>
+        <location filename="basketcontroller.cpp" line="394"/>
+        <location filename="basketcontroller.cpp" line="935"/>
         <source>Ospiti</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="basketcontroller.cpp" line="197"/>
+        <location filename="basketcontroller.cpp" line="198"/>
         <source>Timeout</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="basketcontroller.cpp" line="150"/>
-        <source> </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="basketcontroller.cpp" line="200"/>
-        <source>Team Fauls</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="basketcontroller.cpp" line="209"/>
-        <source>Possess</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="basketcontroller.cpp" line="203"/>
-        <source>Score</source>
-        <translation></translation>
+        <location filename="basketcontroller.cpp" line="210"/>
+        <source>Possesso</source>
+        <translation>Possess</translation>
     </message>
     <message>
         <location filename="basketcontroller.cpp" line="152"/>
+        <location filename="basketcontroller.cpp" line="153"/>
         <source>Bonus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="basketcontroller.cpp" line="206"/>
-        <source>Period</source>
-        <translation></translation>
+        <location filename="basketcontroller.cpp" line="201"/>
+        <source>Falli Squadra</source>
+        <translation>Team Fauls</translation>
     </message>
     <message>
-        <location filename="basketcontroller.cpp" line="737"/>
-        <location filename="basketcontroller.cpp" line="816"/>
-        <location filename="basketcontroller.cpp" line="886"/>
+        <location filename="basketcontroller.cpp" line="204"/>
+        <source>Punteggio</source>
+        <translation>Score</translation>
+    </message>
+    <message>
+        <location filename="basketcontroller.cpp" line="207"/>
+        <source>Periodo</source>
+        <translation>Period</translation>
+    </message>
+    <message>
+        <location filename="basketcontroller.cpp" line="773"/>
+        <location filename="basketcontroller.cpp" line="856"/>
+        <location filename="basketcontroller.cpp" line="929"/>
         <source>BasketController</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="basketcontroller.cpp" line="738"/>
+        <location filename="basketcontroller.cpp" line="774"/>
         <source>Scambiare il campo delle squadre ?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="basketcontroller.cpp" line="817"/>
+        <location filename="basketcontroller.cpp" line="857"/>
         <source>Vuoi davvero iniziare un nuovo Periodo ?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="basketcontroller.cpp" line="887"/>
+        <location filename="basketcontroller.cpp" line="930"/>
         <source>Iniziare una Nuova Partita ?</source>
         <translation>Start New Game ?</translation>
     </message>
 </context>
 <context>
-    <name>ChooseDiscipline</name>
+    <name>BasketTab</name>
     <message>
-        <location filename="choosediscipline.ui" line="14"/>
-        <source>ChooseDiscipline</source>
-        <translation>Choose Discipline</translation>
+        <location filename="baskettab.cpp" line="29"/>
+        <source>Timeouts on 1st Half:</source>
+        <translation>Timeouts on 1st Half:</translation>
     </message>
     <message>
-        <location filename="choosediscipline.ui" line="26"/>
-        <source>Disciplina</source>
-        <translation>Discipline</translation>
+        <location filename="baskettab.cpp" line="30"/>
+        <source>Timeouts on 2nd Half:</source>
+        <translation>Timeouts on 2nd Half:</translation>
     </message>
     <message>
-        <location filename="choosediscipline.ui" line="41"/>
-        <source>Basket</source>
-        <translation>Basket</translation>
+        <location filename="baskettab.cpp" line="31"/>
+        <source>Timeouts on Overtimes:</source>
+        <translation>Timeouts on Overtimes:</translation>
     </message>
     <message>
-        <location filename="choosediscipline.ui" line="54"/>
-        <source>Avvia</source>
-        <translation>Start</translation>
+        <location filename="baskettab.cpp" line="32"/>
+        <source>Bonus Fauls:</source>
+        <translation>Bonus Fauls:</translation>
     </message>
     <message>
-        <location filename="choosediscipline.ui" line="73"/>
-        <source>Esci</source>
-        <translation>Exit</translation>
+        <location filename="baskettab.cpp" line="33"/>
+        <source>Game Periods:</source>
+        <translation>Game Periods:</translation>
     </message>
     <message>
-        <location filename="choosediscipline.ui" line="86"/>
-        <source>Handball</source>
-        <translation>Handball</translation>
+        <location filename="baskettab.cpp" line="34"/>
+        <source>Regular Time [min]:</source>
+        <translation>Regular Time [min]:</translation>
     </message>
     <message>
-        <location filename="choosediscipline.ui" line="99"/>
-        <source>Volley</source>
-        <translation>Volley</translation>
-    </message>
-    <message>
-        <location filename="choosediscipline.cpp" line="33"/>
-        <source>Italiano</source>
-        <translation>Italian</translation>
+        <location filename="baskettab.cpp" line="35"/>
+        <source>Over Time [min]:</source>
+        <translation>Over Time [min]:</translation>
     </message>
 </context>
 <context>
     <name>ClientListDialog</name>
     <message>
-        <location filename="clientlistdialog.cpp" line="67"/>
+        <location filename="clientlistdialog.cpp" line="77"/>
         <source>Chiudi</source>
         <translation>Close</translation>
     </message>
     <message>
-        <location filename="clientlistdialog.cpp" line="70"/>
+        <location filename="clientlistdialog.cpp" line="80"/>
         <source>Client Connessi</source>
         <translation>Connected Clients</translation>
     </message>
 </context>
 <context>
+    <name>DirectoryTab</name>
+    <message>
+        <location filename="directorytab.cpp" line="49"/>
+        <source>Slides folder:</source>
+        <translation>Slides folder:</translation>
+    </message>
+    <message>
+        <location filename="directorytab.cpp" line="50"/>
+        <source>Spots folder:</source>
+        <translation>Spots folder:</translation>
+    </message>
+    <message>
+        <location filename="directorytab.cpp" line="109"/>
+        <location filename="directorytab.cpp" line="113"/>
+        <source>Slide Dir</source>
+        <translation>Slide Dir</translation>
+    </message>
+    <message>
+        <location filename="directorytab.cpp" line="141"/>
+        <location filename="directorytab.cpp" line="145"/>
+        <source>Spot Dir</source>
+        <translation>Spot Dir</translation>
+    </message>
+</context>
+<context>
+    <name>GeneralSetupDialog</name>
+    <message>
+        <location filename="generalsetupdialog.cpp" line="26"/>
+        <source>Directories</source>
+        <translation>Directories</translation>
+    </message>
+    <message>
+        <location filename="generalsetupdialog.cpp" line="31"/>
+        <source>Volley</source>
+        <translation>Volley</translation>
+    </message>
+    <message>
+        <location filename="generalsetupdialog.cpp" line="36"/>
+        <source>Basket</source>
+        <translation>Basket</translation>
+    </message>
+    <message>
+        <location filename="generalsetupdialog.cpp" line="41"/>
+        <source>Handball</source>
+        <translation>Handball</translation>
+    </message>
+</context>
+<context>
+    <name>HandBallTab</name>
+    <message>
+        <location filename="handballtab.cpp" line="29"/>
+        <source>Number of Timeouts:</source>
+        <translation>Number of Timeouts:</translation>
+    </message>
+    <message>
+        <location filename="handballtab.cpp" line="30"/>
+        <source>Number of Periods:</source>
+        <translation>Number of Periods:</translation>
+    </message>
+    <message>
+        <location filename="handballtab.cpp" line="31"/>
+        <source>Regular Time [min]:</source>
+        <translation>Regular Time [min]:</translation>
+    </message>
+</context>
+<context>
     <name>HandballController</name>
     <message>
-        <location filename="handballcontroller.cpp" line="160"/>
+        <location filename="handballcontroller.cpp" line="170"/>
         <source>Timeout</source>
         <translation>Timeout</translation>
     </message>
     <message>
-        <location filename="handballcontroller.cpp" line="163"/>
-        <source>Score</source>
-        <translation>Score</translation>
-    </message>
-    <message>
-        <location filename="handballcontroller.cpp" line="166"/>
-        <source>Period</source>
+        <location filename="handballcontroller.cpp" line="176"/>
+        <source>Periodo</source>
         <translation>Period</translation>
     </message>
     <message>
-        <source>Nuovo
-Periodo</source>
-        <translation type="vanished">New
-Period</translation>
-    </message>
-    <message>
-        <source>Nuova
-Partita</source>
-        <translation type="vanished">New
-Game</translation>
-    </message>
-    <message>
-        <source>Cambio
-Campo</source>
-        <translation type="vanished">Field
-XChange</translation>
-    </message>
-    <message>
-        <location filename="handballcontroller.cpp" line="446"/>
-        <location filename="handballcontroller.cpp" line="448"/>
-        <location filename="handballcontroller.cpp" line="450"/>
-        <source>Avvia</source>
-        <translation>Start</translation>
-    </message>
-    <message>
-        <location filename="handballcontroller.cpp" line="617"/>
-        <location filename="handballcontroller.cpp" line="682"/>
-        <location filename="handballcontroller.cpp" line="716"/>
+        <location filename="handballcontroller.cpp" line="679"/>
+        <location filename="handballcontroller.cpp" line="747"/>
+        <location filename="handballcontroller.cpp" line="784"/>
         <source>Handball Controller</source>
         <translation>Handball Controller</translation>
     </message>
     <message>
-        <location filename="handballcontroller.cpp" line="618"/>
+        <location filename="handballcontroller.cpp" line="680"/>
         <source>Vuoi davvero iniziare un nuovo Periodo ?</source>
         <translation>Start a New Period ?</translation>
     </message>
     <message>
-        <source>Vuoi davvero azzerare tutto ?</source>
-        <translation type="vanished">Really Clear All ?</translation>
+        <location filename="handballcontroller.cpp" line="173"/>
+        <source>Punteggio</source>
+        <translation>Score</translation>
     </message>
     <message>
-        <location filename="handballcontroller.cpp" line="321"/>
-        <location filename="handballcontroller.cpp" line="687"/>
+        <location filename="handballcontroller.cpp" line="328"/>
+        <location filename="handballcontroller.cpp" line="752"/>
         <source>Locali</source>
         <translation>Home</translation>
     </message>
     <message>
-        <location filename="handballcontroller.cpp" line="322"/>
-        <location filename="handballcontroller.cpp" line="688"/>
+        <location filename="handballcontroller.cpp" line="329"/>
+        <location filename="handballcontroller.cpp" line="753"/>
         <source>Ospiti</source>
         <translation>Guests</translation>
     </message>
     <message>
-        <location filename="handballcontroller.cpp" line="683"/>
+        <location filename="handballcontroller.cpp" line="748"/>
         <source>Iniziare una Nuova Partita ?</source>
         <translation>Start New Game ?</translation>
     </message>
     <message>
-        <location filename="handballcontroller.cpp" line="717"/>
+        <location filename="handballcontroller.cpp" line="785"/>
         <source>Scambiare il campo delle squadre ?</source>
         <translation>Exchange Team Position ?</translation>
     </message>
@@ -243,12 +271,12 @@ XChange</translation>
         <translation>Close</translation>
     </message>
     <message>
-        <location filename="panelconfigurator.cpp" line="14"/>
+        <location filename="panelconfigurator.cpp" line="20"/>
         <source>Normale</source>
         <translation>Normal</translation>
     </message>
     <message>
-        <location filename="panelconfigurator.cpp" line="15"/>
+        <location filename="panelconfigurator.cpp" line="21"/>
         <source>Riflesso</source>
         <translation>Reflected</translation>
     </message>
@@ -256,230 +284,140 @@ XChange</translation>
 <context>
     <name>ScoreController</name>
     <message>
-        <location filename="scorecontroller.cpp" line="252"/>
+        <location filename="scorecontroller.cpp" line="266"/>
         <source>Connessione Assente</source>
         <translation>Network Connection Absent</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="253"/>
+        <location filename="scorecontroller.cpp" line="267"/>
         <source>Connettiti alla rete e ritenta</source>
         <translation>Connect to the Network and Retry</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="433"/>
+        <location filename="scorecontroller.cpp" line="495"/>
         <source>Volley Controller</source>
         <translation>Volley Controller</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="434"/>
+        <location filename="scorecontroller.cpp" line="496"/>
         <source>Impossibile aprire il file %1: %2.</source>
         <translation>Unable to Open File %1: %2.</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="567"/>
+        <location filename="scorecontroller.cpp" line="649"/>
         <source>Vuoi spegnere anche i pannelli ?</source>
         <translation>Switch Off The Score Panels ?</translation>
     </message>
     <message>
-        <source>Avvia
-Spot</source>
-        <translation type="vanished">Start
-Spot</translation>
+        <location filename="scorecontroller.cpp" line="883"/>
+        <source>Socket disconnection</source>
+        <translation>Socket disconnection</translation>
     </message>
     <message>
-        <source>Avvia
-Spot Loop</source>
-        <translation type="vanished">Start
-Spot Loop</translation>
-    </message>
-    <message>
-        <location filename="scorecontroller.cpp" line="768"/>
-        <source>Timeout in connection</source>
-        <translation>Timeout in connection</translation>
-    </message>
-    <message>
-        <source>Spegni %1
-Tabellone</source>
-        <translation type="vanished">Switch Off
-%1 Panel</translation>
-    </message>
-    <message>
-        <source>Avvia
-Spot Singolo</source>
-        <translation type="vanished">Start
-Single Spot</translation>
-    </message>
-    <message>
-        <source>Avvia
-Slide Show</source>
-        <translation type="vanished">Start
-Slide Show</translation>
-    </message>
-    <message>
-        <source>Avvia
-Live Camera</source>
-        <translation type="vanished">Start
-Live Camera</translation>
-    </message>
-    <message>
-        <source>Spegni %1
-Tabelloni</source>
-        <translation type="vanished">Switch Off
-%1 Panels</translation>
-    </message>
-    <message>
-        <source>Controlo
-Tabelloni</source>
-        <translation type="vanished">Score Panels
-Control</translation>
-    </message>
-    <message>
-        <source>Setup
-Generale</source>
-        <translation type="vanished">General
-Setup</translation>
-    </message>
-    <message>
-        <source>Avvia</source>
-        <translation type="vanished">Start</translation>
-    </message>
-    <message>
-        <source>Chiudi
-Spot</source>
-        <translation type="vanished">Stop
-Spot</translation>
-    </message>
-    <message>
-        <source>Chiudi
-Spot Loop</source>
-        <translation type="vanished">Stop
-Spot Loop</translation>
-    </message>
-    <message>
-        <source>Chiudi
-Live Camera</source>
-        <translation type="vanished">Stop Live
-Camera</translation>
-    </message>
-    <message>
-        <source>Chiudi
-Slideshow</source>
-        <translation type="vanished">Stop
-Slide Show</translation>
-    </message>
-    <message>
-        <location filename="scorecontroller.cpp" line="1093"/>
+        <location filename="scorecontroller.cpp" line="1239"/>
         <source>ScoreController</source>
         <translation>ScoreController</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="1094"/>
+        <location filename="scorecontroller.cpp" line="1240"/>
         <source>Vuoi Spegnere i Tabelloni ?</source>
         <translation>Switch Off Score Panels ?</translation>
     </message>
+</context>
+<context>
+    <name>SportSelector</name>
     <message>
-        <location filename="scorecontroller.cpp" line="1128"/>
-        <location filename="scorecontroller.cpp" line="1131"/>
-        <source>Slide Dir</source>
-        <translation>Slide Dir</translation>
+        <location filename="SportSelector.cpp" line="16"/>
+        <source>Italiano</source>
+        <translation>Italian</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="1157"/>
-        <location filename="scorecontroller.cpp" line="1160"/>
-        <source>Spot Dir</source>
-        <translation>Spot Dir</translation>
+        <location filename="SportSelector.cpp" line="35"/>
+        <location filename="SportSelector.cpp" line="146"/>
+        <source>Avvia</source>
+        <translation>Start</translation>
+    </message>
+    <message>
+        <location filename="SportSelector.cpp" line="36"/>
+        <location filename="SportSelector.cpp" line="147"/>
+        <source>Esci</source>
+        <translation>Exit</translation>
     </message>
 </context>
 <context>
     <name>VolleyController</name>
     <message>
-        <location filename="volleycontroller.cpp" line="303"/>
-        <location filename="volleycontroller.cpp" line="777"/>
+        <location filename="volleycontroller.cpp" line="278"/>
+        <location filename="volleycontroller.cpp" line="839"/>
         <source>Locali</source>
         <translation>Home</translation>
     </message>
     <message>
-        <location filename="volleycontroller.cpp" line="304"/>
-        <location filename="volleycontroller.cpp" line="778"/>
+        <location filename="volleycontroller.cpp" line="279"/>
+        <location filename="volleycontroller.cpp" line="840"/>
         <source>Ospiti</source>
         <translation>Guests</translation>
     </message>
     <message>
-        <location filename="volleycontroller.cpp" line="163"/>
+        <location filename="volleycontroller.cpp" line="172"/>
         <source>Timeout</source>
         <translation>Timeout</translation>
     </message>
     <message>
-        <location filename="volleycontroller.cpp" line="166"/>
+        <location filename="volleycontroller.cpp" line="175"/>
         <source>Set Vinti</source>
         <translation>Set Win</translation>
     </message>
     <message>
-        <location filename="volleycontroller.cpp" line="169"/>
+        <location filename="volleycontroller.cpp" line="178"/>
         <source>Servizio</source>
         <translation>Service</translation>
     </message>
     <message>
-        <location filename="volleycontroller.cpp" line="773"/>
+        <location filename="volleycontroller.cpp" line="835"/>
         <source>Iniziare una Nuova Partita ?</source>
         <translation>Start New Game ?</translation>
     </message>
     <message>
-        <location filename="volleycontroller.cpp" line="145"/>
-        <location filename="volleycontroller.cpp" line="172"/>
+        <location filename="volleycontroller.cpp" line="154"/>
+        <location filename="volleycontroller.cpp" line="181"/>
         <source>Punti</source>
         <translation>Points</translation>
     </message>
     <message>
-        <source>Nuovo
-Set</source>
-        <translation type="vanished">New
-Set</translation>
-    </message>
-    <message>
-        <source>Nuova
-Partita</source>
-        <translation type="vanished">New
-Game</translation>
-    </message>
-    <message>
-        <source>Cambio
-Campo</source>
-        <translation type="vanished">Field
-XChange</translation>
-    </message>
-    <message>
-        <source>Set</source>
-        <translation type="vanished">Set</translation>
-    </message>
-    <message>
-        <source>Partita</source>
-        <translation type="vanished">Game</translation>
-    </message>
-    <message>
-        <source>Campo</source>
-        <translation type="vanished">Field</translation>
-    </message>
-    <message>
-        <location filename="volleycontroller.cpp" line="648"/>
-        <location filename="volleycontroller.cpp" line="727"/>
-        <location filename="volleycontroller.cpp" line="772"/>
+        <location filename="volleycontroller.cpp" line="704"/>
+        <location filename="volleycontroller.cpp" line="786"/>
+        <location filename="volleycontroller.cpp" line="834"/>
         <source>Volley_Controller</source>
         <translation>Volley_Controller</translation>
     </message>
     <message>
-        <location filename="volleycontroller.cpp" line="649"/>
+        <location filename="volleycontroller.cpp" line="705"/>
         <source>Scambiare il campo delle squadre ?</source>
         <translation>Exchange Team Positions ?</translation>
     </message>
     <message>
-        <location filename="volleycontroller.cpp" line="728"/>
+        <location filename="volleycontroller.cpp" line="787"/>
         <source>Vuoi davvero iniziare un nuovo Set ?</source>
         <translation>Start a New Set ?</translation>
     </message>
+</context>
+<context>
+    <name>VolleyTab</name>
     <message>
-        <source>Vuoi davvero azzerare tutto ?</source>
-        <translation type="vanished">Really Clear All ?</translation>
+        <location filename="volleytab.cpp" line="28"/>
+        <source>Max Timeouts:</source>
+        <translation>Max Timeouts:</translation>
+    </message>
+    <message>
+        <location filename="volleytab.cpp" line="29"/>
+        <source>Max Sets:</source>
+        <translation>Max Sets:</translation>
+    </message>
+    <message>
+        <location filename="volleytab.cpp" line="30"/>
+        <source>Timeout sec:</source>
+        <translation>Timeout sec:</translation>
     </message>
 </context>
 </TS>
