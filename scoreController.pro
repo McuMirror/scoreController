@@ -40,6 +40,10 @@ SOURCES += main.cpp\
     baskettab.cpp \
     handballtab.cpp
 
+build_nr.commands = ../scoreController/build_number.sh
+build_nr.depends = FORCE
+QMAKE_EXTRA_TARGETS += build_nr
+PRE_TARGETDEPS += build_nr
 
 HEADERS  += scorecontroller.h \
     clientlistdialog.h \
@@ -60,7 +64,8 @@ HEADERS  += scorecontroller.h \
     directorytab.h \
     volleytab.h \
     baskettab.h \
-    handballtab.h
+    handballtab.h \
+    build_number.h
 
 RESOURCES += scorecontroller.qrc
 
@@ -86,6 +91,8 @@ DISTFILES += \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat \
-    scoreController_en.ts
+    scoreController_en.ts \
+    build_number.sh \
+    build_number
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
