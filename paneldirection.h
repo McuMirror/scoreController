@@ -1,10 +1,10 @@
-#ifndef PANELORIENTATION_H
-#define PANELORIENTATION_H
+#ifndef PANELDIRECTION_H
+#define PANELDIRECTION_H
 
 
-enum class PanelOrientation {
+enum class PanelDirection {
                               Normal    = 0,
                               Reflected = 1
                             };
 
-#endif // PANELORIENTATION_H
+#endif // PANELDIRECTION_H

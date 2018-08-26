@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef CLIENTLISTDIALOG_H
 #define CLIENTLISTDIALOG_H
 
-#include "panelorientation.h"
+#include "paneldirection.h"
 #include "panelconfigurator.h"
 
 #include <QObject>
@@ -41,7 +41,7 @@ public:
     ~ClientListDialog();
     int exec();
     void remotePanTiltReceived(int newPan, int newTilt);
-    void remoteOrientationReceived(PanelOrientation currentOrientation);
+    void remoteDirectionReceived(PanelDirection currentDirection);
     void remoteScoreOnlyValueReceived(bool bScoreOnly);
 
 public slots:
@@ -49,9 +49,8 @@ public slots:
     void onSetNewTilt(int newTilt);
     void onStartCamera();
     void onCloseCamera();
-    void onChangePanelOrientation(PanelOrientation newOrientation);
+    void onChangePanelDirection(PanelDirection newDirection);
     void onChangeScoreOnly(bool bScoreOnly);
-    void onConfiguratorClosing();
 
 signals:
     void enableVideo(QString sIpAdress);
@@ -59,9 +58,9 @@ signals:
     void setPanTilt(int newPan, int newTilt);
     void newPanValue(QString sClientIp, int newPan);
     void newTiltValue(QString sClientIp, int newTilt);
-    void getOrientation(QString sIpAdress);
+    void getDirection(QString sIpAdress);
     void getScoreOnly(QString sIpAdress);
-    void changeOrientation(QString sIpAdress, PanelOrientation newOrientation);
+    void changeDirection(QString sIpAdress, PanelDirection newDirection);
     void changeScoreOnly(QString sIpAdress, bool bScoreOnly);
 
 private slots:
@@ -70,7 +69,7 @@ private slots:
 private:
     QGroupBox* createClientListBox();
     QGroupBox* createPanTiltBox();
-    QGroupBox* createOrientationBox();
+    QGroupBox* createDirectionBox();
 
 private:
     QWidget           *pMyParent;

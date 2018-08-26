@@ -45,7 +45,9 @@ SOURCES += main.cpp\
     volleytab.cpp \
     baskettab.cpp \
     handballtab.cpp \
-    sportSelector.cpp
+    sportSelector.cpp \
+    paneltab.cpp \
+    cameratab.cpp
 
 HEADERS  += scorecontroller.h \
     clientlistdialog.h \
@@ -57,7 +59,6 @@ HEADERS  += scorecontroller.h \
     button.h \
     edit.h \
     radioButton.h \
-    panelorientation.h \
     panelconfigurator.h \
     handballcontroller.h \
     gamedirector.h \
@@ -67,7 +68,10 @@ HEADERS  += scorecontroller.h \
     baskettab.h \
     handballtab.h \
     build_number.h \
-    sportSelector.h
+    sportSelector.h \
+    paneltab.h \
+    cameratab.h \
+    paneldirection.h
 
 RESOURCES += scorecontroller.qrc
 

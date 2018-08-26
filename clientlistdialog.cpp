@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "clientlistdialog.h"
+#include "utility.h"
 
 #include <QGridLayout>
 #include <QVBoxLayout>
@@ -38,6 +39,9 @@ ClientListDialog::ClientListDialog(QWidget* parent)
     : QDialog(parent)
     , pMyParent(parent)
 {
+    connect(&clientListWidget, SIGNAL(itemClicked(QListWidgetItem*)),
+            this, SLOT(onClientSelected(QListWidgetItem*)));
+
     auto*  mainLayout = new QGridLayout();
     mainLayout->addWidget(createClientListBox(),  0,  0, 10, 10);
     setLayout(mainLayout);
@@ -45,6 +49,7 @@ ClientListDialog::ClientListDialog(QWidget* parent)
             this, SLOT(onCloseCamera()));
 
     pConfigurator = new PanelConfigurator(this);
+    // CameraTab forwarded signals
     connect(pConfigurator, SIGNAL(newPanValue(int)),
             this, SLOT(onSetNewPan(int)));
     connect(pConfigurator, SIGNAL(startCamera()),
@@ -53,12 +58,11 @@ ClientListDialog::ClientListDialog(QWidget* parent)
             this, SLOT(onCloseCamera()));
     connect(pConfigurator, SIGNAL(newTiltValue(int)),
             this, SLOT(onSetNewTilt(int)));
-    connect(pConfigurator, SIGNAL(changeOrientation(PanelOrientation)),
-            this, SLOT(onChangePanelOrientation(PanelOrientation)));
-    connect(pConfigurator, SIGNAL(scoreOnly(bool)),
+    // PanelTab forwarded signals
+    connect(pConfigurator, SIGNAL(changeDirection(PanelDirection)),
+            this, SLOT(onChangePanelDirection(PanelDirection)));
+    connect(pConfigurator, SIGNAL(changeScoreOnly(bool)),
             this, SLOT(onChangeScoreOnly(bool)));
-    connect(pConfigurator, SIGNAL(closingDialog()),
-            this, SLOT(onConfiguratorClosing()));
 }
 
 
@@ -80,8 +84,6 @@ ClientListDialog::createClientListBox() {
     clientListBox->setTitle(tr("Client Connessi"));
     clientListWidget.setFont(QFont("Arial", 24));
     clientListLayout->addWidget(&clientListWidget, 0, 0, 6, 3);
-    connect(&clientListWidget, SIGNAL(itemClicked(QListWidgetItem*)),
-            this, SLOT(onClientSelected(QListWidgetItem*)));
     clientListLayout->addWidget(closeButton, 6, 1, 1, 1);
     clientListBox->setLayout(clientListLayout);
     return clientListBox;
@@ -126,25 +128,17 @@ ClientListDialog::onCloseCamera() {
 
 
 /*!
- * \brief ClientListDialog::onConfiguratorClosing
- */
-void
-ClientListDialog::onConfiguratorClosing() {
-    emit disableVideo();
-    show();
-}
-
-
-/*!
  * \brief ClientListDialog::onClientSelected
  * \param selectedClient
  */
 void
 ClientListDialog::onClientSelected(QListWidgetItem* selectedClient) {
     emit disableVideo();
-    pConfigurator->show();
     sSelectedClient = selectedClient->text();
-    emit getOrientation(sSelectedClient);
+
+    pConfigurator->setClient(sSelectedClient);
+    pConfigurator->show();
+    emit getDirection(sSelectedClient);
     emit getScoreOnly(sSelectedClient);
 }
 
@@ -181,23 +175,22 @@ ClientListDialog::remotePanTiltReceived(int newPan, int newTilt) {
 
 
 /*!
- * \brief ClientListDialog::remoteOrientationReceived
- * \param currentOrientation
+ * \brief ClientListDialog::remoteDirectionReceived
+ * \param currentDirection
  */
 void
-ClientListDialog::remoteOrientationReceived(PanelOrientation currentOrientation) {
-    auto index = static_cast<int>(currentOrientation);
-    pConfigurator->SetCurrrentOrientaton(index);
+ClientListDialog::remoteDirectionReceived(PanelDirection currentDirection) {
+    pConfigurator->SetCurrrentOrientaton(currentDirection);
 }
 
 
 /*!
- * \brief ClientListDialog::onChangePanelOrientation
- * \param newOrientation
+ * \brief ClientListDialog::onChangePanelDirection
+ * \param newDirection
  */
 void
-ClientListDialog::onChangePanelOrientation(PanelOrientation newOrientation) {
-    emit changeOrientation(sSelectedClient, newOrientation);
+ClientListDialog::onChangePanelDirection(PanelDirection newDirection) {
+    emit changeDirection(sSelectedClient, newDirection);
 }
 
 
@@ -217,6 +210,12 @@ ClientListDialog::remoteScoreOnlyValueReceived(bool bScoreOnly) {
  */
 void
 ClientListDialog::onChangeScoreOnly(bool bScoreOnly) {
+    #ifdef LOG_VERBOSE
+        logMessage(Q_NULLPTR,
+                   Q_FUNC_INFO,
+                   QString("ScoreOnly: %2")
+                   .arg(bScoreOnly));
+    #endif
     emit changeScoreOnly(sSelectedClient, bScoreOnly);
 }
 

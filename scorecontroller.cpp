@@ -128,10 +128,10 @@ ScoreController::ScoreController(int myPanelType, QWidget *parent)
     connect(pClientListDialog, SIGNAL(newTiltValue(QString,int)),
             this, SLOT(onSetNewTiltValue(QString,int)));
     // Panel orientation management
-    connect(pClientListDialog, SIGNAL(getOrientation(QString)),
-            this, SLOT(onGetPanelOrientation(QString)));
-    connect(pClientListDialog, SIGNAL(changeOrientation(QString,PanelOrientation)),
-            this, SLOT(onChangePanelOrientation(QString,PanelOrientation)));
+    connect(pClientListDialog, SIGNAL(getDirection(QString)),
+            this, SLOT(onGetPanelDirection(QString)));
+    connect(pClientListDialog, SIGNAL(changeDirection(QString,PanelDirection)),
+            this, SLOT(onChangePanelDirection(QString,PanelDirection)));
     // Score Only Panel management
     connect(pClientListDialog, SIGNAL(getScoreOnly(QString)),
             this, SLOT(onGetIsPanelScoreOnly(QString)));
@@ -465,6 +465,13 @@ ScoreController::onSetNewTiltValue(const QString& sClientIp, int newTilt) {
  */
 void
 ScoreController::onSetScoreOnly(const QString& sClientIp, bool bScoreOnly) {
+#ifdef LOG_VERBOSE
+    logMessage(logFile,
+               Q_FUNC_INFO,
+               QString("Client %1 ScoreOnly: %2")
+               .arg(sClientIp)
+               .arg(bScoreOnly));
+#endif
     QHostAddress hostAddress(sClientIp);
     for(int i=0; i<connectionList.count(); i++) {
         if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
@@ -768,16 +775,16 @@ ScoreController::onProcessTextMessage(QString sMessage) {
     sToken = XML_Parse(sMessage, "orientation");
     if(sToken != sNoData) {
         bool ok;
-        int iOrientation = sToken.toInt(&ok);
+        int iDirection = sToken.toInt(&ok);
         if(!ok) {
             logMessage(logFile,
                        Q_FUNC_INFO,
-                       QString("Illegal orientation received: %1")
+                       QString("Illegal Direction received: %1")
                        .arg(sToken));
             return;
         }
-        auto orientation = static_cast<PanelOrientation>(iOrientation);
-        pClientListDialog->remoteOrientationReceived(orientation);
+        auto direction = static_cast<PanelDirection>(iDirection);
+        pClientListDialog->remoteDirectionReceived(direction);
     }// orientation
 
     // The Panel communicates if it shows only the score
@@ -788,12 +795,12 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         if(!ok) {
             logMessage(logFile,
                        Q_FUNC_INFO,
-                       QString("Illegal orientation received: %1")
+                       QString("Illegal Score Only value received: %1")
                        .arg(sToken));
             return;
         }
         pClientListDialog->remoteScoreOnlyValueReceived(isScoreOnly);
-    }// orientation
+    }// isScoreOnly
 }
 
 
@@ -1330,11 +1337,11 @@ ScoreController::FormatStatusMsg() {
 
 
 /*!
- * \brief ScoreController::onGetPanelOrientation
+ * \brief ScoreController::onGetPanelDirection
  * \param sClientIp
  */
 void
-ScoreController::onGetPanelOrientation(const QString& sClientIp) {
+ScoreController::onGetPanelDirection(const QString& sClientIp) {
     QHostAddress hostAddress(sClientIp);
     for(int i=0; i<connectionList.count(); i++) {
         if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
@@ -1364,17 +1371,24 @@ ScoreController::onGetIsPanelScoreOnly(const QString& sClientIp) {
 
 
 /*!
- * \brief ScoreController::onChangePanelOrientation
+ * \brief ScoreController::onChangePanelDirection
  * \param sClientIp
- * \param orientation
+ * \param direction
  */
 void
-ScoreController::onChangePanelOrientation(const QString& sClientIp, PanelOrientation orientation) {
+ScoreController::onChangePanelDirection(const QString& sClientIp, PanelDirection direction) {
+#ifdef LOG_VERBOSE
+    logMessage(logFile,
+               Q_FUNC_INFO,
+               QString("Client %1 Direction %2")
+               .arg(sClientIp)
+               .arg(static_cast<int>(direction)));
+#endif
     QHostAddress hostAddress(sClientIp);
     for(int i=0; i<connectionList.count(); i++) {
         if(connectionList.at(i).clientAddress.toIPv4Address() == hostAddress.toIPv4Address()) {
             QString sMessage = QString("<setOrientation>%1</setOrientation>")
-                                       .arg(static_cast<int>(orientation));
+                                       .arg(static_cast<int>(direction));
             SendToOne(connectionList.at(i).pClientSocket, sMessage);
             return;
         }

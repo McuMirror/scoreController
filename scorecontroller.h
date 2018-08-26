@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSettings>
 
 #include "fileserver.h"
-#include "panelorientation.h"
+#include "paneldirection.h"
 #include "utility.h"
 
 
@@ -79,8 +79,8 @@ protected slots:
     void onSetNewPanValue(const QString& sClientIp, int newPan);
     void onSetNewTiltValue(const QString& sClientIp, int newTilt);
 
-    void onGetPanelOrientation(const QString& sClientIp);
-    void onChangePanelOrientation(const QString& sClientIp, PanelOrientation orientation);
+    void onGetPanelDirection(const QString& sClientIp);
+    void onChangePanelDirection(const QString& sClientIp, PanelDirection direction);
 
     void onGetIsPanelScoreOnly(const QString& sClientIp);
     void onSetScoreOnly(const QString& sClientIp, bool bScoreOnly);
