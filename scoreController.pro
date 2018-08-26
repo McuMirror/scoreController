@@ -96,6 +96,8 @@ DISTFILES += \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat \
     scoreController_en.ts \
-    build_number.sh
+    build_number.sh \
+    build_number.sh \
+    build_number
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
