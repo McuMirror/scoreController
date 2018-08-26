@@ -31,8 +31,8 @@ PanelConfigurator::PanelConfigurator(QWidget *parent)
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
 
-    tabWidget->addTab(pPanelTab,  tr("Panel Control"));
-    iCameraTab = tabWidget->addTab(pCameraTab, tr("Camera Control"));
+    tabWidget->addTab(pPanelTab,  tr("Controllo Pannello"));
+    iCameraTab = tabWidget->addTab(pCameraTab, tr("Controllo Telecamera"));
     connect(tabWidget, SIGNAL(currentChanged(int)),
             this, SLOT(onChangedTab(int)));
 
@@ -40,9 +40,6 @@ PanelConfigurator::PanelConfigurator(QWidget *parent)
     mainLayout->addWidget(tabWidget);
     mainLayout->addWidget(buttonBox);
     setLayout(mainLayout);
-
-    connect(this, SIGNAL(finished(int)),
-            this, SLOT(onFinished(int)));
 }
 
 
@@ -109,12 +106,4 @@ PanelConfigurator::onChangePanValue(int newValue) {
     emit newPanValue(newValue);
 }
 
-
-void
-PanelConfigurator::onFinished(int iResult) {
-    if(iResult==QDialog::Accepted) {
-    }
-    else {
-    }
-}
 

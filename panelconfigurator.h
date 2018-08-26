@@ -41,8 +41,6 @@ public slots:
     // CameraTab events
     void onChangeTiltValue(int);
     void onChangePanValue(int);
-    //
-    void onFinished(int iResult);
 
 private slots:
 

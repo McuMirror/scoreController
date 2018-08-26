@@ -110,12 +110,12 @@
 <context>
     <name>ClientListDialog</name>
     <message>
-        <location filename="clientlistdialog.cpp" line="77"/>
+        <location filename="clientlistdialog.cpp" line="81"/>
         <source>Chiudi</source>
         <translation>Close</translation>
     </message>
     <message>
-        <location filename="clientlistdialog.cpp" line="80"/>
+        <location filename="clientlistdialog.cpp" line="84"/>
         <source>Client Connessi</source>
         <translation>Connected Clients</translation>
     </message>
@@ -241,44 +241,41 @@
 <context>
     <name>PanelConfigurator</name>
     <message>
-        <location filename="panelconfigurator.ui" line="14"/>
-        <source>Panel Configurator</source>
-        <translation>Panel Configurator</translation>
+        <location filename="panelconfigurator.cpp" line="34"/>
+        <source>Controllo Pannello</source>
+        <oldsource>Panel Control</oldsource>
+        <translation>Panel Control</translation>
     </message>
     <message>
-        <location filename="panelconfigurator.ui" line="30"/>
-        <source>Pannello</source>
-        <translation>Panel</translation>
+        <location filename="panelconfigurator.cpp" line="35"/>
+        <source>Controllo Telecamera</source>
+        <translation>Camera Control</translation>
     </message>
+</context>
+<context>
+    <name>PanelTab</name>
     <message>
-        <location filename="panelconfigurator.ui" line="52"/>
+        <location filename="paneltab.cpp" line="10"/>
         <source>Orientamento</source>
-        <translation>Orientation</translation>
+        <translation>Direction</translation>
     </message>
     <message>
-        <location filename="panelconfigurator.ui" line="71"/>
-        <source>Mostra solo il punteggio</source>
-        <translation>Show Score Only</translation>
-    </message>
-    <message>
-        <location filename="panelconfigurator.ui" line="77"/>
-        <source>Camera</source>
-        <translation>Camera</translation>
-    </message>
-    <message>
-        <location filename="panelconfigurator.ui" line="158"/>
-        <source>Chiudi</source>
-        <translation>Close</translation>
-    </message>
-    <message>
-        <location filename="panelconfigurator.cpp" line="20"/>
+        <location filename="paneltab.cpp" line="11"/>
+        <location filename="paneltab.cpp" line="35"/>
         <source>Normale</source>
         <translation>Normal</translation>
     </message>
     <message>
-        <location filename="panelconfigurator.cpp" line="21"/>
+        <location filename="paneltab.cpp" line="12"/>
+        <location filename="paneltab.cpp" line="38"/>
+        <location filename="paneltab.cpp" line="56"/>
         <source>Riflesso</source>
         <translation>Reflected</translation>
+    </message>
+    <message>
+        <location filename="paneltab.cpp" line="17"/>
+        <source>Mostra solo il punteggio</source>
+        <translation>Show Score Only</translation>
     </message>
 </context>
 <context>
@@ -294,32 +291,32 @@
         <translation>Connect to the Network and Retry</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="495"/>
+        <location filename="scorecontroller.cpp" line="502"/>
         <source>Volley Controller</source>
         <translation>Volley Controller</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="496"/>
+        <location filename="scorecontroller.cpp" line="503"/>
         <source>Impossibile aprire il file %1: %2.</source>
         <translation>Unable to Open File %1: %2.</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="649"/>
+        <location filename="scorecontroller.cpp" line="656"/>
         <source>Vuoi spegnere anche i pannelli ?</source>
         <translation>Switch Off The Score Panels ?</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="883"/>
+        <location filename="scorecontroller.cpp" line="890"/>
         <source>Socket disconnection</source>
         <translation>Socket disconnection</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="1239"/>
+        <location filename="scorecontroller.cpp" line="1246"/>
         <source>ScoreController</source>
         <translation>ScoreController</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="1240"/>
+        <location filename="scorecontroller.cpp" line="1247"/>
         <source>Vuoi Spegnere i Tabelloni ?</source>
         <translation>Switch Off Score Panels ?</translation>
     </message>
@@ -327,19 +324,19 @@
 <context>
     <name>SportSelector</name>
     <message>
-        <location filename="SportSelector.cpp" line="16"/>
+        <location filename="sportSelector.cpp" line="21"/>
         <source>Italiano</source>
         <translation>Italian</translation>
     </message>
     <message>
-        <location filename="SportSelector.cpp" line="35"/>
-        <location filename="SportSelector.cpp" line="146"/>
+        <location filename="sportSelector.cpp" line="40"/>
+        <location filename="sportSelector.cpp" line="188"/>
         <source>Avvia</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="SportSelector.cpp" line="36"/>
-        <location filename="SportSelector.cpp" line="147"/>
+        <location filename="sportSelector.cpp" line="41"/>
+        <location filename="sportSelector.cpp" line="189"/>
         <source>Esci</source>
         <translation>Exit</translation>
     </message>

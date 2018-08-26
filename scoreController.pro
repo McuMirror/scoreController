@@ -78,8 +78,7 @@ RESOURCES += scorecontroller.qrc
 CONFIG += mobility
 MOBILITY = 
 
-FORMS    += \
-    panelconfigurator.ui
+FORMS    +=
 
 DISTFILES += \
     android/AndroidManifest.xml \
