@@ -83,10 +83,11 @@ ScoreController::ScoreController(int myPanelType, QWidget *parent)
 
     // Initialize some useful dialogs...
     pGeneralSetupDialog = new GeneralSetupDialog(panelType, this);
-    pGeneralSetupDialog->setWindowFlags(Qt::Window);
     pClientListDialog = new ClientListDialog(this);
+#ifdef Q_OS_ANDROID
+    pGeneralSetupDialog->setWindowFlags(Qt::Window);
     pClientListDialog->setWindowFlags(Qt::Window);
-
+#endif
     // The click sound for button press.
     // To have an acoustic feedback on touch screen tablets.
     pButtonClick = new QSoundEffect(this);

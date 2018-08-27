@@ -43,7 +43,9 @@ GameDirector::GameDirector(int &argc, char **argv)
                QString(" Starting"));
 #endif
     pSelector = new SportSelector(Q_NULLPTR);
+#ifdef Q_OS_ANDROID
     pSelector->setWindowFlags(Qt::Window);
+#endif
 }
 
 

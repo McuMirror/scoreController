@@ -116,7 +116,9 @@ DirectoryTab::onSelectSlideDir() {
     pGetDirDlg->setOptions(QFileDialog::ShowDirsOnly);
     pGetDirDlg->setFileMode(QFileDialog::Directory);
     pGetDirDlg->setViewMode(QFileDialog::List);
+#ifdef Q_OS_ANDROID
     pGetDirDlg->setWindowFlags(Qt::Window);
+#endif
     if(pGetDirDlg->exec() == QDialog::Accepted)
         sSlideDir = pGetDirDlg->directory().absolutePath();
     pGetDirDlg->deleteLater();
@@ -148,7 +150,9 @@ DirectoryTab::onSelectSpotDir() {
     pGetDirDlg->setOptions(QFileDialog::ShowDirsOnly);
     pGetDirDlg->setFileMode(QFileDialog::Directory);
     pGetDirDlg->setViewMode(QFileDialog::List);
+#ifdef Q_OS_ANDROID
     pGetDirDlg->setWindowFlags(Qt::Window);
+#endif
     if(pGetDirDlg->exec() == QDialog::Accepted)
         sSpotDir = pGetDirDlg->directory().absolutePath();
     pGetDirDlg->deleteLater();
