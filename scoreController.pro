@@ -30,7 +30,7 @@ QT += multimedia
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 
-# to Add a different Build number after a new Build
+# To add a different Build Number after a new Build
 build_nr.commands = ../scoreController/build_number.sh
 build_nr.depends = FORCE
 QMAKE_EXTRA_TARGETS += build_nr
@@ -111,9 +111,6 @@ DISTFILES += \
     android/build.gradle \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew.bat \
-    scoreController_en.ts \
-    build_number.sh \
-    build_number.sh \
-    build_number
+    scoreController_en.ts
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
