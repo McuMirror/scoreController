@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "build_number.h"
 
 
-
 /*!
  * \mainpage The Score Panels
  * \section intro Introduction
@@ -61,7 +60,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 int
 main(int argc, char *argv[]) {
     int iresult = 0;
-    //QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QString sVersion = QString("ver. 1.2 - build %1").arg(BUILD);
+    QApplication::setApplicationVersion(sVersion);
+
     // Create the main application
     auto* pApp = new GameDirector(argc, argv);
     // Start the event loop and waits unil exit() is called

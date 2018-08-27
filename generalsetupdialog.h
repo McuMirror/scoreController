@@ -10,7 +10,7 @@
 #include "volleytab.h"
 #include "baskettab.h"
 #include "handballtab.h"
-
+#include <QLabel>
 
 
 QT_FORWARD_DECLARE_CLASS(QDialogButtonBox)
@@ -50,6 +50,7 @@ public slots:
 private:
     QTabWidget       *tabWidget;
     QDialogButtonBox *buttonBox;
+    QLabel           *pStatusBar;
     DirectoryTab     *pDirectoryTab;
     VolleyTab        *pVolleyTab;
     BasketTab        *pBasketTab;

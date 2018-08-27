@@ -3,6 +3,10 @@
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QDir>
+#include <QApplication>
+#include <QLabel>
+#include <QFrame>
+
 #include "utility.h"
 
 
@@ -16,6 +20,11 @@ GeneralSetupDialog::GeneralSetupDialog(int PanelType, QWidget *parent)
     pVolleyTab   = Q_NULLPTR;
     pBasketTab   = Q_NULLPTR;
     pHandballTab = Q_NULLPTR;
+
+    QString statusMessage = QString("Score Controller %1")
+                            .arg(QApplication::applicationVersion());
+    pStatusBar = new QLabel(statusMessage);
+    pStatusBar->setFrameStyle(QFrame::Panel|QFrame::Sunken);
 
     connect(this, SIGNAL(finished(int)),
             this, SLOT(onFinished(int)));
@@ -48,6 +57,7 @@ GeneralSetupDialog::GeneralSetupDialog(int PanelType, QWidget *parent)
     auto *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(tabWidget);
     mainLayout->addWidget(buttonBox);
+    mainLayout->addWidget(pStatusBar);
     setLayout(mainLayout);
 }
 
