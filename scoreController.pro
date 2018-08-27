@@ -67,7 +67,6 @@ HEADERS  += scorecontroller.h \
     volleytab.h \
     baskettab.h \
     handballtab.h \
-    build_number.h \
     sportSelector.h \
     paneltab.h \
     cameratab.h \
