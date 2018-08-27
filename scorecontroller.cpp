@@ -1247,10 +1247,7 @@ ScoreController::onButtonShutdownClicked() {
  */
 void
 ScoreController::onButtonPanelControlClicked() {
-    hide();
-    pClientListDialog->setWindowFlags(Qt::Window);
     pClientListDialog->exec();
-    show();
 }
 
 

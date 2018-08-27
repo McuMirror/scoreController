@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
 #include "panelconfigurator.h"
-#include "ui_panelconfigurator.h"
 #include "utility.h"
 
 #include <QDialogButtonBox>
