@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QListWidgetItem>
 #include <QComboBox>
 #include <QMessageBox>
+#include <QAbstractItemView>
 
 
 /*!
@@ -39,6 +40,8 @@ ClientListDialog::ClientListDialog(QWidget* parent)
     : QDialog(parent)
     , pMyParent(parent)
 {
+    clientListWidget.setFont(QFont("Arial", 24));
+    clientListWidget.setSelectionMode(QAbstractItemView::SingleSelection);
     connect(&clientListWidget, SIGNAL(itemClicked(QListWidgetItem*)),
             this, SLOT(onClientSelected(QListWidgetItem*)));
 
@@ -49,6 +52,9 @@ ClientListDialog::ClientListDialog(QWidget* parent)
             this, SLOT(onCloseCamera()));
 
     pConfigurator = new PanelConfigurator(this);
+#ifdef Q_OS_ANDROID
+    pConfigurator->setWindowFlags(Qt::Window);
+#endif
     // CameraTab forwarded signals
     connect(pConfigurator, SIGNAL(newPanValue(int)),
             this, SLOT(onSetNewPan(int)));
@@ -82,7 +88,7 @@ ClientListDialog::createClientListBox() {
     connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(accept()));
 
     clientListBox->setTitle(tr("Client Connessi"));
-    clientListWidget.setFont(QFont("Arial", 24));
+
     clientListLayout->addWidget(&clientListWidget, 0, 0, 6, 3);
     clientListLayout->addWidget(closeButton, 6, 1, 1, 1);
     clientListBox->setLayout(clientListLayout);
