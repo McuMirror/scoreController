@@ -1,4 +1,4 @@
-bulid_number.h
+build_number.h
 *.pro.user
 gradle.properties*
 local.properties*
