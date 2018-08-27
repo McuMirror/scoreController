@@ -752,18 +752,6 @@ ScoreController::onProcessTextMessage(QString sMessage) {
         SendToOne(pClient, FormatStatusMsg());
     }// getStatus
 
-    // The Panel has closed the Spot Loop
-    sToken = XML_Parse(sMessage, "closed_spot_loop");
-    if(sToken != sNoData) {
-        myStatus = showPanel;
-        QPixmap pixmap(":/buttonIcons/PlaySpots.png");
-        QIcon ButtonIcon(pixmap);
-        startStopLoopSpotButton->setIcon(ButtonIcon);
-        startStopLoopSpotButton->setIconSize(pixmap.rect().size());
-        startStopSlideShowButton->setDisabled(false);
-        startStopLoopSpotButton->setDisabled(false);
-    }// closed_spot_loop
-
     // The Panel communicates the local Pan and Tilt values
     sToken = XML_Parse(sMessage, "pan_tilt");
     if(sToken != sNoData) {
