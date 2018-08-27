@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFrame>
 
 #include "utility.h"
+#include "build_number.h"
 
 
 /*!
@@ -39,8 +40,9 @@ GeneralSetupDialog::GeneralSetupDialog(int PanelType, QWidget *parent)
     pBasketTab   = Q_NULLPTR;
     pHandballTab = Q_NULLPTR;
 
-    QString statusMessage = QString("Score Controller %1")
-                            .arg(QApplication::applicationVersion());
+    QString statusMessage = QString("Score Controller ver. %1 - build: %2")
+                                    .arg(QApplication::applicationVersion())
+                                    .arg(BUILD);
     pStatusBar = new QLabel(statusMessage);
     pStatusBar->setFrameStyle(QFrame::Panel|QFrame::Sunken);
 

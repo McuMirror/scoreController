@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gamedirector.h"
-#include "build_number.h"
 
 
 /*!
@@ -60,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 int
 main(int argc, char *argv[]) {
     int iresult = 0;
-    QString sVersion = QString("ver. 1.2 - build %1").arg(BUILD);
+    QString sVersion = QString("1.2");
     QApplication::setApplicationVersion(sVersion);
 
     // Create the main application
