@@ -87,8 +87,7 @@ HEADERS  += scorecontroller.h \
     sportSelector.h \
     paneltab.h \
     cameratab.h \
-    paneldirection.h \
-    build_number.h
+    paneldirection.h
 
 RESOURCES += scorecontroller.qrc
 
