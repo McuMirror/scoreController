@@ -356,9 +356,9 @@ VolleyController::CreateGameButtons() {
     newSetButton  = new QPushButton(ButtonIcon, "");
     newSetButton->setIconSize(pixmap.rect().size());
 
-    gameButtonLayout->addWidget(newGameButton);
-    gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(newSetButton);
+    gameButtonLayout->addStretch();
+    gameButtonLayout->addWidget(newGameButton);
     gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(changeFieldButton);
     gameButtonLayout->addStretch();
