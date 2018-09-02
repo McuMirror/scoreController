@@ -29,13 +29,13 @@ QT += multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-
-# To add a different Build Number after a new Build
-build_nr.commands = ../scoreController/build_number.sh
-build_nr.depends = FORCE
-QMAKE_EXTRA_TARGETS += build_nr
-PRE_TARGETDEPS += build_nr
-
+linux {
+    # To add a different Build Number after a new Build
+    build_nr.commands = ../scoreController/build_number.sh
+    build_nr.depends = FORCE
+    QMAKE_EXTRA_TARGETS += build_nr
+    PRE_TARGETDEPS += build_nr
+}
 
 TARGET = scoreController
 TEMPLATE = app
