@@ -345,7 +345,7 @@ VolleyController::CreateGameButtons() {
     QIcon ButtonIcon(pixmap);
     changeFieldButton = new QPushButton(ButtonIcon, "");
     changeFieldButton->setIconSize(pixmap.rect().size());
-    changeFieldButton->setToolTip("Cambia Campo");
+    changeFieldButton->setToolTip("Inverti Campo");
 
     pixmap.load(":/buttonIcons/New-Game-Volley.png");
     ButtonIcon.addPixmap(pixmap);
