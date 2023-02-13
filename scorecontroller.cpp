@@ -756,7 +756,7 @@ ScoreController::onProcessTextMessage(QString sMessage) {
     // The Panel communicates the local Pan and Tilt values
     sToken = XML_Parse(sMessage, "pan_tilt");
     if(sToken != sNoData) {
-        QStringList values = QStringList(sToken.split(",",QString::SkipEmptyParts));
+        QStringList values = QStringList(sToken.split(",",Qt::SkipEmptyParts));
         pClientListDialog->remotePanTiltReceived(values.at(0).toInt(), values.at(1).toInt());
     }// pan_tilt
 
@@ -976,8 +976,8 @@ ScoreController::onNewConnection(QWebSocket *pClient) {
 void
 ScoreController::onClientDisconnected() {
     auto* pClient = qobject_cast<QWebSocket *>(sender());
-    QString sDiconnectedAddress = pClient->peerAddress().toString();
 #ifdef LOG_VERBOSE
+    QString sDiconnectedAddress = pClient->peerAddress().toString();
     logMessage(logFile,
                Q_FUNC_INFO,
                QString("%1 disconnected because %2. Close code: %3")
@@ -1016,31 +1016,37 @@ ScoreController::CreateSpotButtons() {
     QIcon ButtonIcon(pixmap);
     startStopLoopSpotButton = new QPushButton(ButtonIcon, "");
     startStopLoopSpotButton->setIconSize(pixmap.rect().size());
+    startStopLoopSpotButton->setToolTip("Start/Stop Spot Loop");
 
     pixmap.load(":/buttonIcons/PlaySlides.png");
     ButtonIcon.addPixmap(pixmap);
     startStopSlideShowButton = new QPushButton(ButtonIcon, "");
     startStopSlideShowButton->setIconSize(pixmap.rect().size());
+    startStopSlideShowButton->setToolTip("Start/Stop Slide Show");
 
     pixmap.load(":/buttonIcons/Camera.png");
     ButtonIcon.addPixmap(pixmap);
     startStopLiveCameraButton = new QPushButton(ButtonIcon, "");
     startStopLiveCameraButton->setIconSize(pixmap.rect().size());
+    startStopLiveCameraButton->setToolTip("Start/Stop Live Camera");
 
     pixmap.load(":/buttonIcons/PanelSetup.png");
     ButtonIcon.addPixmap(pixmap);
     panelControlButton = new QPushButton(ButtonIcon, "");
     panelControlButton->setIconSize(pixmap.rect().size());
+    panelControlButton->setToolTip("Panel Setup");
 
     pixmap.load(":/buttonIcons/GeneralSetup.png");
     ButtonIcon.addPixmap(pixmap);
     generalSetupButton = new QPushButton(ButtonIcon, "");
     generalSetupButton->setIconSize(pixmap.rect().size());
+    generalSetupButton->setToolTip("General Setup");
 
     pixmap.load(":/buttonIcons/video-display.png");
     ButtonIcon.addPixmap(pixmap);
     shutdownButton = new QPushButton(ButtonIcon, "");
     shutdownButton->setIconSize(pixmap.rect().size());
+    shutdownButton->setToolTip("Shutdown System");
 
     startStopLoopSpotButton->setDisabled(true);
     startStopSlideShowButton->setDisabled(true);

@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // and select the right files.
 //
 //#define CUS_TS
-#define CUS_UNIME
+#define UNIME
 //--------------------------------------------------------------
 
 //#define LOG_MESG
@@ -46,8 +46,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef CUS_TS
 #define WINDOW_ICON ":/android/CusTriesteH.png"
 #endif
-#ifdef CUS_UNIME
-#define WINDOW_ICON ":/android/CusMessinaH.png"
+#ifdef UNIME
+#define WINDOW_ICON ":/SSD_Unime.jpeg"
 #endif
 
 #define VOLLEY_PANEL      0

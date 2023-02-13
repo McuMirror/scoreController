@@ -340,21 +340,24 @@ VolleyController::SaveStatus() {
 QHBoxLayout*
 VolleyController::CreateGameButtons() {
     auto* gameButtonLayout = new QHBoxLayout();
+
     QPixmap pixmap(":/buttonIcons/ExchangeVolleyField.png");
     QIcon ButtonIcon(pixmap);
-
     changeFieldButton = new QPushButton(ButtonIcon, "");
     changeFieldButton->setIconSize(pixmap.rect().size());
+    changeFieldButton->setToolTip("Cambia Campo");
 
     pixmap.load(":/buttonIcons/New-Game-Volley.png");
     ButtonIcon.addPixmap(pixmap);
     newGameButton = new QPushButton(ButtonIcon, "");
     newGameButton->setIconSize(pixmap.rect().size());
+    newGameButton->setToolTip("Nuova Partita");
 
     pixmap.load(":/buttonIcons/New-Set-Volley.png");
     ButtonIcon.addPixmap(pixmap);
     newSetButton  = new QPushButton(ButtonIcon, "");
     newSetButton->setIconSize(pixmap.rect().size());
+    newSetButton->setToolTip("Nuovo Set");
 
     gameButtonLayout->addWidget(newSetButton);
     gameButtonLayout->addStretch();
