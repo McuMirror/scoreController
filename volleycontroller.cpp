@@ -359,9 +359,9 @@ VolleyController::CreateGameButtons() {
     newSetButton->setIconSize(pixmap.rect().size());
     newSetButton->setToolTip("Nuovo Set");
 
-    gameButtonLayout->addWidget(newSetButton);
-    gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(newGameButton);
+    gameButtonLayout->addStretch();
+    gameButtonLayout->addWidget(newSetButton);
     gameButtonLayout->addStretch();
     gameButtonLayout->addWidget(changeFieldButton);
     gameButtonLayout->addStretch();
