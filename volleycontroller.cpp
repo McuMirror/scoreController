@@ -172,7 +172,7 @@ VolleyController::buildControls() {
     timeoutLabel = new QLabel(tr("Timeout"));
     timeoutLabel->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
     // Set
-    setsLabel = new QLabel(tr("Set Vinti"));
+    setsLabel = new QLabel(tr("Set"));
     setsLabel->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
     // Service
     serviceLabel = new QLabel(tr("Servizio"));

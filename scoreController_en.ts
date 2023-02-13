@@ -110,12 +110,12 @@
 <context>
     <name>ClientListDialog</name>
     <message>
-        <location filename="clientlistdialog.cpp" line="81"/>
+        <location filename="clientlistdialog.cpp" line="87"/>
         <source>Chiudi</source>
         <translation>Close</translation>
     </message>
     <message>
-        <location filename="clientlistdialog.cpp" line="84"/>
+        <location filename="clientlistdialog.cpp" line="90"/>
         <source>Client Connessi</source>
         <translation>Connected Clients</translation>
     </message>
@@ -139,8 +139,8 @@
         <translation>Slide Dir</translation>
     </message>
     <message>
-        <location filename="directorytab.cpp" line="141"/>
-        <location filename="directorytab.cpp" line="145"/>
+        <location filename="directorytab.cpp" line="143"/>
+        <location filename="directorytab.cpp" line="147"/>
         <source>Spot Dir</source>
         <translation>Spot Dir</translation>
     </message>
@@ -148,22 +148,22 @@
 <context>
     <name>GeneralSetupDialog</name>
     <message>
-        <location filename="generalsetupdialog.cpp" line="26"/>
+        <location filename="generalsetupdialog.cpp" line="55"/>
         <source>Directories</source>
         <translation>Directories</translation>
     </message>
     <message>
-        <location filename="generalsetupdialog.cpp" line="31"/>
+        <location filename="generalsetupdialog.cpp" line="60"/>
         <source>Volley</source>
         <translation>Volley</translation>
     </message>
     <message>
-        <location filename="generalsetupdialog.cpp" line="36"/>
+        <location filename="generalsetupdialog.cpp" line="65"/>
         <source>Basket</source>
         <translation>Basket</translation>
     </message>
     <message>
-        <location filename="generalsetupdialog.cpp" line="41"/>
+        <location filename="generalsetupdialog.cpp" line="70"/>
         <source>Handball</source>
         <translation>Handball</translation>
     </message>
@@ -241,13 +241,13 @@
 <context>
     <name>PanelConfigurator</name>
     <message>
-        <location filename="panelconfigurator.cpp" line="34"/>
+        <location filename="panelconfigurator.cpp" line="51"/>
         <source>Controllo Pannello</source>
         <oldsource>Panel Control</oldsource>
         <translation>Panel Control</translation>
     </message>
     <message>
-        <location filename="panelconfigurator.cpp" line="35"/>
+        <location filename="panelconfigurator.cpp" line="52"/>
         <source>Controllo Telecamera</source>
         <translation>Camera Control</translation>
     </message>
@@ -255,25 +255,25 @@
 <context>
     <name>PanelTab</name>
     <message>
-        <location filename="paneltab.cpp" line="10"/>
+        <location filename="paneltab.cpp" line="28"/>
         <source>Orientamento</source>
         <translation>Direction</translation>
     </message>
     <message>
-        <location filename="paneltab.cpp" line="11"/>
-        <location filename="paneltab.cpp" line="35"/>
+        <location filename="paneltab.cpp" line="29"/>
+        <location filename="paneltab.cpp" line="53"/>
         <source>Normale</source>
         <translation>Normal</translation>
     </message>
     <message>
-        <location filename="paneltab.cpp" line="12"/>
-        <location filename="paneltab.cpp" line="38"/>
+        <location filename="paneltab.cpp" line="30"/>
         <location filename="paneltab.cpp" line="56"/>
+        <location filename="paneltab.cpp" line="74"/>
         <source>Riflesso</source>
         <translation>Reflected</translation>
     </message>
     <message>
-        <location filename="paneltab.cpp" line="17"/>
+        <location filename="paneltab.cpp" line="35"/>
         <source>Mostra solo il punteggio</source>
         <translation>Show Score Only</translation>
     </message>
@@ -281,42 +281,42 @@
 <context>
     <name>ScoreController</name>
     <message>
-        <location filename="scorecontroller.cpp" line="266"/>
+        <location filename="scorecontroller.cpp" line="267"/>
         <source>Connessione Assente</source>
         <translation>Network Connection Absent</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="267"/>
+        <location filename="scorecontroller.cpp" line="268"/>
         <source>Connettiti alla rete e ritenta</source>
         <translation>Connect to the Network and Retry</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="502"/>
+        <location filename="scorecontroller.cpp" line="503"/>
         <source>Volley Controller</source>
         <translation>Volley Controller</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="503"/>
+        <location filename="scorecontroller.cpp" line="504"/>
         <source>Impossibile aprire il file %1: %2.</source>
         <translation>Unable to Open File %1: %2.</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="656"/>
+        <location filename="scorecontroller.cpp" line="657"/>
         <source>Vuoi spegnere anche i pannelli ?</source>
         <translation>Switch Off The Score Panels ?</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="890"/>
+        <location filename="scorecontroller.cpp" line="879"/>
         <source>Socket disconnection</source>
         <translation>Socket disconnection</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="1246"/>
+        <location filename="scorecontroller.cpp" line="1241"/>
         <source>ScoreController</source>
         <translation>ScoreController</translation>
     </message>
     <message>
-        <location filename="scorecontroller.cpp" line="1247"/>
+        <location filename="scorecontroller.cpp" line="1242"/>
         <source>Vuoi Spegnere i Tabelloni ?</source>
         <translation>Switch Off Score Panels ?</translation>
     </message>
@@ -324,19 +324,19 @@
 <context>
     <name>SportSelector</name>
     <message>
-        <location filename="sportSelector.cpp" line="21"/>
+        <location filename="sportSelector.cpp" line="39"/>
         <source>Italiano</source>
         <translation>Italian</translation>
     </message>
     <message>
-        <location filename="sportSelector.cpp" line="40"/>
-        <location filename="sportSelector.cpp" line="188"/>
+        <location filename="sportSelector.cpp" line="58"/>
+        <location filename="sportSelector.cpp" line="206"/>
         <source>Avvia</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="sportSelector.cpp" line="41"/>
-        <location filename="sportSelector.cpp" line="189"/>
+        <location filename="sportSelector.cpp" line="59"/>
+        <location filename="sportSelector.cpp" line="207"/>
         <source>Esci</source>
         <translation>Exit</translation>
     </message>
@@ -345,13 +345,13 @@
     <name>VolleyController</name>
     <message>
         <location filename="volleycontroller.cpp" line="278"/>
-        <location filename="volleycontroller.cpp" line="839"/>
+        <location filename="volleycontroller.cpp" line="842"/>
         <source>Locali</source>
         <translation>Home</translation>
     </message>
     <message>
         <location filename="volleycontroller.cpp" line="279"/>
-        <location filename="volleycontroller.cpp" line="840"/>
+        <location filename="volleycontroller.cpp" line="843"/>
         <source>Ospiti</source>
         <translation>Guests</translation>
     </message>
@@ -362,8 +362,8 @@
     </message>
     <message>
         <location filename="volleycontroller.cpp" line="175"/>
-        <source>Set Vinti</source>
-        <translation>Set Win</translation>
+        <source>Set</source>
+        <translation>Set</translation>
     </message>
     <message>
         <location filename="volleycontroller.cpp" line="178"/>
@@ -371,7 +371,7 @@
         <translation>Service</translation>
     </message>
     <message>
-        <location filename="volleycontroller.cpp" line="835"/>
+        <location filename="volleycontroller.cpp" line="838"/>
         <source>Iniziare una Nuova Partita ?</source>
         <translation>Start New Game ?</translation>
     </message>
@@ -382,19 +382,19 @@
         <translation>Points</translation>
     </message>
     <message>
-        <location filename="volleycontroller.cpp" line="704"/>
-        <location filename="volleycontroller.cpp" line="786"/>
-        <location filename="volleycontroller.cpp" line="834"/>
+        <location filename="volleycontroller.cpp" line="707"/>
+        <location filename="volleycontroller.cpp" line="789"/>
+        <location filename="volleycontroller.cpp" line="837"/>
         <source>Volley_Controller</source>
         <translation>Volley_Controller</translation>
     </message>
     <message>
-        <location filename="volleycontroller.cpp" line="705"/>
+        <location filename="volleycontroller.cpp" line="708"/>
         <source>Scambiare il campo delle squadre ?</source>
         <translation>Exchange Team Positions ?</translation>
     </message>
     <message>
-        <location filename="volleycontroller.cpp" line="787"/>
+        <location filename="volleycontroller.cpp" line="790"/>
         <source>Vuoi davvero iniziare un nuovo Set ?</source>
         <translation>Start a New Set ?</translation>
     </message>
