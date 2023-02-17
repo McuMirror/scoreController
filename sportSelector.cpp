@@ -53,8 +53,8 @@ SportSelector::SportSelector(QWidget *parent)
 
     QCoreApplication::removeTranslator(&Translator);
     if(sCurrentLanguage == QString("English")) {
-        Translator.load(":/scoreController_en");
-        QCoreApplication::installTranslator(&Translator);
+        if(Translator.load(":/scoreController_en"))
+            QCoreApplication::installTranslator(&Translator);
     }
 
     goPushButton.setText(tr("Avvia"));
@@ -185,8 +185,8 @@ SportSelector::on_LanguageComboBox_currentIndexChanged(const QString &arg1) {
     sCurrentLanguage = arg1;
     QCoreApplication::removeTranslator(&Translator);
     if(sCurrentLanguage == QString("English")) {
-        Translator.load(":/scoreController_en");
-        QCoreApplication::installTranslator(&Translator);
+        if(Translator.load(":/scoreController_en"))
+            QCoreApplication::installTranslator(&Translator);
     }
 }
 
