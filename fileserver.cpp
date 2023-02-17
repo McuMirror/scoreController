@@ -305,7 +305,7 @@ FileServer::onProcessTextMessage(QString sMessage) {
             if(file.open(QIODevice::ReadOnly)) {
                 if(file.seek(startPos)) {
                     ba.append(file.read(length));
-                    if(ba.size() == 1024) {// Read error !
+                    if(ba.count() == 1024) {// Read error !
                         file.close();
                         logMessage(logFile,
                                    Q_FUNC_INFO,
@@ -315,7 +315,7 @@ FileServer::onProcessTextMessage(QString sMessage) {
                     }
                     if(pClient->isValid()) {
                         auto bytesSent = int(pClient->sendBinaryMessage(ba));
-                        if(bytesSent != ba.size()) {
+                        if(bytesSent != ba.count()) {
                             logMessage(logFile,
                                        Q_FUNC_INFO,
                                        QString("Unable to send the file %1")

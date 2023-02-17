@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file>key.wav</file>
+        <file>android/CusMessinaH.png</file>
+        <file>android/CusMessinaL.png</file>
+        <file>android/CusMessinaM.png</file>
         <file>scoreController_en.qm</file>
         <file>buttonIcons/video-display.png</file>
         <file>buttonIcons/sign_stop.png</file>
