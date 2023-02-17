@@ -298,9 +298,9 @@ FileServer::onProcessTextMessage(QString sMessage) {
             }
             QByteArray ba;
             if(startPos == 0) {
-                ba.append(sFileName);
-                ba.append(QString(",%1").arg(filesize));
-                ba.append(QString(1024-ba.length(), '\0'));
+                ba.append(sFileName.toLocal8Bit());
+                ba.append(QString(",%1").arg(filesize).toLocal8Bit());
+                ba.append(QString(1024-ba.length(), '\0').toLocal8Bit());
             }
             if(file.open(QIODevice::ReadOnly)) {
                 if(file.seek(startPos)) {

@@ -115,7 +115,7 @@ BasketController::buildControls() {
         teamName[iTeam]->setAlignment(Qt::AlignHCenter);
         teamName[iTeam]->setMaxLength(15);
         // Timeout
-        sString.sprintf("%1d", iTimeout[iTeam]);
+        sString = QString("%1").arg(iTimeout[iTeam]);
         timeoutEdit[iTeam] = new Edit(sString);
         timeoutEdit[iTeam]->setMaxLength(1);
         timeoutEdit[iTeam]->setAlignment(Qt::AlignHCenter);
@@ -130,7 +130,7 @@ BasketController::buildControls() {
         if(iTimeout[iTeam] == 0)
             timeoutDecrement[iTeam]->setEnabled(false);
         // Team Fauls
-        sString.sprintf("%1d", iFauls[iTeam]);
+        sString = QString("%1").arg(iFauls[iTeam]);
         faulsEdit[iTeam] = new Edit(sString);
         faulsEdit[iTeam]->setMaxLength(2);
         faulsEdit[iTeam]->setAlignment(Qt::AlignHCenter);
@@ -161,7 +161,7 @@ BasketController::buildControls() {
             bonusEdit[iTeam]->setStyleSheet("background:transparent;color:transparent;");
         }
         // Score
-        sString.sprintf("%3d", iScore[iTeam]);
+        sString = QString("%1").arg(iScore[iTeam]);
         scoreEdit[iTeam] = new Edit(sString);
         scoreEdit[iTeam]->setMaxLength(3);
         scoreEdit[iTeam]->setReadOnly(true);
@@ -177,7 +177,7 @@ BasketController::buildControls() {
             scoreDecrement[iTeam]->setEnabled(false);
     }
     // Period
-    sString.sprintf("%2d", iPeriod);
+    sString = QString("%1").arg(iPeriod);
     periodEdit = new Edit(sString);
     periodEdit->setMaxLength(2);
     periodEdit->setReadOnly(true);
@@ -547,23 +547,23 @@ BasketController::FormatStatusMsg() {
     QString sMessage = QString();
     QString sTemp;
     for(int i=0; i<2; i++) {
-        sTemp.sprintf("<team%1d>%s</team%1d>", i, sTeam[i].toLocal8Bit().data(), i);
+        sTemp = QString("<team%1>%2</team%3>").arg(i).arg(sTeam[i].toLocal8Bit().data()).arg(i);
         sMessage += sTemp;
-        sTemp.sprintf("<timeout%1d>%d</timeout%1d>", i, iTimeout[i], i);
+        sTemp = QString("<timeout%1>%2</timeout%3>").arg(i).arg(iTimeout[i]).arg(i);
         sMessage += sTemp;
-        sTemp.sprintf("<score%1d>%d</score%1d>", i, iScore[i], i);
+        sTemp = QString("<score%1>%2</score%3>").arg(i).arg(iScore[i]).arg(i);
         sMessage += sTemp;
-        sTemp.sprintf("<fauls%1d>%d</fauls%1d>", i, iFauls[i], i);
+        sTemp = QString("<fauls%1>%2</fauls%3>").arg(i).arg(iFauls[i]).arg(i);
         sMessage += sTemp;
-        sTemp.sprintf("<bonus%1d>%d</bonus%1d>", i, iBonus[i], i);
+        sTemp = QString("<bonus%1>%2</bonus%3>").arg(i).arg(iBonus[i]).arg(i);
         sMessage += sTemp;
     }
     if(iPeriod > pGeneralSetupDialog->getGamePeriodsBB())
-        sTemp.sprintf("<period>%d,%d</period>", iPeriod, pGeneralSetupDialog->getOverTimeBB());
+        sTemp = QString("<period>%1,%2</period>").arg(iPeriod).arg(pGeneralSetupDialog->getOverTimeBB());
     else
-        sTemp.sprintf("<period>%d,%d</period>", iPeriod, pGeneralSetupDialog->getRegularTimeBB());
+        sTemp = QString("<period>%1,%2</period>").arg(iPeriod).arg(pGeneralSetupDialog->getRegularTimeBB());
     sMessage += sTemp;
-    sTemp.sprintf("<possess>%d</possess>", iPossess);
+    sTemp = QString("<possess>%1</possess>").arg(iPossess);
     sMessage += sTemp;
     if(myStatus == showSlides)
         sMessage += "<slideshow>1</slideshow>";
@@ -603,12 +603,12 @@ BasketController::onTimeOutIncrement(int iTeam) {
         timeoutEdit[iTeam]->setStyleSheet("background:red;color:white;");
     }
     timeoutDecrement[iTeam]->setEnabled(true);
-    sMessage.sprintf("<timeout%1d>%d</timeout%1d>", iTeam, iTimeout[iTeam], iTeam);
+    sMessage = QString("<timeout%1>%2</timeout%3>").arg(iTeam).arg(iTimeout[iTeam]).arg(iTeam);
     SendToAll(sMessage);
     QString sText;
-    sText.sprintf("%1d", iTimeout[iTeam]);
+    sText = QString("%1").arg(iTimeout[iTeam]);
     timeoutEdit[iTeam]->setText(sText);
-    sText.sprintf("team%1d/timeouts", iTeam+1);
+    sText = QString("team%1/timeouts").arg(iTeam+1);
     pSettings->setValue(sText, iTimeout[iTeam]);
 }
 
@@ -626,12 +626,12 @@ BasketController::onTimeOutDecrement(int iTeam) {
     }
     timeoutEdit[iTeam]->setStyleSheet(styleSheet());
     timeoutIncrement[iTeam]->setEnabled(true);
-    sMessage.sprintf("<timeout%1d>%d</timeout%1d>", iTeam, iTimeout[iTeam], iTeam);
+    sMessage = QString("<timeout%1>%2</timeout%3>").arg(iTeam).arg(iTimeout[iTeam]).arg(iTeam);
     SendToAll(sMessage);
     QString sText;
-    sText.sprintf("%1d", iTimeout[iTeam]);
+    sText = QString("%1").arg(iTimeout[iTeam]);
     timeoutEdit[iTeam]->setText(sText);
-    sText.sprintf("team%1d/timeouts", iTeam+1);
+    sText = QString("team%1/timeouts").arg(iTeam+1);
     pSettings->setValue(sText, iTimeout[iTeam]);
 }
 
@@ -658,13 +658,13 @@ BasketController::onFaulsIncrement(int iTeam) {
     }
     faulsDecrement[iTeam]->setEnabled(true);
 
-    sMessage.sprintf("<fauls%1d>%d</fauls%1d>", iTeam, iFauls[iTeam], iTeam);
-    sText.sprintf("<bonus%1d>%d</bonus%1d>", iTeam, iBonus[iTeam], iTeam);
+    sMessage = QString("<fauls%1>%2</fauls%3>").arg(iTeam).arg(iFauls[iTeam]).arg(iTeam);
+    sText = QString("<bonus%1>%2</bonus%3>").arg(iTeam).arg(iBonus[iTeam]).arg(iTeam);
     sMessage += sText;
     SendToAll(sMessage);
-    sText.sprintf("%2d", iFauls[iTeam]);
+    sText = QString("%1").arg(iFauls[iTeam]);
     faulsEdit[iTeam]->setText(sText);
-    sText.sprintf("team%1d/fauls", iTeam+1);
+    sText = QString("team%1/fauls").arg(iTeam+1);
     pSettings->setValue(sText, iFauls[iTeam]);
 }
 
@@ -691,13 +691,13 @@ BasketController::onFaulsDecrement(int iTeam) {
     }
     faulsIncrement[iTeam]->setEnabled(true);
 
-    sMessage.sprintf("<fauls%1d>%d</fauls%1d>", iTeam, iFauls[iTeam], iTeam);
-    sText.sprintf("<bonus%1d>%d</bonus%1d>", iTeam, iBonus[iTeam], iTeam);
+    sMessage = QString("<fauls%1>%2</fauls%3>").arg(iTeam).arg(iFauls[iTeam]).arg(iTeam);
+    sText = QString("<bonus%1>%2</bonus%3>").arg(iTeam).arg(iBonus[iTeam]).arg(iTeam);
     sMessage += sText;
     SendToAll(sMessage);
-    sText.sprintf("%2d", iFauls[iTeam]);
+    sText = QString("%1").arg(iFauls[iTeam]);
     faulsEdit[iTeam]->setText(sText);
-    sText.sprintf("team%1d/fauls", iTeam+1);
+    sText = QString("team%1/fauls").arg(iTeam+1);
     pSettings->setValue(sText, iFauls[iTeam]);
 }
 
@@ -714,12 +714,12 @@ BasketController::onScoreIncrement(int iTeam) {
     if(iScore[iTeam] > 998) {
         scoreIncrement[iTeam]->setEnabled(false);
     }
-    sMessage.sprintf("<score%1d>%d</score%1d>", iTeam, iScore[iTeam], iTeam);
+    sMessage = QString("<score%1>%2</score%3>").arg(iTeam).arg(iScore[iTeam]).arg(iTeam);
     SendToAll(sMessage);
     QString sText;
-    sText.sprintf("%1d", iScore[iTeam]);
+    sText = QString("%1d").arg(iScore[iTeam]);
     scoreEdit[iTeam]->setText(sText);
-    sText.sprintf("team%1d/score", iTeam+1);
+    sText = QString("team%1/score").arg(iTeam+1);
     pSettings->setValue(sText, iScore[iTeam]);
 }
 
@@ -736,12 +736,12 @@ BasketController::onScoreDecrement(int iTeam) {
     if(iScore[iTeam] == 0) {
         scoreDecrement[iTeam]->setEnabled(false);
     }
-    sMessage.sprintf("<score%1d>%d</score%1d>", iTeam, iScore[iTeam], iTeam);
+    sMessage = QString("<score%1>%2</score%3>").arg(iTeam).arg(iScore[iTeam]).arg(iTeam);
     SendToAll(sMessage);
     QString sText;
-    sText.sprintf("%1d", iScore[iTeam]);
+    sText = QString("%1").arg(iScore[iTeam]);
     scoreEdit[iTeam]->setText(sText);
-    sText.sprintf("team%1d/score", iTeam+1);
+    sText = QString("team%1/score").arg(iTeam+1);
     pSettings->setValue(sText, iScore[iTeam]);
 }
 
@@ -756,11 +756,11 @@ BasketController::onTeamTextChanged(QString sText, int iTeam) {
     QString sMessage;
     sTeam[iTeam] = sText;
     if(sText=="")// C'è un problema con la stringa vuota...
-        sMessage.sprintf("<team%1d>-</team%1d>", iTeam, iTeam);
+        sMessage = QString("<team%1>-</team%2>").arg(iTeam).arg(iTeam);
     else
-        sMessage.sprintf("<team%1d>%s</team%1d>", iTeam, sTeam[iTeam].toLocal8Bit().data(), iTeam);
+        sMessage = QString("<team%1>%2</team%3>").arg(iTeam).arg(sTeam[iTeam].toLocal8Bit().data()).arg(iTeam);
     SendToAll(sMessage);
-    sText.sprintf("team%1d/name", iTeam+1);
+    sText = QString("team%1/name").arg(iTeam+1);
     pSettings->setValue(sText, sTeam[iTeam]);
 }
 
@@ -795,7 +795,7 @@ BasketController::onButtonChangeFieldClicked() {
     // Update panel
     for(int iTeam=0; iTeam<2; iTeam++) {
         teamName[iTeam]->setText(sTeam[iTeam]);
-        sText.sprintf("%1d", iScore[iTeam]);
+        sText = QString("%1").arg(iScore[iTeam]);
         scoreEdit[iTeam]->setText(sText);
         scoreDecrement[iTeam]->setEnabled(true);
         scoreIncrement[iTeam]->setEnabled(true);
@@ -805,7 +805,7 @@ BasketController::onButtonChangeFieldClicked() {
         if(iScore[iTeam] > 98) {
           scoreIncrement[iTeam]->setEnabled(false);
         }
-        sText.sprintf("%1d", iTimeout[iTeam]);
+        sText = QString("%1").arg(iTimeout[iTeam]);
         timeoutEdit[iTeam]->setText(sText);
         timeoutIncrement[iTeam]->setEnabled(true);
         timeoutDecrement[iTeam]->setEnabled(true);
@@ -826,7 +826,7 @@ BasketController::onButtonChangeFieldClicked() {
         if(iTimeout[iTeam] == 0) {
             timeoutDecrement[iTeam]->setEnabled(false);
         }
-        sText.sprintf("%2d", iFauls[iTeam]);
+        sText = QString("%1").arg(iFauls[iTeam]);
         faulsEdit[iTeam]->setText(sText);
         if(iFauls[iTeam] == 0) {
            faulsDecrement[iTeam]->setEnabled(false);
@@ -869,7 +869,7 @@ BasketController::onButtonNewPeriodClicked() {
     }
     periodDecrement->setEnabled(true);
     QString sString;
-    sString.sprintf("%2d", iPeriod);
+    sString = QString("%1").arg(iPeriod);
     periodEdit->setText(sString);
 
     // Exchange teams order, score and team fauls
@@ -892,14 +892,14 @@ BasketController::onButtonNewPeriodClicked() {
     for(int iTeam=0; iTeam<2; iTeam++) {
         teamName[iTeam]->setText(sTeam[iTeam]);
         iTimeout[iTeam] = 0;
-        sText.sprintf("%1d", iTimeout[iTeam]);
+        sText = QString("%1").arg(iTimeout[iTeam]);
         timeoutEdit[iTeam]->setText(sText);
         timeoutEdit[iTeam]->setStyleSheet(styleSheet());
         timeoutDecrement[iTeam]->setEnabled(false);
         timeoutIncrement[iTeam]->setEnabled(true);
-        sText.sprintf("%3d", iScore[iTeam]);
+        sText = QString("%1").arg(iScore[iTeam]);
         scoreEdit[iTeam]->setText(sText);
-        sText.sprintf("%2d", iFauls[iTeam]);
+        sText = QString("%1").arg(iFauls[iTeam]);
         faulsEdit[iTeam]->setText(sText);
         if(iFauls[iTeam] == 0) {
            faulsDecrement[iTeam]->setEnabled(false);
@@ -935,25 +935,25 @@ BasketController::onButtonNewGameClicked() {
     sTeam[1]    = tr("Ospiti");
     QString sText;
     iPeriod = 1;
-    sText.sprintf("%2d", iPeriod);
+    sText = QString("%1").arg(iPeriod);
     periodEdit->setText(sText);
     periodIncrement->setEnabled(true);
     periodDecrement->setEnabled(false);
     for(int iTeam=0; iTeam<2; iTeam++) {
         teamName[iTeam]->setText(sTeam[iTeam]);
         iTimeout[iTeam] = 0;
-        sText.sprintf("%1d", iTimeout[iTeam]);
+        sText = QString("%1").arg(iTimeout[iTeam]);
         timeoutEdit[iTeam]->setText(sText);
         timeoutEdit[iTeam]->setStyleSheet(styleSheet());
         timeoutDecrement[iTeam]->setEnabled(false);
         timeoutIncrement[iTeam]->setEnabled(true);
         iScore[iTeam]   = 0;
-        sText.sprintf("%3d", iScore[iTeam]);
+        sText = QString("%1").arg(iScore[iTeam]);
         scoreEdit[iTeam]->setText(sText);
         scoreDecrement[iTeam]->setEnabled(false);
         scoreIncrement[iTeam]->setEnabled(true);
         iFauls[iTeam] = 0;
-        sText.sprintf("%2d", iFauls[iTeam]);
+        sText = QString("%1").arg(iFauls[iTeam]);
         faulsEdit[iTeam]->setText(sText);
         faulsIncrement[iTeam]->setEnabled(true);
         faulsDecrement[iTeam]->setEnabled(false);
@@ -978,12 +978,12 @@ BasketController::onIncrementPeriod() {
     }
     periodDecrement->setEnabled(true);
     QString sString, sMessage;
-    sString.sprintf("%2d", iPeriod);
+    sString = QString("%1").arg(iPeriod);
     periodEdit->setText(sString);
     if(iPeriod > pGeneralSetupDialog->getGamePeriodsBB())
-        sMessage.sprintf("<period>%d,%d</period>", iPeriod, pGeneralSetupDialog->getOverTimeBB());
+        sMessage = QString("<period>%1,%2</period>").arg(iPeriod).arg(pGeneralSetupDialog->getOverTimeBB());
     else
-        sMessage.sprintf("<period>%d,%d</period>", iPeriod, pGeneralSetupDialog->getRegularTimeBB());
+        sMessage = QString("<period>%1,%2</period>").arg(iPeriod).arg(pGeneralSetupDialog->getRegularTimeBB());
     SendToAll(sMessage);
     pSettings->setValue("game/period", iPeriod);
 }
@@ -1005,12 +1005,12 @@ BasketController::onDecrementPeriod() {
     }
     periodIncrement->setEnabled(true);
     QString sString, sMessage;
-    sString.sprintf("%2d", iPeriod);
+    sString = QString("%1").arg(iPeriod);
     periodEdit->setText(sString);
     if(iPeriod > pGeneralSetupDialog->getGamePeriodsBB())
-        sMessage.sprintf("<period>%d,%d</period>", iPeriod, pGeneralSetupDialog->getOverTimeBB());
+        sMessage = QString("<period>%1,%2</period>").arg(iPeriod).arg(pGeneralSetupDialog->getOverTimeBB());
     else
-        sMessage.sprintf("<period>%d,%d</period>", iPeriod, pGeneralSetupDialog->getRegularTimeBB());
+        sMessage = QString("<period>%1,%2</period>").arg(iPeriod).arg(pGeneralSetupDialog->getRegularTimeBB());
     SendToAll(sMessage);
     pSettings->setValue("game/period", iPeriod);
 }
@@ -1028,7 +1028,7 @@ BasketController::onPossessClicked(int iTeam, bool bChecked) {
     iPossess = iTeam;
     possess[iPossess ? 1 : 0]->setChecked(true);
     possess[iPossess ? 0 : 1]->setChecked(false);
-    sMessage.sprintf("<possess>%d</possess>", iPossess);
+    sMessage = QString("<possess>%1</possess>").arg(iPossess);
     SendToAll(sMessage);
     pSettings->setValue("game/possess", iPossess);
 }
