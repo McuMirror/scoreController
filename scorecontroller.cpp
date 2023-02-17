@@ -652,11 +652,12 @@ ScoreController::closeEvent(QCloseEvent *event) {
 
     // If there are Panels connected would we switch they off ?
     if(connectionList.count() > 0) {
-        int answer = QMessageBox::question(this,
-                                           Q_FUNC_INFO,
-                                           tr("Vuoi spegnere anche i pannelli ?"),
-                                           QMessageBox::Yes,
-                                           QMessageBox::No|QMessageBox::Default);
+        QMessageBox msgBox;
+        msgBox.setText("Sto per Chiudere l'App...");
+        msgBox.setInformativeText("Spengo i pannelli ?");
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msgBox.setDefaultButton(QMessageBox::No);
+        int answer = msgBox.exec();
         if(answer == QMessageBox::No) {
             for(int i=0; i<connectionList.count(); i++) {
                 connectionList.at(i).pClientSocket->disconnect();
@@ -1237,13 +1238,13 @@ ScoreController::onButtonStartStopSlideShowClicked() {
  */
 void
 ScoreController::onButtonShutdownClicked() {
-    int iRes = QMessageBox::question(this,
-                                     tr("ScoreController"),
-                                     tr("Vuoi Spegnere i Tabelloni ?"),
-                                     QMessageBox::Yes,
-                                     QMessageBox::No|QMessageBox::Default,
-                                     QMessageBox::NoButton);
-    if(iRes != QMessageBox::Yes) return;
+    QMessageBox msgBox;
+    msgBox.setText("Sei Sicuro di Volere Spegnere");
+    msgBox.setInformativeText("i Tabelloni ?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+    int answer = msgBox.exec();
+    if(answer != QMessageBox::Yes) return;
     QString sMessage = "<kill>1</kill>";
     SendToAll(sMessage);
 }
