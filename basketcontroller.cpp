@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "radioButton.h"
 #include "fileserver.h"
 #include "generalsetupdialog.h"
+#include "utility.h"
 
 
 #define MAX_FAULS      99 // To be defined the behaviour after #fauls becomes greater then MAX_FAULS
@@ -329,56 +330,34 @@ BasketController::setEventHandlers() {
         // Timeout
         connect(timeoutIncrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onTimeOutIncrement(int)));
-        connect(timeoutIncrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
         connect(timeoutDecrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onTimeOutDecrement(int)));
-        connect(timeoutDecrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
         // Fauls
         connect(faulsIncrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onFaulsIncrement(int)));
-        connect(faulsIncrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
         connect(faulsDecrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onFaulsDecrement(int)));
-        connect(faulsDecrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
         // Possess
         connect(possess[iTeam], SIGNAL(buttonClicked(int,bool)),
                 this, SLOT(onPossessClicked(int,bool)));
         // Score
         connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onScoreIncrement(int)));
-        connect(scoreIncrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
         connect(scoreDecrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onScoreDecrement(int)));
-        connect(scoreDecrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
     }
     // Period
     connect(periodIncrement, SIGNAL(clicked()),
             this, SLOT(onIncrementPeriod()));
-    connect(periodIncrement, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
     connect(periodDecrement, SIGNAL(clicked()),
             this, SLOT(onDecrementPeriod()));
-    connect(periodDecrement, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
     // Buttons
     connect(newPeriodButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonNewPeriodClicked()));
-    connect(newPeriodButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
     connect(newGameButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonNewGameClicked()));
-    connect(newGameButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
     connect(changeFieldButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonChangeFieldClicked()));
-    connect(changeFieldButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
 }
 
 

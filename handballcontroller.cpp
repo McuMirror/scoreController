@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "edit.h"
 #include "button.h"
 #include "generalsetupdialog.h"
+#include "utility.h"
 
 #define MAX_SCORE    999 //
 
@@ -274,46 +275,28 @@ HandballController::setEventHandlers() {
         // Timeouts
         connect(timeoutIncrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onTimeOutIncrement(int)));
-        connect(timeoutIncrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
         connect(timeoutDecrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onTimeOutDecrement(int)));
-        connect(timeoutDecrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
         // Scores
         connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onScoreIncrement(int)));
-        connect(scoreIncrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
         connect(scoreDecrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onScoreDecrement(int)));
-        connect(scoreDecrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
     }
     // Period
     connect(periodIncrement, SIGNAL(clicked()),
             this, SLOT(onPeriodIncrement()));
-    connect(periodIncrement, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
     connect(periodDecrement, SIGNAL(clicked()),
             this, SLOT(onPeriodDecrement()));
-    connect(periodDecrement, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
     // New Period
     connect(newPeriodButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonNewPeriodClicked()));
-    connect(newPeriodButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
     // New Game
     connect(newGameButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonNewGameClicked()));
-    connect(newGameButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
     // Exchange Field Position
     connect(changeFieldButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonChangeFieldClicked()));
-    connect(changeFieldButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
 }
 
 

@@ -26,8 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFrame>
 
 #include "utility.h"
-#include "build_number.h"
+//#include "build_number.h"
 
+#define BUILD 0
 
 /*!
  * \brief GeneralSetupDialog::GeneralSetupDialog

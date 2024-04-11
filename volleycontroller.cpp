@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "radioButton.h"
 #include "fileserver.h"
 #include "generalsetupdialog.h"
+#include "utility.h"
 
 
 
@@ -512,48 +513,28 @@ VolleyController::setEventHandlers() {
                 this, SLOT(onTeamTextChanged(QString,int)));
         connect(timeoutIncrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onTimeOutIncrement(int)));
-        connect(timeoutIncrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
         connect(timeoutDecrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onTimeOutDecrement(int)));
-        connect(timeoutDecrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
         connect(setsIncrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onSetIncrement(int)));
-        connect(setsIncrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
         connect(setsDecrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onSetDecrement(int)));
-        connect(setsDecrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
         connect(service[iTeam], SIGNAL(buttonClicked(int,bool)),
                 this, SLOT(onServiceClicked(int,bool)));
-        connect(service[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
         connect(scoreIncrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onScoreIncrement(int)));
-        connect(scoreIncrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
         connect(scoreDecrement[iTeam], SIGNAL(buttonClicked(int)),
                 this, SLOT(onScoreDecrement(int)));
-        connect(scoreDecrement[iTeam], SIGNAL(clicked()),
-                pButtonClick, SLOT(play()));
     }
     // New Set
     connect(newSetButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonNewSetClicked()));
-    connect(newSetButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
     // New Game
     connect(newGameButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonNewGameClicked()));
-    connect(newGameButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
     // Exchange Field Position
     connect(changeFieldButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonChangeFieldClicked()));
-    connect(changeFieldButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
 }
 
 

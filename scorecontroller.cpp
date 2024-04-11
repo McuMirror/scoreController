@@ -69,7 +69,6 @@ ScoreController::ScoreController(int myPanelType, QWidget *parent)
     , pSpotServerThread(Q_NULLPTR)
     , pSpotUpdaterServer(Q_NULLPTR)
     , spotUpdaterPort(SPOT_UPDATER_PORT)
-    , pButtonClick(Q_NULLPTR)
 {
     // For Message Logging...
     logFile = Q_NULLPTR;
@@ -88,10 +87,6 @@ ScoreController::ScoreController(int myPanelType, QWidget *parent)
     pGeneralSetupDialog->setWindowFlags(Qt::Window);
     pClientListDialog->setWindowFlags(Qt::Window);
 #endif
-    // The click sound for button press.
-    // To have an acoustic feedback on touch screen tablets.
-    pButtonClick = new QSoundEffect(this);
-    pButtonClick->setSource(QUrl::fromLocalFile(":/key.wav"));
 
     // A List of IP Addresses of the connected Score Panels
     sIpAddresses = QStringList();
@@ -356,8 +351,8 @@ ScoreController::prepareDiscovery() {
             QList<QNetworkAddressEntry> list = interface.addressEntries();
             for(int j=0; j<list.count(); j++)
             {
-                auto* pDiscoverySocket = new QUdpSocket(this);
                 if(list[j].ip().protocol() == QAbstractSocket::IPv4Protocol) {
+                    auto* pDiscoverySocket = new QUdpSocket(this);
                     if(pDiscoverySocket->bind(QHostAddress::AnyIPv4, discoveryPort, QUdpSocket::ShareAddress)) {
                         pDiscoverySocket->joinMulticastGroup(discoveryAddress);
                         sIpAddresses.append(list[j].ip().toString());
@@ -631,8 +626,6 @@ ScoreController::closeEvent(QCloseEvent *event) {
                Q_FUNC_INFO,
                QString("Closing"));
 #endif
-    delete pButtonClick;
-    pButtonClick = Q_NULLPTR;
 
     // Close all the discovery sockets
     for(int i=0; i<discoverySocketArray.count(); i++) {
@@ -1057,35 +1050,23 @@ ScoreController::CreateSpotButtons() {
     generalSetupButton->setEnabled(true);
     shutdownButton->setDisabled(true);
 
-    connect(panelControlButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
     connect(panelControlButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonPanelControlClicked()));
 
     connect(startStopLoopSpotButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonStartStopSpotLoopClicked()));
-    connect(startStopLoopSpotButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
 
     connect(startStopSlideShowButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonStartStopSlideShowClicked()));
-    connect(startStopSlideShowButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
 
     connect(startStopLiveCameraButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonStartStopLiveCameraClicked()));
-    connect(startStopLiveCameraButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
 
     connect(generalSetupButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonSetupClicked()));
-    connect(generalSetupButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
 
     connect(shutdownButton, SIGNAL(clicked(bool)),
             this, SLOT(onButtonShutdownClicked()));
-    connect(shutdownButton, SIGNAL(clicked()),
-            pButtonClick, SLOT(play()));
 
     spotButtonLayout->addWidget(startStopLoopSpotButton);
 

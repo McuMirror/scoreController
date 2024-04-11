@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *
 */
 #include "paneltab.h"
-#include "utility.h"
+//#include "utility.h"
 
 #include <QGridLayout>
 
@@ -29,14 +29,14 @@ PanelTab::PanelTab(QWidget *parent)
     directionCombo.addItem(tr("Normale"));
     directionCombo.addItem(tr("Riflesso"));
     directionCombo.setDisabled(true);
-    connect(&directionCombo, SIGNAL(currentIndexChanged(QString)),
+    connect(&directionCombo, SIGNAL(currentTextChanged(QString)),
             this, SLOT(onChangePanelDirection(QString)));
 
     scoreOnlyCheckBox.setText(tr("Mostra solo il punteggio"));
     scoreOnlyCheckBox.setCheckState(Qt::Unchecked);
     scoreOnlyCheckBox.setDisabled(true);
-    connect(&scoreOnlyCheckBox, SIGNAL(stateChanged(int)),
-            this, SLOT(onChangeScoreOnly(int)));
+    connect(&scoreOnlyCheckBox, SIGNAL(checkStateChanged(Qt::CheckState)),
+            this, SLOT(onChangeScoreOnly(Qt::CheckState)));
 
     auto *mainLayout = new QGridLayout;
     mainLayout->addWidget(&labelDirection, 0, 0, 1, 2);
@@ -78,7 +78,7 @@ PanelTab::onChangePanelDirection(QString sDirection) {
 
 
 void
-PanelTab::onChangeScoreOnly(int newState) {
+PanelTab::onChangeScoreOnly(Qt::CheckState newState) {
     #ifdef LOG_VERBOSE
         logMessage(Q_NULLPTR,
                    Q_FUNC_INFO,

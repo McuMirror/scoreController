@@ -58,6 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 int
 main(int argc, char *argv[]) {
+    //qputenv("QT_MEDIA_BACKEND", "d3d11va");
     int iresult = 0;
     QString sVersion = QString("1.2");
     QApplication::setApplicationVersion(sVersion);

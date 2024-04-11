@@ -23,12 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QWidget>
 #include <QHostAddress>
 #include <QFileInfoList>
-#include <QSoundEffect>
+//#include <QSoundEffect>
 #include <QSettings>
 
 #include "fileserver.h"
 #include "paneldirection.h"
-#include "utility.h"
+//#include "utility.h"
 
 
 QT_FORWARD_DECLARE_CLASS(QWebSocket)
@@ -149,8 +149,6 @@ protected:
     QString               sSpotDir;
     QFileInfoList         spotList;
     int                   iCurrentSpot;
-
-    QSoundEffect*         pButtonClick;
 
     QPushButton*          startStopLoopSpotButton{};
     QPushButton*          startStopSlideShowButton{};

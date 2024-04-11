@@ -42,9 +42,9 @@ SportSelector::SportSelector(QWidget *parent)
 
     volleyRadioButton.setText("Volley");
     handballRadioButton.setText("Handball");
-    handballRadioButton.setDisabled(true);
+    //>>>>>>>>>>>>>>>>>>>handballRadioButton.setDisabled(true);
     basketRadioButton.setText("Basket");
-    basketRadioButton.setDisabled(true);
+    //>>>>>>>>>>>>>>>>>>>basketRadioButton.setDisabled(true);
     volleyRadioButton.setChecked(true);
 
     languageComboBox.addItem(QString("Italiano"));
@@ -98,7 +98,7 @@ SportSelector::setEventHandlers() {
     connect(&basketRadioButton, SIGNAL(clicked()),
             this, SLOT(on_basketRadioButton_clicked()));
 
-    connect(&languageComboBox, SIGNAL(currentIndexChanged(QString)),
+    connect(&languageComboBox, SIGNAL(currentTextChanged(QString)),
             this, SLOT(on_LanguageComboBox_currentIndexChanged(QString)));
 
     connect(&goPushButton, SIGNAL(clicked()),

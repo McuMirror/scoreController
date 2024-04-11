@@ -42,7 +42,7 @@ signals:
 
 public slots:
     void onChangePanelDirection(QString sDirection);
-    void onChangeScoreOnly(int newState);
+    void onChangeScoreOnly(Qt::CheckState newState);
 
 private:
     QLabel labelDirection;
